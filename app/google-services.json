@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "55935314119",
+    "project_id": "gastoscompartidos-lfcounago",
+    "storage_bucket": "gastoscompartidos-lfcounago.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55935314119:android:8f8f040acf5c2a4be076e2",
+        "android_client_info": {
+          "package_name": "com.lfcounago.gastoscompartidos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6-5MBuLzfalK5heOwh0mWK6LVfc60meg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
