@@ -2,4 +2,89 @@
     <string name="app_name">GastosCompartidos</string>
     <string name="prefs_file">com.lfcounago.gastoscompartidos.PREFERENCE_FILE_KEY</string>
     <string name="default_web_client_id">55935314119-3g35kfd7k0tvf2mco5tcvco6vsgopaio.apps.googleusercontent.com</string>
+    <string-array name="currencies">
+        <item>Euro - EUR</item>
+        <item>Baht tailandés - THB</item>
+        <item>Bolívar fuerte de Venezuela - VEF</item>
+        <item>Boliviano Bolivia - BOB</item>
+        <item>Chelin keniano - KES</item>
+        <item>Colón costarricense - CRC</item>
+        <item>Córdoba nicaragüense - NIO</item>
+        <item>Corona checa - CZK</item>
+        <item>Corona danesa - DKK</item>
+        <item>Corona islandesa - ISK</item>
+        <item>Corona islandesa - ISK</item>
+        <item>Corona sueca - SEK</item>
+        <item>Dalasi Gambia - GMD</item>
+        <item>Dinar argelino - DZD</item>
+        <item>Dinar bahreiní - BHD</item>
+        <item>Dinar jordano - JOD</item>
+        <item>Dinar kuwaití - KWD</item>
+        <item>Dinar serbio - RSD</item>
+        <item>Dinar tunecino - TND</item>
+        <item>Dírham Em. Árabes - AED</item>
+        <item>Dírham marroquí - MAD</item>
+        <item>Dólar americano - USD</item>
+        <item>Dólar australiano - AUD</item>
+        <item>Dólar canadiense - CAD</item>
+        <item>Dólar de Hong Kong - HKD</item>
+        <item>Dólar jamaiquino - JMD</item>
+        <item>Dólar neozelandés - NZD</item>
+        <item>Dolar singapurense - SGD</item>
+        <item>Dólar taiwanés - TWD</item>
+        <item>Dólar trinitense - TTD</item>
+        <item>Dong vietnamita - VND</item>
+        <item>Florín de Antillas Holandesas - ANG</item>
+        <item>Florín de Aruba - AWG</item>
+        <item>Forint - HUF</item>
+        <item>Franco BCEAO - XOF</item>
+        <item>Franco BEAC - XAF</item>
+        <item>Franco suizo - CHF</item>
+        <item>Grivna Ucrania - UAH</item>
+        <item>Guaraní Paraguay - PYG</item>
+        <item>Kuna croata - HRK</item>
+        <item>Kwanza - AOA</item>
+        <item>Lek - ALL</item>
+        <item>Leu rumano - RON</item>
+        <item>Lev búlgaro - BGN</item>
+        <item>Libra egipcia - EGP</item>
+        <item>Libra escocesa - SCP</item>
+        <item>Libra esterlina - GBP</item>
+        <item>Lira turca - TRY</item>
+        <item>Lita lituana - LTL</item>
+        <item>Manat azerbaiyano - AZM</item>
+        <item>Marco bosnio - BAM</item>
+        <item>Nuevo shequel israelí - ILS</item>
+        <item>Nuevo sol peruano - PEN</item>
+        <item>Peso argentino - ARS</item>
+        <item>Peso chileno - CLP</item>
+        <item>Peso colombiano - COP</item>
+        <item>Peso dominicano - DOP</item>
+        <item>Peso filipino - PHP</item>
+        <item>Peso mexicano - MXN</item>
+        <item>Peso uruguayo - UYU</item>
+        <item>Quetzal guatemalteco - GTQ</item>
+        <item>Rand sudafricano - ZAR</item>
+        <item>Real brasileño - BRL</item>
+        <item>Rial qatarí - QAR</item>
+        <item>Rial saudí - SAR</item>
+        <item>Ringgit malayo - MYR</item>
+        <item>Rublo ruso - RUB</item>
+        <item>Rupia india - INR</item>
+        <item>Rupia indonesia - IDR</item>
+        <item>Rupia mauriciana - MUR</item>
+        <item>Taka - BDT</item>
+        <item>Won surcoreano - KRW</item>
+        <item>Yen - JPY</item>
+        <item>Yuan chino - CNY</item>
+        <item>Zloty polaco - PLN</item>
+    </string-array>
+    <string-array name="categories">
+        <item>Viaje</item>
+        <item>Casa compartida</item>
+        <item>Pareja</item>
+        <item>Celebración</item>
+        <item>Proyecto</item>
+        <item>Otros</item>
+    </string-array>
 </resources>
