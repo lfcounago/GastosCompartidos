@@ -88,6 +88,32 @@
         app:layout_constraintTop_toBottomOf="@+id/groupCurrency"
         app:layout_constraintVertical_bias="0.038" />
 
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Miembros:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.046"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.588" />
+
+    <EditText
+        android:id="@+id/groupMembers"
+        android:layout_width="301dp"
+        android:layout_height="41dp"
+        android:ems="10"
+        android:hint="Emails (separados por comas)"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.927"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.597" />
+
     <Button
         android:id="@+id/createGroupBtn"
         android:layout_width="0dp"
