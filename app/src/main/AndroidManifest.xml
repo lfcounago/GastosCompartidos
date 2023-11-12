@@ -21,6 +21,9 @@
             android:name=".ListUserGroupsActivity"
             android:exported="false" />
         <activity
+            android:name=".IngresarSaldoActivity"
+            android:exported="false" />
+        <activity
             android:name=".EditProfileActivity"
             android:exported="false" />
         <activity
