@@ -98,4 +98,20 @@ public class ListUserGroupsActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    // Definir el método que se ejecuta al pulsar el botón de ingresar saldo
+    public void goToIngresarSaldo(View view) {
+        // Obtener la posición del elemento seleccionado en el listView
+        int position = listView.getCheckedItemPosition();
+        if (position != ListView.INVALID_POSITION) { // Si la posición es válida
+            // Obtener el id del grupo correspondiente al elemento seleccionado
+            String groupId = groupIds.get(position);
+            // Crear un intent para iniciar la actividad IngresarSaldoActivity
+            Intent intent = new Intent(this, IngresarSaldoActivity.class);
+            // Añadir el id del grupo como un extra al intent
+            intent.putExtra("groupId", groupId);
+            // Iniciar la actividad
+            startActivity(intent);
+        }
+    }
 }
