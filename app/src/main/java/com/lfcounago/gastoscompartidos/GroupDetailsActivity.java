@@ -1,6 +1,8 @@
 package com.lfcounago.gastoscompartidos;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -63,5 +65,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    // Definir el método que se ejecuta al pulsar el botón de ingresar saldo
+    public void goToIngresarSaldo(View view) {
+        // Crear un intent para iniciar la actividad CreateGroupActivity
+        Intent intent = new Intent(this, IngresarSaldoActivity.class);
+
+        // Iniciar la actividad
+        startActivity(intent);
     }
 }
