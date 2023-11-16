@@ -1,172 +1,163 @@
 package com.lfcounago.gastoscompartidos;
 
-// Importar las librerías necesarias
-import static android.content.ContentValues.TAG;
-
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GetTokenResult;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.HttpsCallableResult;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
 public class CreateGroupActivity extends AppCompatActivity {
-    // Declarar las variables de los elementos de la interfaz
-    private EditText etGroupName;
-    private Spinner spCurrency;
-    private Spinner spCategory;
-    private EditText etEmails;
-    private Button btCreateGroup;
+    // Firebase references
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private CollectionReference usersRef;
+    private CollectionReference groupsRef;
 
-    // Declarar las variables de Firebase
-    private FirebaseAuth fAuth;
-    private FirebaseFirestore fStore;
+    // UI elements
+    private EditText groupNameEditText;
+    private Spinner currencySpinner;
+    private Spinner categorySpinner;
+    private EditText usersEditText;
+    private Button createGroupButton;
 
-    // Declarar una lista para almacenar los UID de los usuarios
-    private List<String> userUIDs;
+    // Arrays for spinners
+    private String[] currencies;
+    private String[] categories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
 
-        // Inicializar las variables de los elementos de la interfaz
-        etGroupName = findViewById(R.id.groupName);
-        spCurrency = findViewById(R.id.groupCurrency);
-        spCategory = findViewById(R.id.groupCategory);
-        etEmails = findViewById(R.id.groupMembers);
-        btCreateGroup = findViewById(R.id.createGroupBtn);
+        // Initialize Firebase references
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+        usersRef = db.collection("users");
+        groupsRef = db.collection("groups");
 
-        // Inicializar las variables de Firebase
-        fAuth = FirebaseAuth.getInstance();
-        fStore = FirebaseFirestore.getInstance();
+        // Initialize UI elements
+        groupNameEditText = findViewById(R.id.group_name_edit_text);
+        currencySpinner = findViewById(R.id.currency_spinner);
+        categorySpinner = findViewById(R.id.category_spinner);
+        usersEditText = findViewById(R.id.users_edit_text);
+        createGroupButton = findViewById(R.id.create_group_button);
 
-        // Inicializar la lista de los UID de los usuarios
-        userUIDs = new ArrayList<>();
+        // Initialize arrays for spinners
+        currencies = getResources().getStringArray(R.array.currencies);
+        categories = getResources().getStringArray(R.array.categories);
 
-        // Crear un adaptador para el spinner de la divisa
-        ArrayAdapter<CharSequence> currencyAdapter = ArrayAdapter.createFromResource(this,
-                R.array.currencies, android.R.layout.simple_spinner_item);
+        // Set up adapters for spinners
+        ArrayAdapter<String> currencyAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, currencies);
         currencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spCurrency.setAdapter(currencyAdapter);
+        currencySpinner.setAdapter(currencyAdapter);
 
-        // Crear un adaptador para el spinner de la categoría
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(this,
-                R.array.categories, android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spCategory.setAdapter(categoryAdapter);
+        categorySpinner.setAdapter(categoryAdapter);
 
-        // Establecer un listener para el botón de crear grupo
-        btCreateGroup.setOnClickListener(new View.OnClickListener() {
+        // Set up listener for create group button
+        createGroupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userUIDs.clear();
-
-                // Obtener los valores introducidos por el usuario
-                String groupName = etGroupName.getText().toString().trim();
-                String emails = etEmails.getText().toString().trim();
-
-                // Comprobar si los campos están vacíos
-                if (groupName.isEmpty() || emails.isEmpty()) {
-                    Toast.makeText(CreateGroupActivity.this, "Por favor, rellena todos los campos", Toast.LENGTH_SHORT).show();
-                } else {
-                    // Dividir los emails por comas y espacios
-                    String[] emailArray = emails.split("[,\\s]+");
-                    getUserUID(emailArray);
-                }
+                createGroup();
             }
         });
     }
 
-    // Método para obtener el UID de un usuario a partir de su email
-    private void getUserUID(String[]  emailArray) {
+    // Method to create a group and save it to Firebase
+    private void createGroup() {
+        // Get the input values
+        String groupName = groupNameEditText.getText().toString().trim();
+        String currency = currencySpinner.getSelectedItem().toString();
+        String category = categorySpinner.getSelectedItem().toString();
+        String users = usersEditText.getText().toString().trim();
 
-        // Crear la referencia a la colección de usuarios
-        CollectionReference usersRef = fStore.collection("users");
+        // Check if the input values are valid
+        if (groupName.isEmpty()) {
+            groupNameEditText.setError("El nombre del grupo es obligatorio");
+            groupNameEditText.requestFocus();
+            return;
+        }
 
-        usersRef.whereArrayContainsAny("email", Arrays.asList(emailArray))
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+        if (users.isEmpty()) {
+            usersEditText.setError("Los usuarios del grupo son obligatorios");
+            usersEditText.requestFocus();
+            return;
+        }
+
+        // Split the users input by commas
+        String[] emails = users.split(",");
+
+        // Create a list to store the user IDs
+        ArrayList<String> userIds = new ArrayList<>();
+
+        // Loop through the emails and find the corresponding user IDs
+        for (String email : emails) {
+            // Trim the email and make it lowercase
+            email = email.trim().toLowerCase();
+
+            // Query the users collection by email
+            usersRef.whereEqualTo("email", email)
+                    .get()
+                    .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                userUIDs.add(document.getId());
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (querySnapshot != null && !querySnapshot.isEmpty()) {
+                                // Email found, get the user ID
+                                for (QueryDocumentSnapshot document : querySnapshot) {
+                                    String userId = document.getId();
+                                    // Add the user ID to the list
+                                    userIds.add(userId);
+                                }
+                                // Show a toast message
+                                //Toast.makeText(CreateGroupActivity.this, "Email encontrado: " + email, Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Email not found, show a toast message
+                                //Toast.makeText(CreateGroupActivity.this, "Email no encontrado: " + email, Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            // Mostrar un mensaje de error
-                            //Toast.makeText(CreateGroupActivity.this, "No se ha podido obtener el UID del usuario " + email, Toast.LENGTH_SHORT).show();
+                            // Query failed, show a toast message
+                            //Toast.makeText(CreateGroupActivity.this, "Error al buscar el email: " + email, Toast.LENGTH_SHORT).show();
                         }
-                        processSaveGroup();
-                    }
-                });
-    }
+                    });
+        }
 
-    private void processSaveGroup() {
-        // Obtener los valores introducidos por el usuario
-        String groupName = etGroupName.getText().toString().trim();
-        String currency = spCurrency.getSelectedItem().toString();
-        String category = spCategory.getSelectedItem().toString();
-        String owner = fAuth.getCurrentUser().getUid();
-        userUIDs.add(owner);
+        // Get the current user ID
+        String ownerId = mAuth.getCurrentUser().getUid();
 
-        // Crear un mapa con los datos del grupo
+        // Add the owner ID to the list
+        userIds.add(ownerId);
+
+        // Create a map to store the group data
         Map<String, Object> groupData = new HashMap<>();
         groupData.put("name", groupName);
         groupData.put("currency", currency);
         groupData.put("category", category);
-        groupData.put("owner", owner);
-        groupData.put("users", userUIDs);
+        groupData.put("users", userIds);
+        groupData.put("owner", ownerId);
 
-        // Guardar el mapa en la colección "groups" de Firestore
-        saveGroupData(groupData);
-    }
-
-    // Método para guardar los datos del grupo en Firestore
-    private void saveGroupData(Map<String, Object> groupData) {
-        // Obtener la referencia de la colección "groups"
-        CollectionReference groupsRef = fStore.collection("groups");
-
-        // Añadir un nuevo documento con los datos del grupo
+        // Add the group data to the groups collection
         groupsRef.add(groupData)
-                .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        if (task.isSuccessful()) {
-                            // Mostrar un mensaje de éxito
-                            Toast.makeText(CreateGroupActivity.this, "Grupo creado con éxito", Toast.LENGTH_SHORT).show();
-                        } else {
-                            // Mostrar un mensaje de error
-                            Toast.makeText(CreateGroupActivity.this, "No se ha podido crear el grupo", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                .addOnSuccessListener(documentReference -> {
+                    // Group created successfully, show a toast message
+                    Toast.makeText(CreateGroupActivity.this, "Grupo creado con éxito", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    // Group creation failed, show a toast message
+                    Toast.makeText(CreateGroupActivity.this, "Error al crear el grupo", Toast.LENGTH_SHORT).show();
                 });
     }
 }
