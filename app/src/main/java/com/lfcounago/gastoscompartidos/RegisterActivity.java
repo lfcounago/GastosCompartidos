@@ -29,6 +29,7 @@ import java.util.Map;
 
 public class RegisterActivity extends AppCompatActivity {
 
+    // Declarar los atributos de la clase
     public static final String TAG = "TAG";
     EditText etFullName, etEmail, etPassword, etPhone;
     Button btRegister;
@@ -42,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        // Inicialización de las variables para los elementos de la interfaz
         etFullName = findViewById(R.id.fullName);
         etEmail = findViewById(R.id.Email);
         etPassword = findViewById(R.id.password);
@@ -49,6 +51,7 @@ public class RegisterActivity extends AppCompatActivity {
         btRegister = findViewById(R.id.registerBtn);
         tvLoginBt = findViewById(R.id.createText);
 
+        // Inicialización de las variables para acceder a la base de datos de Firebase
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         progressBar = findViewById(R.id.progressBar);
@@ -58,10 +61,11 @@ public class RegisterActivity extends AppCompatActivity {
             finish();
         }
 
-
+        //Listener del botón Login
         btRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Obtener los datos introducidos por el usuario y comprobar si son válidos
                 final String email = etEmail.getText().toString().trim();
                 String password = etPassword.getText().toString().trim();
                 final String fullName = etFullName.getText().toString();
@@ -84,15 +88,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                 progressBar.setVisibility(View.VISIBLE);
 
-                // register the user in firebase
-
+                // Register el usuario en Firebase
                 fAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
 
-                            // send verification link
-
+                            // Enviar el link de verificación
                             FirebaseUser fuser = fAuth.getCurrentUser();
                             fuser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -108,7 +110,9 @@ public class RegisterActivity extends AppCompatActivity {
 
                             Toast.makeText(RegisterActivity.this, "User Created.", Toast.LENGTH_SHORT).show();
                             userID = fAuth.getCurrentUser().getUid();
+                            // Obtención de la referencia al documento del usuario en la colección "users" de Firebase Firestore
                             DocumentReference documentReference = fStore.collection("users").document(userID);
+                            // Creación de un mapa con los datos del usuario
                             Map<String,Object> user = new HashMap<>();
                             user.put("fName",fullName);
                             user.put("email",email);
@@ -135,8 +139,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-
-
+        // Inicio de la actividad de inicio de sesión
         tvLoginBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

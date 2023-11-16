@@ -24,6 +24,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
+    // Declarar los atributos de la clase
     EditText etEmail, etPassword;
     Button btLogin;
     TextView tvCreateBt, tvForgotTextLink;
@@ -35,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Inicialización de las variables para los elementos de la interfaz
         etEmail = findViewById(R.id.Email);
         etPassword = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
@@ -43,11 +45,11 @@ public class LoginActivity extends AppCompatActivity {
         tvCreateBt = findViewById(R.id.createText);
         tvForgotTextLink = findViewById(R.id.forgotPassword);
 
-
+        //Listener del botón Login
         btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Obtener los datos introducidos por el usuario y comprobar si son válidos
                 String email = etEmail.getText().toString().trim();
                 String password = etPassword.getText().toString().trim();
 
@@ -68,8 +70,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 progressBar.setVisibility(View.VISIBLE);
 
-                // authenticate the user
-
+                // Autenticar al usuario con Firebase
                 fAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -87,6 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        // Listener para iniciar la actividad de registro
         tvCreateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        //Lister para iniciar la actividad de recuperar contraseña
         tvForgotTextLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                 passwordResetDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // extract the email and send reset link
+                        // Extraer el email y enviar el enlace de restablecimiento
                         String mail = resetMail.getText().toString();
                         fAuth.sendPasswordResetEmail(mail).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
@@ -132,7 +135,6 @@ public class LoginActivity extends AppCompatActivity {
                 });
 
                 passwordResetDialog.create().show();
-
             }
         });
     }

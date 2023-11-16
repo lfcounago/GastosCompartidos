@@ -33,6 +33,7 @@ import javax.annotation.Nullable;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    // Declarar los atributos de la clase
     private static final int GALLERY_INTENT_CODE = 1023;
     TextView tvFullName, tvEmail, tvPhone, tvVerifyMsg;
     FirebaseAuth fAuth;
@@ -48,20 +49,23 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+        // Inicialización de las variables para los elementos de la interfaz
         tvPhone = findViewById(R.id.profilePhone);
         tvFullName = findViewById(R.id.profileName);
         tvEmail = findViewById(R.id.profileEmail);
         btResetPassLocal = findViewById(R.id.resetPasswordLocal);
-
         ivProfileImage = findViewById(R.id.profileImage);
         btChangeProfileImage = findViewById(R.id.changeProfile);
 
-
+        // Inicialización de las variables para acceder a la base de datos de Firebase
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         fStorageReference = FirebaseStorage.getInstance().getReference();
 
+        // Obtención de la referencia al archivo de la imagen de perfil del usuario en Firebase Storage
         StorageReference profileRef = fStorageReference.child("users/" + fAuth.getCurrentUser().getUid() + "/profile.jpg");
+        // Descarga de la imagen de perfil y asignación al ImageView correspondiente
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -69,6 +73,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        // Inicialización de los elementos para verificar el correo electrónico del usuario
         btResendCode = findViewById(R.id.resendCode);
         tvVerifyMsg = findViewById(R.id.verifyMsg);
 
@@ -76,10 +81,12 @@ public class ProfileActivity extends AppCompatActivity {
         userId = fAuth.getCurrentUser().getUid();
         fUser = fAuth.getCurrentUser();
 
+        // Si el usuario no se ha verificado, se muestran los elementos para enviar el código de verificación
         if (!fUser.isEmailVerified()) {
             tvVerifyMsg.setVisibility(View.VISIBLE);
             btResendCode.setVisibility(View.VISIBLE);
 
+            // Al pulsar el botón, se envía el código de verificación al correo del usuario
             btResendCode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
@@ -99,7 +106,9 @@ public class ProfileActivity extends AppCompatActivity {
             });
         }
 
+        // Obtención de la referencia al documento del usuario en la colección "users" de Firebase Firestore
         DocumentReference documentReference = fStore.collection("users").document(userId);
+        // Listener de los cambios en el documento y actualización de los elementos de la interfaz con los datos del usuario
         documentReference.addSnapshotListener(this, new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -114,7 +123,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-
+        // Al pulsar el botón, se muestra un diálogo para cambiar la contraseña local del usuario
         btResetPassLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,8 +138,10 @@ public class ProfileActivity extends AppCompatActivity {
                 passwordResetDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // extract the email and send reset link
+                        // Extraer el correo electrónico y enviar el enlace de restablecimiento
                         String newPassword = resetPassword.getText().toString();
+
+                        // Actualizar la contraseña del usuario en Firebase Auth
                         fUser.updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
@@ -157,6 +168,7 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
+        // Enviar los datos del usuario a la actividad de edición de perfil
         btChangeProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,6 +182,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    // Iniciar la actividad de inicio de sesión
     public void logout(View view) {
         FirebaseAuth.getInstance().signOut();//logout
         startActivity(new Intent(getApplicationContext(),LoginActivity.class));
