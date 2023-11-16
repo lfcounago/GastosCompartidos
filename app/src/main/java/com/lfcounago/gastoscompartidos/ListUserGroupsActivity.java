@@ -18,25 +18,24 @@ import java.util.List;
 public class ListUserGroupsActivity extends AppCompatActivity {
 
     // Declarar los atributos de la clase
-    private ListView lvGroups; // El componente que muestra la lista de grupos
-    private ArrayAdapter<String> adapter; // El adaptador que vincula los datos con la vista
-    private List<String> groupNames; // La lista de nombres de los grupos
-    private List<String> groupIds; // La lista de ids de los grupos
-    private String uid; // El id del usuario actual
-    private FirebaseFirestore fStore; // La referencia a la base de datos de Firestore
+    private ListView lvGroups;
+    private ArrayAdapter<String> adapter;
+    private List<String> groupNames;
+    private List<String> groupIds;
+    private String uid;
+    private FirebaseFirestore fStore;
 
-    // Sobreescribir el método onCreate que se ejecuta al crear la actividad
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list_user_groups); // Establecer el layout correspondiente
+        setContentView(R.layout.activity_list_user_groups);
 
         // Inicializar los atributos de la clase
-        lvGroups = findViewById(R.id.listView); // Obtener la referencia al componente listView del layout
-        groupNames = new ArrayList<>(); // Crear una lista vacía para los nombres de los grupos
-        groupIds = new ArrayList<>(); // Crear una lista vacía para los ids de los grupos
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Obtener el id del usuario actual
-        fStore = FirebaseFirestore.getInstance(); // Obtener la instancia de la base de datos de Firestore
+        lvGroups = findViewById(R.id.listView);
+        groupNames = new ArrayList<>();
+        groupIds = new ArrayList<>();
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        fStore = FirebaseFirestore.getInstance();
 
         // Crear un adaptador que vincula los nombres de los grupos con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, groupNames);
@@ -46,13 +45,9 @@ public class ListUserGroupsActivity extends AppCompatActivity {
         lvGroups.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // Obtener el id del grupo correspondiente al elemento pulsado
                 String groupId = groupIds.get(position);
-                // Crear un intent para iniciar una nueva actividad que muestre los datos del grupo
                 Intent intent = new Intent(ListUserGroupsActivity.this, GroupDetailsActivity.class);
-                // Añadir el id del grupo como un extra al intent
                 intent.putExtra("groupId", groupId);
-                // Iniciar la nueva actividad
                 startActivity(intent);
             }
         });
@@ -61,29 +56,25 @@ public class ListUserGroupsActivity extends AppCompatActivity {
         getGroups();
     }
 
-    // Definir el método que obtiene los grupos a los que pertenece el usuario
+    // Método que obtiene los grupos a los que pertenece el usuario
     private void getGroups() {
         // Realizar una consulta a la colección "groups" de la base de datos de Firestore
         fStore.collection("groups")
                 .get() // Obtener todos los documentos de la colección
                 .addOnCompleteListener(task -> { // Añadir un listener que se ejecuta cuando la tarea se completa
-                    if (task.isSuccessful()) { // Si la tarea se ha completado con éxito
+                    if (task.isSuccessful()) {
                         // Obtener el resultado de la tarea como una lista de documentos
                         QuerySnapshot result = task.getResult();
-                        if (result != null) { // Si el resultado no es nulo
+                        if (result != null) {
                             // Recorrer cada documento del resultado
                             for (QueryDocumentSnapshot document : result) {
-                                // Obtener el id del documento como el id del grupo
+                                // Obtener los valores correspondientes
                                 String groupId = document.getId();
-                                // Obtener el nombre del grupo como el valor del campo "name" del documento
                                 String groupName = document.getString("name");
-                                // Obtener la divisa del grupo como el valor del campo "currency" del documento
                                 String groupCurrency = document.getString("currency");
-                                // Obtener la categoría del grupo como el valor del campo "category" del documento
                                 String groupCategory = document.getString("category");
-                                // Obtener la lista de usuarios del grupo como el valor del campo "users" del documento
                                 List<String> groupUsers = (List<String>) document.get("users");
-                                if (groupUsers != null) { // Si la lista de usuarios no es nula
+                                if (groupUsers != null) {
                                     if (groupUsers.contains(uid)) { // Si la lista de usuarios contiene el id del usuario actual
                                         // Añadir el id del grupo a la lista de ids de los grupos
                                         groupIds.add(groupId);
@@ -99,12 +90,11 @@ public class ListUserGroupsActivity extends AppCompatActivity {
                 });
     }
 
-    // Definir el método que se ejecuta al pulsar el botón de ingresar saldo
+    // Método que se ejecuta al pulsar el botón de ingresar saldo
     public void goToCrearGrupo(View view) {
         // Crear un intent para iniciar la actividad CreateGroupActivity
         Intent intent = new Intent(this, CreateGroupActivity.class);
 
-        // Iniciar la actividad
         startActivity(intent);
     }
 }

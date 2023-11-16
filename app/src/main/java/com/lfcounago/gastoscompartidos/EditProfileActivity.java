@@ -30,7 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EditProfileActivity extends AppCompatActivity {
-
+    // Declarar los atributos de la clase
     public static final String TAG = "TAG";
     EditText etFullName, etEmail, etPhone;
     ImageView ivProfileImage;
@@ -45,30 +45,38 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        // Obtener los datos del intento que inició esta actividad
         Intent data = getIntent();
         final String fullName = data.getStringExtra("fullName");
         String email = data.getStringExtra("email");
         String phone = data.getStringExtra("phone");
 
+        // Inicialización de las variables para acceder a la base de datos de Firebase
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         fUser = fAuth.getCurrentUser();
         fStorageReference = FirebaseStorage.getInstance().getReference();
 
+        // Inicializar los atributos de la clase
         etFullName = findViewById(R.id.profileFullName);
         etEmail = findViewById(R.id.profileEmailAddress);
         etPhone = findViewById(R.id.profilePhoneNo);
         ivProfileImage = findViewById(R.id.profileImageView);
         btSave = findViewById(R.id.saveProfileInfo);
 
+        // Crear una referencia a la imagen de perfil del usuario en el almacenamiento de Firebase
         StorageReference profileRef = fStorageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");
+
+        // Obtener la URL de descarga de la imagen de perfil
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
+                // Cargar la imagen de perfil en la vista de la imagen usando la biblioteca Picasso
                 Picasso.get().load(uri).into(ivProfileImage);
             }
         });
 
+        // Establecer un escuchador de clics en la vista de la imagen de perfil
         ivProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +85,7 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+        // Listener en el botón de guardar
         btSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +100,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     public void onSuccess(Void aVoid) {
                         DocumentReference docRef = fStore.collection("users").document(fUser.getUid());
                         Map<String,Object> edited = new HashMap<>();
+                        // Añadir los datos al mapa
                         edited.put("email",email);
                         edited.put("fName", etFullName.getText().toString());
                         edited.put("phone", etPhone.getText().toString());
@@ -115,6 +125,7 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+        // Establecer las variables
         etEmail.setText(email);
         etFullName.setText(fullName);
         etPhone.setText(phone);
@@ -126,11 +137,9 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @androidx.annotation.Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1000){
-            if(resultCode == Activity.RESULT_OK){
+        if(requestCode == 1000){ // Si el código de solicitud es 1000, significa que se ha seleccionado una imagen de la galería
+            if(resultCode == Activity.RESULT_OK){ // Si el resultado es OK, significa que se ha obtenido una imagen válida
                 Uri imageUri = data.getData();
-
-                //profileImage.setImageURI(imageUri);
 
                 uploadImageToFirebase(imageUri);
 
@@ -141,14 +150,16 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void uploadImageToFirebase(Uri imageUri) {
-        // uplaod image to firebase storage
+        // Crear una referencia al archivo de la imagen de perfil del usuario en el almacenamiento de Firebase
         final StorageReference fileRef = fStorageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");
         fileRef.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // Obtener la URL de descarga de la imagen subida
                 fileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
+                        // Cargar la imagen en la vista de la imagen usando la biblioteca Picasso
                         Picasso.get().load(uri).into(ivProfileImage);
                     }
                 });
