@@ -34,57 +34,57 @@ import javax.annotation.Nullable;
 public class ProfileActivity extends AppCompatActivity {
 
     private static final int GALLERY_INTENT_CODE = 1023;
-    TextView fullName, email, phone, verifyMsg;
+    TextView tvFullName, tvEmail, tvPhone, tvVerifyMsg;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
     String userId;
-    Button resendCode;
-    Button resetPassLocal, changeProfileImage;
-    FirebaseUser user;
-    ImageView profileImage;
-    StorageReference storageReference;
+    Button btResendCode;
+    Button btResetPassLocal, btChangeProfileImage;
+    FirebaseUser fUser;
+    ImageView ivProfileImage;
+    StorageReference fStorageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        phone = findViewById(R.id.profilePhone);
-        fullName = findViewById(R.id.profileName);
-        email = findViewById(R.id.profileEmail);
-        resetPassLocal = findViewById(R.id.resetPasswordLocal);
+        tvPhone = findViewById(R.id.profilePhone);
+        tvFullName = findViewById(R.id.profileName);
+        tvEmail = findViewById(R.id.profileEmail);
+        btResetPassLocal = findViewById(R.id.resetPasswordLocal);
 
-        profileImage = findViewById(R.id.profileImage);
-        changeProfileImage = findViewById(R.id.changeProfile);
+        ivProfileImage = findViewById(R.id.profileImage);
+        btChangeProfileImage = findViewById(R.id.changeProfile);
 
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
+        fStorageReference = FirebaseStorage.getInstance().getReference();
 
-        StorageReference profileRef = storageReference.child("users/" + fAuth.getCurrentUser().getUid() + "/profile.jpg");
+        StorageReference profileRef = fStorageReference.child("users/" + fAuth.getCurrentUser().getUid() + "/profile.jpg");
         profileRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
-                Picasso.get().load(uri).into(profileImage);
+                Picasso.get().load(uri).into(ivProfileImage);
             }
         });
 
-        resendCode = findViewById(R.id.resendCode);
-        verifyMsg = findViewById(R.id.verifyMsg);
+        btResendCode = findViewById(R.id.resendCode);
+        tvVerifyMsg = findViewById(R.id.verifyMsg);
 
 
         userId = fAuth.getCurrentUser().getUid();
-        user = fAuth.getCurrentUser();
+        fUser = fAuth.getCurrentUser();
 
-        if (!user.isEmailVerified()) {
-            verifyMsg.setVisibility(View.VISIBLE);
-            resendCode.setVisibility(View.VISIBLE);
+        if (!fUser.isEmailVerified()) {
+            tvVerifyMsg.setVisibility(View.VISIBLE);
+            btResendCode.setVisibility(View.VISIBLE);
 
-            resendCode.setOnClickListener(new View.OnClickListener() {
+            btResendCode.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
 
-                    user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    fUser.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Toast.makeText(v.getContext(), "Verification Email Has been Sent.", Toast.LENGTH_SHORT).show();
@@ -104,9 +104,9 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if(documentSnapshot.exists()){
-                    phone.setText(documentSnapshot.getString("phone"));
-                    fullName.setText(documentSnapshot.getString("fName"));
-                    email.setText(documentSnapshot.getString("email"));
+                    tvPhone.setText(documentSnapshot.getString("phone"));
+                    tvFullName.setText(documentSnapshot.getString("fName"));
+                    tvEmail.setText(documentSnapshot.getString("email"));
 
                 }else {
                     Log.d("tag", "onEvent: Document do not exists");
@@ -115,7 +115,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
 
-        resetPassLocal.setOnClickListener(new View.OnClickListener() {
+        btResetPassLocal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -131,7 +131,7 @@ public class ProfileActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // extract the email and send reset link
                         String newPassword = resetPassword.getText().toString();
-                        user.updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        fUser.updatePassword(newPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Toast.makeText(ProfileActivity.this, "Password Reset Successfully.", Toast.LENGTH_SHORT).show();
@@ -157,14 +157,14 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        changeProfileImage.setOnClickListener(new View.OnClickListener() {
+        btChangeProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // open gallery
                 Intent i = new Intent(v.getContext(),EditProfileActivity.class);
-                i.putExtra("fullName",fullName.getText().toString());
-                i.putExtra("email",email.getText().toString());
-                i.putExtra("phone",phone.getText().toString());
+                i.putExtra("fullName", tvFullName.getText().toString());
+                i.putExtra("email", tvEmail.getText().toString());
+                i.putExtra("phone", tvPhone.getText().toString());
                 startActivity(i);
             }
         });

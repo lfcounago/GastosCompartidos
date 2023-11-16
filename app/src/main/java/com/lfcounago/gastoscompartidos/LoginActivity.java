@@ -24,9 +24,9 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText mEmail,mPassword;
-    Button mLoginBtn;
-    TextView mCreateBtn,forgotTextLink;
+    EditText etEmail, etPassword;
+    Button btLogin;
+    TextView tvCreateBt, tvForgotTextLink;
     ProgressBar progressBar;
     FirebaseAuth fAuth;
 
@@ -35,34 +35,34 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mEmail = findViewById(R.id.Email);
-        mPassword = findViewById(R.id.password);
+        etEmail = findViewById(R.id.Email);
+        etPassword = findViewById(R.id.password);
         progressBar = findViewById(R.id.progressBar);
         fAuth = FirebaseAuth.getInstance();
-        mLoginBtn = findViewById(R.id.loginBtn);
-        mCreateBtn = findViewById(R.id.createText);
-        forgotTextLink = findViewById(R.id.forgotPassword);
+        btLogin = findViewById(R.id.loginBtn);
+        tvCreateBt = findViewById(R.id.createText);
+        tvForgotTextLink = findViewById(R.id.forgotPassword);
 
 
-        mLoginBtn.setOnClickListener(new View.OnClickListener() {
+        btLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String email = mEmail.getText().toString().trim();
-                String password = mPassword.getText().toString().trim();
+                String email = etEmail.getText().toString().trim();
+                String password = etPassword.getText().toString().trim();
 
                 if(TextUtils.isEmpty(email)){
-                    mEmail.setError("Email is Required.");
+                    etEmail.setError("Email is Required.");
                     return;
                 }
 
                 if(TextUtils.isEmpty(password)){
-                    mPassword.setError("Password is Required.");
+                    etPassword.setError("Password is Required.");
                     return;
                 }
 
                 if(password.length() < 6){
-                    mPassword.setError("Password Must be >= 6 Characters");
+                    etPassword.setError("Password Must be >= 6 Characters");
                     return;
                 }
 
@@ -87,14 +87,14 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        mCreateBtn.setOnClickListener(new View.OnClickListener() {
+        tvCreateBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),RegisterActivity.class));
             }
         });
 
-        forgotTextLink.setOnClickListener(new View.OnClickListener() {
+        tvForgotTextLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

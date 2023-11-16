@@ -30,9 +30,9 @@ import java.util.Map;
 public class RegisterActivity extends AppCompatActivity {
 
     public static final String TAG = "TAG";
-    EditText mFullName,mEmail,mPassword,mPhone;
-    Button mRegisterBtn;
-    TextView mLoginBtn;
+    EditText etFullName, etEmail, etPassword, etPhone;
+    Button btRegister;
+    TextView tvLoginBt;
     FirebaseAuth fAuth;
     ProgressBar progressBar;
     FirebaseFirestore fStore;
@@ -42,12 +42,12 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mFullName   = findViewById(R.id.fullName);
-        mEmail      = findViewById(R.id.Email);
-        mPassword   = findViewById(R.id.password);
-        mPhone      = findViewById(R.id.phone);
-        mRegisterBtn= findViewById(R.id.registerBtn);
-        mLoginBtn   = findViewById(R.id.createText);
+        etFullName = findViewById(R.id.fullName);
+        etEmail = findViewById(R.id.Email);
+        etPassword = findViewById(R.id.password);
+        etPhone = findViewById(R.id.phone);
+        btRegister = findViewById(R.id.registerBtn);
+        tvLoginBt = findViewById(R.id.createText);
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
@@ -59,26 +59,26 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
 
-        mRegisterBtn.setOnClickListener(new View.OnClickListener() {
+        btRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = mEmail.getText().toString().trim();
-                String password = mPassword.getText().toString().trim();
-                final String fullName = mFullName.getText().toString();
-                final String phone    = mPhone.getText().toString();
+                final String email = etEmail.getText().toString().trim();
+                String password = etPassword.getText().toString().trim();
+                final String fullName = etFullName.getText().toString();
+                final String phone    = etPhone.getText().toString();
 
                 if(TextUtils.isEmpty(email)){
-                    mEmail.setError("Email is Required.");
+                    etEmail.setError("Email is Required.");
                     return;
                 }
 
                 if(TextUtils.isEmpty(password)){
-                    mPassword.setError("Password is Required.");
+                    etPassword.setError("Password is Required.");
                     return;
                 }
 
                 if(password.length() < 6){
-                    mPassword.setError("Password Must be >= 6 Characters");
+                    etPassword.setError("Password Must be >= 6 Characters");
                     return;
                 }
 
@@ -137,7 +137,7 @@ public class RegisterActivity extends AppCompatActivity {
 
 
 
-        mLoginBtn.setOnClickListener(new View.OnClickListener() {
+        tvLoginBt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),LoginActivity.class));

@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -18,12 +18,12 @@ import java.util.List;
 public class ListUserGroupsActivity extends AppCompatActivity {
 
     // Declarar los atributos de la clase
-    private ListView listView; // El componente que muestra la lista de grupos
+    private ListView lvGroups; // El componente que muestra la lista de grupos
     private ArrayAdapter<String> adapter; // El adaptador que vincula los datos con la vista
     private List<String> groupNames; // La lista de nombres de los grupos
     private List<String> groupIds; // La lista de ids de los grupos
     private String uid; // El id del usuario actual
-    private FirebaseFirestore db; // La referencia a la base de datos de Firestore
+    private FirebaseFirestore fStore; // La referencia a la base de datos de Firestore
 
     // Sobreescribir el método onCreate que se ejecuta al crear la actividad
     @Override
@@ -32,18 +32,18 @@ public class ListUserGroupsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_user_groups); // Establecer el layout correspondiente
 
         // Inicializar los atributos de la clase
-        listView = findViewById(R.id.listView); // Obtener la referencia al componente listView del layout
+        lvGroups = findViewById(R.id.listView); // Obtener la referencia al componente listView del layout
         groupNames = new ArrayList<>(); // Crear una lista vacía para los nombres de los grupos
         groupIds = new ArrayList<>(); // Crear una lista vacía para los ids de los grupos
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Obtener el id del usuario actual
-        db = FirebaseFirestore.getInstance(); // Obtener la instancia de la base de datos de Firestore
+        fStore = FirebaseFirestore.getInstance(); // Obtener la instancia de la base de datos de Firestore
 
         // Crear un adaptador que vincula los nombres de los grupos con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, groupNames);
-        listView.setAdapter(adapter); // Establecer el adaptador al listView
+        lvGroups.setAdapter(adapter); // Establecer el adaptador al listView
 
         // Añadir un listener al listView que se activa cuando se hace clic en un elemento de la lista
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvGroups.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // Obtener el id del grupo correspondiente al elemento pulsado
@@ -64,7 +64,7 @@ public class ListUserGroupsActivity extends AppCompatActivity {
     // Definir el método que obtiene los grupos a los que pertenece el usuario
     private void getGroups() {
         // Realizar una consulta a la colección "groups" de la base de datos de Firestore
-        db.collection("groups")
+        fStore.collection("groups")
                 .get() // Obtener todos los documentos de la colección
                 .addOnCompleteListener(task -> { // Añadir un listener que se ejecuta cuando la tarea se completa
                     if (task.isSuccessful()) { // Si la tarea se ha completado con éxito

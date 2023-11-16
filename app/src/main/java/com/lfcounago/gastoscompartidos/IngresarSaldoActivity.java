@@ -49,7 +49,7 @@ public class IngresarSaldoActivity extends AppCompatActivity {
     private List<String> compartidos;
 
     // Declaración de variables para acceder a la base de datos de Firebase
-    private FirebaseFirestore db;
+    private FirebaseFirestore fStore;
     private DocumentReference docRef;
 
     // Declaración de variables para almacenar los datos obtenidos de Firebase
@@ -88,7 +88,7 @@ public class IngresarSaldoActivity extends AppCompatActivity {
         compartidos = new ArrayList<>();
 
         // Inicialización de las variables para acceder a la base de datos de Firebase
-        db = FirebaseFirestore.getInstance();
+        fStore = FirebaseFirestore.getInstance();
         docRef = null;
 
         // Inicialización de las variables para almacenar los datos obtenidos de Firebase
@@ -135,7 +135,7 @@ public class IngresarSaldoActivity extends AppCompatActivity {
         };
 
         // Obtener la lista de grupos de la colección groups de Firebase
-        db.collection("groups")
+        fStore.collection("groups")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -166,7 +166,7 @@ public class IngresarSaldoActivity extends AppCompatActivity {
                 // Obtener el nombre del grupo seleccionado
                 nombreGrupo = parent.getItemAtPosition(position).toString();
                 // Obtener el documento correspondiente al nombre del grupo seleccionado de la colección groups de Firebase
-                db.collection("groups").whereEqualTo("name", nombreGrupo)
+                fStore.collection("groups").whereEqualTo("name", nombreGrupo)
                         .get()
                         .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -191,7 +191,7 @@ public class IngresarSaldoActivity extends AppCompatActivity {
                                         // Recorrer la lista de UID de los usuarios
                                         for (String uid : uids) {
                                             // Obtener el documento correspondiente al UID del usuario de la colección users de Firebase
-                                            db.collection("users").document(uid)
+                                            fStore.collection("users").document(uid)
                                                     .get()
                                                     .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                                         @Override
@@ -291,7 +291,7 @@ public class IngresarSaldoActivity extends AppCompatActivity {
                     gasto.put("sharedWith", compartidos);
                     gasto.put("group", nombreGrupo);
                     // Añadir el documento del gasto a la colección spends de Firebase
-                    db.collection("spends")
+                    fStore.collection("spends")
                             .add(gasto)
                             .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                                 @Override
