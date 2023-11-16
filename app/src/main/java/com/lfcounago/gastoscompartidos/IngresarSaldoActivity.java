@@ -279,6 +279,7 @@ public class IngresarSaldoActivity extends AppCompatActivity {
                     gasto.put("payer", nameToUid.get(pagador));
                     gasto.put("sharedWith", compartidos);
                     gasto.put("group", nombreGrupo);
+                    gasto.put("groupID", uidGrupo);
                     // Añadir el documento del gasto a la colección spends de Firebase
                     fStore.collection("spends")
                             .add(gasto)
