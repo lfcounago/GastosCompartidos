@@ -63,4 +63,11 @@
         android:layout_marginTop="16dp"
         android:text="Crear grupo" />
 
+    <Button
+        android:id="@+id/bttCancelar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="goToActividadAnterior"
+        android:text="Cancelar" />
+
 </LinearLayout>

@@ -171,4 +171,11 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
     }
+
+    public void goToActividadAnterior(View view) {
+        // Crear un intent para iniciar la actividad ProfileActivity
+        Intent intent = new Intent(this, ProfileActivity.class);
+
+        startActivity(intent);
+    }
 }

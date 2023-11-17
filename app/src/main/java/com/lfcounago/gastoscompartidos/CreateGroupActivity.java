@@ -1,6 +1,8 @@
 package com.lfcounago.gastoscompartidos;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -146,5 +148,12 @@ public class CreateGroupActivity extends AppCompatActivity {
                         Toast.makeText(CreateGroupActivity.this, "Error al buscar los emails", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public void goToActividadAnterior(View view) {
+        // Crear un intent para iniciar la actividad ListUserGroupsActivity
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+
+        startActivity(intent);
     }
 }
