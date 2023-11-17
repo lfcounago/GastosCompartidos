@@ -126,6 +126,15 @@
             android:layout_marginTop="16dp"
             android:text="Guardar gasto" />
 
+        <Button
+            android:id="@+id/btCancelar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="16dp"
+            android:onClick="goToActividadAnterior"
+            android:text="Cancelar" />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -370,5 +371,12 @@ public class IngresarSaldoActivity extends AppCompatActivity {
         spPagador.setSelection(0);
         cbTodos.setChecked(false);
         marcarCheckBox(false);
+    }
+
+    public void goToActividadAnterior(View view) {
+        // Crear un intent para iniciar la actividad GroupDetailsActivity
+        Intent intent = new Intent(this, GroupDetailsActivity.class);
+
+        startActivity(intent);
     }
 }
