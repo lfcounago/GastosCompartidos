@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class IngresarSaldoActivity extends AppCompatActivity {
+public class AddSpendActivity extends AppCompatActivity {
 
     // Declaración de variables para los elementos de la interfaz
     private EditText etTitulo, etCantidad;
@@ -66,7 +66,7 @@ public class IngresarSaldoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ingresar_saldo);
+        setContentView(R.layout.activity_add_spend);
 
         // Inicialización de las variables para los elementos de la interfaz
         etTitulo = findViewById(R.id.etTitulo);
@@ -113,7 +113,7 @@ public class IngresarSaldoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Mostrar un diálogo para elegir la fecha
-                new DatePickerDialog(IngresarSaldoActivity.this, date, calendario
+                new DatePickerDialog(AddSpendActivity.this, date, calendario
                         .get(Calendar.YEAR), calendario.get(Calendar.MONTH),
                         calendario.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -147,14 +147,14 @@ public class IngresarSaldoActivity extends AppCompatActivity {
                                 grupos.add(document.getString("name"));
                             }
                             // Crear un adaptador para el Spinner de grupos con la lista de grupos
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(IngresarSaldoActivity.this,
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddSpendActivity.this,
                                     android.R.layout.simple_spinner_item, grupos);
                             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             // Establecer el adaptador para el Spinner de grupos
                             spGrupo.setAdapter(adapter);
                         } else {
                             // Mostrar un mensaje de error si la consulta falla
-                            Toast.makeText(IngresarSaldoActivity.this, "Error al obtener los grupos", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddSpendActivity.this, "Error al obtener los grupos", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -206,26 +206,26 @@ public class IngresarSaldoActivity extends AppCompatActivity {
                                                                     uidToName.put(uid, name);
                                                                     nameToUid.put(name, uid);
                                                                     // Crear un adaptador para el Spinner de pagador con la lista de nombres de los usuarios
-                                                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(IngresarSaldoActivity.this,
+                                                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddSpendActivity.this,
                                                                             android.R.layout.simple_spinner_item, usuarios);
                                                                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                                                     // Establecer el adaptador para el Spinner de pagador
                                                                     spPagador.setAdapter(adapter);
                                                                     crearCheckBox();
                                                                 } else {
-                                                                    Toast.makeText(IngresarSaldoActivity.this, "El documento del usuario no existe", Toast.LENGTH_SHORT).show();
+                                                                    Toast.makeText(AddSpendActivity.this, "El documento del usuario no existe", Toast.LENGTH_SHORT).show();
                                                                 }
                                                             } else {
-                                                                Toast.makeText(IngresarSaldoActivity.this, "Error al obtener el usuario", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(AddSpendActivity.this, "Error al obtener el usuario", Toast.LENGTH_SHORT).show();
                                                             }
                                                         }
                                                     });
                                         }
                                     } else {
-                                        Toast.makeText(IngresarSaldoActivity.this, "Error: no hay ningún documento que coincida con el nombre del grupo", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(AddSpendActivity.this, "Error: no hay ningún documento que coincida con el nombre del grupo", Toast.LENGTH_SHORT).show();
                                     }
                                 } else {
-                                    Toast.makeText(IngresarSaldoActivity.this, "Error al obtener el grupo", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(AddSpendActivity.this, "Error al obtener el grupo", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -288,15 +288,15 @@ public class IngresarSaldoActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<DocumentReference> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(IngresarSaldoActivity.this, "Gasto guardado con éxito", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(AddSpendActivity.this, "Gasto guardado con éxito", Toast.LENGTH_SHORT).show();
                                         limpiarCampos();
                                     } else {
-                                        Toast.makeText(IngresarSaldoActivity.this, "Error al guardar el gasto", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(AddSpendActivity.this, "Error al guardar el gasto", Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                 } else {
-                    Toast.makeText(IngresarSaldoActivity.this, "Por favor, introduce datos válidos", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddSpendActivity.this, "Por favor, introduce datos válidos", Toast.LENGTH_SHORT).show();
                 }
             }
         });

@@ -63,8 +63,8 @@ public class GroupDetailsActivity extends AppCompatActivity {
 
     // Definir el método que se ejecuta al pulsar el botón de ingresar saldo
     public void goToIngresarSaldo(View view) {
-        // Crear un intent para iniciar la actividad IngresarSaldoActivity
-        Intent intent = new Intent(this, IngresarSaldoActivity.class);
+        // Crear un intent para iniciar la actividad AddSpendActivity
+        Intent intent = new Intent(this, AddSpendActivity.class);
 
         // Iniciar la actividad
         startActivity(intent);

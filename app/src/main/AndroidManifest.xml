@@ -21,7 +21,7 @@
             android:name=".ListUserGroupsActivity"
             android:exported="false" />
         <activity
-            android:name=".IngresarSaldoActivity"
+            android:name=".AddSpendActivity"
             android:exported="false" />
         <activity
             android:name=".CreateGroupActivity"
