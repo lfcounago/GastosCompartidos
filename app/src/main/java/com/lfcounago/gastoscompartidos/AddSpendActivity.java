@@ -24,8 +24,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,12 +38,12 @@ public class AddSpendActivity extends AppCompatActivity {
     // Declaración de variables para los elementos de la interfaz
     private EditText etTitulo, etCantidad;
     private TextView tvFecha, tvDivisa;
-    private Spinner spPagador, spGrupo;
+    private Spinner spPagador;
     private Button btFecha, btGuardar;
     private CheckBox cbTodos;
 
     // Declaración de variables para almacenar los datos introducidos por el usuario
-    private String titulo, fecha, pagador, grupo, nombreGrupo;
+    private String titulo, fecha, pagador, grupo, nombreGrupo, groupId;
     private double cantidad;
     private List<String> compartidos;
 
@@ -54,7 +52,7 @@ public class AddSpendActivity extends AppCompatActivity {
     private DocumentReference docRef;
 
     // Declaración de variables para almacenar los datos obtenidos de Firebase
-    private List<String> grupos, usuarios, uids;
+    private List<String> usuarios, uids;
     private Map<String, String> uidToName, nameToUid;
     private String uidGrupo, divisa;
 
@@ -74,10 +72,12 @@ public class AddSpendActivity extends AppCompatActivity {
         tvFecha = findViewById(R.id.tvFecha);
         tvDivisa = findViewById(R.id.tvDivisa);
         spPagador = findViewById(R.id.spPagador);
-        spGrupo = findViewById(R.id.spGrupo);
         btFecha = findViewById(R.id.btFecha);
         btGuardar = findViewById(R.id.btGuardar);
         cbTodos = findViewById(R.id.cbTodos);
+
+        //Obtener el groupId que se pasa con el intent
+        groupId = getIntent().getStringExtra("groupId");
 
         // Inicialización de las variables para almacenar los datos introducidos por el usuario
         titulo = "";
@@ -93,12 +93,11 @@ public class AddSpendActivity extends AppCompatActivity {
         docRef = null;
 
         // Inicialización de las variables para almacenar los datos obtenidos de Firebase
-        grupos = new ArrayList<>();
         usuarios = new ArrayList<>();
         uids = new ArrayList<>();
         uidToName = new HashMap<>();
         nameToUid = new HashMap<>();
-        uidGrupo = "";
+        uidGrupo = groupId;
         divisa = "";
 
         // Inicialización de las variables para el calendario y el formato de fecha
@@ -134,121 +133,79 @@ public class AddSpendActivity extends AppCompatActivity {
 
         };
 
-        // Obtener la lista de grupos de la colección groups de Firebase
-        fStore.collection("groups")
+        fStore.collection("groups").document(groupId)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()) {
-                            // Recorrer los documentos de la colección
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                // Añadir el nombre del grupo a la lista de grupos
-                                grupos.add(document.getString("name"));
+                            // Obtener el primer documento que coincida con el nombre del grupo
+                            DocumentSnapshot document = task.getResult();
+                            // Obtener los valores necesarios
+                            uidGrupo = groupId;
+                            divisa = document.getString("currency");
+                            tvDivisa.setText(divisa);
+                            uids = (List<String>) document.get("users");
+                            // Limpiar la lista de nombres de los usuarios
+                            usuarios.clear();
+                            // Limpiar los mapas de correspondencia entre UID y nombre de los usuarios
+                            uidToName.clear();
+                            nameToUid.clear();
+                            // Recorrer la lista de UID de los usuarios
+                            for (String uid : uids) {
+                                // Obtener el documento correspondiente al UID del usuario de la colección users de Firebase
+                                fStore.collection("users").document(uid)
+                                        .get()
+                                        .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                                if (task.isSuccessful()) {
+                                                    // Obtener el documento del usuario
+                                                    DocumentSnapshot document = task.getResult();
+                                                    if (document.exists()) {
+                                                        // Obtener el nombre del usuario
+                                                        String name = document.getString("fName");
+                                                        // Añadir el nombre del usuario a la lista de nombres de los usuarios
+                                                        usuarios.add(name);
+                                                        // Añadir la correspondencia entre el UID y el nombre del usuario a los mapas
+                                                        uidToName.put(uid, name);
+                                                        nameToUid.put(name, uid);
+                                                        // Crear un adaptador para el Spinner de pagador con la lista de nombres de los usuarios
+                                                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddSpendActivity.this,
+                                                                android.R.layout.simple_spinner_item, usuarios);
+                                                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                                        // Establecer el adaptador para el Spinner de pagador
+                                                        spPagador.setAdapter(adapter);
+                                                        crearCheckBox();
+                                                    } else {
+                                                        Toast.makeText(AddSpendActivity.this, "El documento del usuario no existe", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                } else {
+                                                    Toast.makeText(AddSpendActivity.this, "Error al obtener el usuario", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
                             }
-                            // Crear un adaptador para el Spinner de grupos con la lista de grupos
-                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddSpendActivity.this,
-                                    android.R.layout.simple_spinner_item, grupos);
-                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                            // Establecer el adaptador para el Spinner de grupos
-                            spGrupo.setAdapter(adapter);
                         } else {
-                            // Mostrar un mensaje de error si la consulta falla
-                            Toast.makeText(AddSpendActivity.this, "Error al obtener los grupos", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddSpendActivity.this, "Error al obtener el grupo", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
 
-        // Establecer el listener para el cambio de grupo
-        spGrupo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Obtener el nombre del grupo seleccionado
-                nombreGrupo = parent.getItemAtPosition(position).toString();
-                // Obtener el documento correspondiente al nombre del grupo seleccionado de la colección groups de Firebase
-                fStore.collection("groups").whereEqualTo("name", nombreGrupo)
-                        .get()
-                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    // Comprobar si hay algún documento que coincida con el nombre del grupo
-                                    if (!task.getResult().isEmpty()) {
-                                        // Obtener el primer documento que coincida con el nombre del grupo
-                                        DocumentSnapshot document = task.getResult().getDocuments().get(0);
-                                        // Obtener los valores necesarios
-                                        uidGrupo = document.getId();
-                                        divisa = document.getString("currency");
-                                        tvDivisa.setText(divisa);
-                                        uids = (List<String>) document.get("users");
-                                        // Limpiar la lista de nombres de los usuarios
-                                        usuarios.clear();
-                                        // Limpiar los mapas de correspondencia entre UID y nombre de los usuarios
-                                        uidToName.clear();
-                                        nameToUid.clear();
-                                        // Recorrer la lista de UID de los usuarios
-                                        for (String uid : uids) {
-                                            // Obtener el documento correspondiente al UID del usuario de la colección users de Firebase
-                                            fStore.collection("users").document(uid)
-                                                    .get()
-                                                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                                            if (task.isSuccessful()) {
-                                                                // Obtener el documento del usuario
-                                                                DocumentSnapshot document = task.getResult();
-                                                                if (document.exists()) {
-                                                                    // Obtener el nombre del usuario
-                                                                    String name = document.getString("fName");
-                                                                    // Añadir el nombre del usuario a la lista de nombres de los usuarios
-                                                                    usuarios.add(name);
-                                                                    // Añadir la correspondencia entre el UID y el nombre del usuario a los mapas
-                                                                    uidToName.put(uid, name);
-                                                                    nameToUid.put(name, uid);
-                                                                    // Crear un adaptador para el Spinner de pagador con la lista de nombres de los usuarios
-                                                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(AddSpendActivity.this,
-                                                                            android.R.layout.simple_spinner_item, usuarios);
-                                                                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                                                                    // Establecer el adaptador para el Spinner de pagador
-                                                                    spPagador.setAdapter(adapter);
-                                                                    crearCheckBox();
-                                                                } else {
-                                                                    Toast.makeText(AddSpendActivity.this, "El documento del usuario no existe", Toast.LENGTH_SHORT).show();
-                                                                }
-                                                            } else {
-                                                                Toast.makeText(AddSpendActivity.this, "Error al obtener el usuario", Toast.LENGTH_SHORT).show();
-                                                            }
-                                                        }
-                                                    });
-                                        }
-                                    } else {
-                                        Toast.makeText(AddSpendActivity.this, "Error: no hay ningún documento que coincida con el nombre del grupo", Toast.LENGTH_SHORT).show();
-                                    }
-                                } else {
-                                    Toast.makeText(AddSpendActivity.this, "Error al obtener el grupo", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // No hacer nada si no se selecciona ningún grupo
-            }
-        });
-
         // Listener para el cambio de pagador
         spPagador.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Obtener el nombre del pagador seleccionado
-                pagador = parent.getItemAtPosition(position).toString();
-            }
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // Obtener el nombre del pagador seleccionado
+            pagador = parent.getItemAtPosition(position).toString();
+        }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // No hacer nada si no se selecciona ningún pagador
-            }
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            // No hacer nada si no se selecciona ningún pagador
+        }
         });
+
 
         // Listener para el CheckBox de todos los usuarios
         cbTodos.setOnClickListener(new View.OnClickListener() {
@@ -279,7 +236,6 @@ public class AddSpendActivity extends AppCompatActivity {
                     gasto.put("amount", cantidad);
                     gasto.put("payer", nameToUid.get(pagador));
                     gasto.put("sharedWith", compartidos);
-                    gasto.put("group", nombreGrupo);
                     gasto.put("groupID", uidGrupo);
                     // Añadir el documento del gasto a la colección spends de Firebase
                     fStore.collection("spends")
