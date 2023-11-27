@@ -45,7 +45,7 @@ public class AddSpendActivity extends AppCompatActivity {
     private CheckBox cbTodos;
 
     // Declaración de variables para almacenar los datos introducidos por el usuario
-    private String titulo, fecha, pagador, grupo, nombreGrupo;
+    private String titulo, fecha, pagador, grupo, nombreGrupo, groupId;
     private double cantidad;
     private List<String> compartidos;
 
@@ -78,6 +78,9 @@ public class AddSpendActivity extends AppCompatActivity {
         btFecha = findViewById(R.id.btFecha);
         btGuardar = findViewById(R.id.btGuardar);
         cbTodos = findViewById(R.id.cbTodos);
+
+        //Obtener el groupId que se pasa con el intent
+        groupId = getIntent().getStringExtra("groupId");
 
         // Inicialización de las variables para almacenar los datos introducidos por el usuario
         titulo = "";
