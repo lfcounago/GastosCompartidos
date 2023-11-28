@@ -17,6 +17,7 @@ import java.util.List;
 
 public class GroupRecyclerViewAdapter extends RecyclerView.Adapter<GroupRecyclerViewAdapter.GroupViewHolder> {
     private List<Group> groupList;
+    private UserRecyclerViewAdapter.OnDataLoadedListener onDataLoadedListener;
 
     public GroupRecyclerViewAdapter(List<Group> groupList) {
 
@@ -58,4 +59,10 @@ public class GroupRecyclerViewAdapter extends RecyclerView.Adapter<GroupRecycler
             rvGroupMembers = itemView.findViewById(R.id.rvGroupUsers);
         }
     }
+
+    // Interfaz de devolución de llamada para la lógica después de cargar los datos
+    public interface OnDataLoadedListener {
+        void onDataLoaded();
+    }
+
 }

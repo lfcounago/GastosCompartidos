@@ -7,14 +7,12 @@ public class User {
     private String userName;
     private List<String> balanceId;
     private double totalBalance;
-    private String currency;
 
-    public User (String userId, String userName, List<String> balanceId, String currency){
+    public User (String userId, String userName, List<String> balanceId){
         this.userId = userId;
         this.userName = userName;
         this.balanceId = balanceId;
         this.totalBalance = 0.0;
-        this.currency = currency;
     }
 
     public String getUserId() {
@@ -41,19 +39,26 @@ public class User {
         this.balanceId = balanceId;
     }
 
-    public double getTotalBalance() {
-        return totalBalance;
+    public double calcularSaldo(List<ExpenseItem> expenseItems){
+        double saldo = 0;
+
+        for (ExpenseItem expenseItem: expenseItems){
+            if (expenseItem.getPayerId().equals(userId)){
+                //Si el usuario pagó el gasto, restar el total del gasto
+                saldo -= expenseItem.getAmount();
+            } else if (expenseItem.getSharedWith().contains(userId)) {
+                //Si el usuario compartió el gasto, sumar su parte al saldo
+                saldo += expenseItem.getAmount()/expenseItem.getSharedWith().size();
+            }
+        }
+        return saldo;
+    }
+    public void actualizarSaldo(List<ExpenseItem> expenseItems) {
+        // Llamar a calcularSaldo para obtener el nuevo saldo
+        double nuevoSaldo = calcularSaldo(expenseItems);
     }
 
     public void setTotalBalance(Double totalBalance){
         this.totalBalance = totalBalance;
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 }
