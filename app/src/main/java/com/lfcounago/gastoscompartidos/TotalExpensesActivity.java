@@ -25,6 +25,7 @@ public class TotalExpensesActivity extends AppCompatActivity {
     // Declarar los atributos de la clase
     private TextView tvGastoTotal, tvTotalPagoUsu, tvCuotaTotal, tvPagoRealizadoUsu, tvPagosRecibidos;
     private String gid;
+    private String uid;
     private FirebaseFirestore fStore;
 
     @Override
@@ -39,6 +40,7 @@ public class TotalExpensesActivity extends AppCompatActivity {
         tvPagoRealizadoUsu = findViewById(R.id.tvPagoRealizadoUsu);
         tvPagosRecibidos = findViewById(R.id.tvPagosRecibidos);
         gid = "bmMYudVqJVuPzEaWwVNj";
+        uid = "uivt6Bi7ZjapLuBKUXF8e052Oku2";//FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
 
         // Llamar al método que obtiene los gastos
@@ -47,7 +49,8 @@ public class TotalExpensesActivity extends AppCompatActivity {
 
     //Recorre la colección "spends" para obtener todos los datos necesarios
     private void getSpends(String groupId) {
-        List<Number> gastos = new ArrayList<>();
+        List<Number> gastos = new ArrayList<>(); //Lista con los gastos del grupo
+        List<Number> gastosPag = new ArrayList<>(); //Lista con el gasto del usuario identificado si es el "payer" del gasto
 
         // Realizar una consulta a la colección "spends" de la base de datos de Firestore
         fStore.collection("spends")
@@ -63,25 +66,32 @@ public class TotalExpensesActivity extends AppCompatActivity {
                                 Number amount = document.getDouble("amount");
                                 String groupID = document.getString("groupID");
                                 String payer = document.getString("payer");
+                                List<String> sharedWith = (List<String>) document.get("sharedWith");
                                 if (groupID != null && groupID.equals(groupId) && amount != null) { // Si la lista de gastos contiene el id del grupo actual
                                     // Añadir el gasto del grupo a la lista de gastos del grupo
                                     gastos.add(amount);
-                                    /*// Añadir el nombre del grupo, la divisa y la categoría a la lista de nombres de los grupos
-                                    groupNames.add(groupName + "\n" + groupCurrency + " - " + groupCategory);*/
+                                    if(payer != null && payer.equals(uid)){
+                                        gastosPag.add(amount);
+                                    }
                                 }
                             }
-                            totalExpenses(gastos); //Llama a la función que obtiene el total de los gastos del grupo
+                            totalExpenses(gastos, gastosPag); //Llama a la función que obtiene los gastos del grupo y del "payer"
                         }
                     }
                 });
     }
 
-    private void totalExpenses(List<Number> gastos) {
+    private void totalExpenses(List<Number> gastos, List<Number> gastosPag) {
         double gastosTotales = 0;
+        double gastosPagador = 0;
         for (Number amount : gastos) {
             gastosTotales += amount.doubleValue();
         }
+        for (Number amountP : gastosPag) {
+            gastosPagador += amountP.doubleValue();
+        }
         tvGastoTotal.setText(String.valueOf(gastosTotales));
+        tvTotalPagoUsu.setText(String.valueOf(gastosPagador));
     }
 
 }
