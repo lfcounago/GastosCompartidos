@@ -1,5 +1,8 @@
 package com.lfcounago.gastoscompartidos;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.lfcounago.gastoscompartidos.core.*;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -30,7 +33,9 @@ public class BalanceActivity extends AppCompatActivity{
     //Declarar los atributos de la clase
     private RecyclerView rvGroups;
     private TextView tvGroupName;
+    private TextView tvUserBalance;
     private GroupRecyclerViewAdapter groupRecyclerViewAdapter;
+    private UserRecyclerViewAdapter userRecyclerViewAdapter;
     private List<Group> groupList;
     private String uid;
     private FirebaseFirestore fStore;
@@ -45,8 +50,7 @@ public class BalanceActivity extends AppCompatActivity{
         rvGroups = findViewById(R.id.rvGroupUsers);
         tvGroupName = findViewById(R.id.tvGroupName);
         //uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        //uid = "uivt6Bi7ZjapLuBKUXF8e052Oku2";
-        uid = "58RJ5RVX0RPrxLu7NhtDacAdM563";
+        uid = "c4rs0VHF65W2T2aAHL840vdZh2e2";
         fStore = FirebaseFirestore.getInstance();
 
         groupList = new ArrayList<>();
@@ -81,7 +85,7 @@ public class BalanceActivity extends AppCompatActivity{
                 //
             }
         });
-        Log.e("BalanceActivity", "Llamamos al getGroup");
+
         //Llamar al método que obtiene los grupos
         getGroups();
     }
@@ -92,8 +96,6 @@ public class BalanceActivity extends AppCompatActivity{
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                // Aquí puedes realizar cualquier acción que desees después de cargar los datos
-                // Por ejemplo, actualizar la interfaz de usuario, mostrar un mensaje, etc.
                 Toast.makeText(BalanceActivity.this, "Datos cargados exitosamente", Toast.LENGTH_SHORT).show();
 
                 // Verifica si groupList tiene datos
@@ -110,7 +112,6 @@ public class BalanceActivity extends AppCompatActivity{
 
     //Método que obtiene los miembros del grupo
     private void getGroups() {
-        Log.e("BalanceActivity", "Entra en getGroups");
         //Realizar consulta a la coleccion "groups" de la base de datos de Firestore
         fStore.collection("groups").get()
                 .addOnCompleteListener(task -> {
@@ -118,6 +119,7 @@ public class BalanceActivity extends AppCompatActivity{
                 //Limpiar los grupos antes de agregar nuevos
                 groupList.clear();
 
+                List<Task<Void>> tasks = new ArrayList<>();
                 int groupCount = task.getResult().size();
                 AtomicInteger userCount = new AtomicInteger(0);
 
@@ -129,20 +131,24 @@ public class BalanceActivity extends AppCompatActivity{
                     //Lista de usuarios del grupo
                     List<String> groupUsers = (List<String>) document.get("users");
 
-                    Log.e("BalanceActivity", "Procesando grupo: " + groupName + ", ID: " + groupId);
-
                     //Comprobar si hay usuarios y si el usuario actual pertenece a ese grupo
                     if (groupUsers != null && groupUsers.contains(uid)) {
+                        Task<Void> groupTask = getGroupInfo(groupId, groupName, groupUsers);
+                        tasks.add(groupTask);
+                        /*
                         List<User> users = new ArrayList<>();
-                        List<String> balanceIds = new ArrayList<>();
 
                         for (String userId : groupUsers) {
                             getGroupUsers(groupId, userId, (user,totalBalance) -> {
+                                //Añadir los usuarios a la lista de usuarios
                                 users.add(user);
 
                                 // Verificar si se han cargado todos los usuarios
                                 if (userCount.incrementAndGet() == groupUsers.size()) {
+                                    // Construir un objeto Group con la información obtenida
                                     Group group = new Group(groupId, groupName, users);
+
+                                    //Añadir el grupo a la lista de grupos
                                     groupList.add(group);
 
                                     // Verificar si se han cargado todos los grupos
@@ -152,17 +158,55 @@ public class BalanceActivity extends AppCompatActivity{
                                 }
                             });
                         }
+
+                         */
                     } else {
                         Log.e("BalanceActivity", "El usuario no pertenece a este grupo");
                     }
                 }
-                //Notificar al adaptador de los cambios realizados
-                groupRecyclerViewAdapter.notifyDataSetChanged();
+            // Esperar a que todas las tareas se completen
+                Tasks.whenAllSuccess(tasks)
+                        .addOnSuccessListener(result -> {
+                            // Notificar al adaptador de los cambios realizados
+                            groupRecyclerViewAdapter.notifyDataSetChanged();
+                            onDataLoaded();
+                        })
+                        .addOnFailureListener(e -> Log.e("BalanceActivity", "Error al obtener información de grupos", e));
 
             } else {
                 Log.e("BalanceActivity", "Error al obtener grupos", task.getException());
             }
         });
+    }
+
+    private Task<Void> getGroupInfo(String groupId, String groupName, List<String> groupUsers){
+        TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
+        List<User> users = new ArrayList<>();
+
+        AtomicInteger userCount = new AtomicInteger(0);
+
+        for (String userId : groupUsers) {
+            getGroupUsers(groupId, userId, (user, totalBalance) -> {
+                //Añadir los usuarios a la lista de usuarios
+                users.add(user);
+
+                // Verificar si se han cargado todos los usuarios
+                if (userCount.incrementAndGet() == groupUsers.size()) {
+                    // Construir un objeto Group con la información obtenida
+                    Group group = new Group(groupId, groupName, users);
+
+                    //Añadir el grupo a la lista de grupos
+                    groupList.add(group);
+
+                    taskCompletionSource.trySetResult(null);
+                }
+            });
+        }
+
+        // Esperar a que todas las tareas de usuario se completen
+        Tasks.whenAllSuccess(Collections.singletonList(taskCompletionSource.getTask()));
+
+        return taskCompletionSource.getTask();
     }
 
     private void getGroupUsers(String groupId, String userId, UsersCallBack callBack) {
@@ -181,8 +225,6 @@ public class BalanceActivity extends AppCompatActivity{
                           // Obtener el nombre del usuario
                           String userName = result.getString("fName");
 
-                           Log.e("BalanceActivity", "Procesando usuario: " + userName+ ", ID: " + userId);
-
                           //Obtener informacion de cada gasto asociado al usuario
                           getUserSpends(groupId, userId, (spends, totalBalance) ->{
                                // Construir un objeto User con la información obtenida
@@ -191,18 +233,18 @@ public class BalanceActivity extends AppCompatActivity{
                               // Configurar el saldo total del usuario
                                user.setTotalBalance(totalBalance);
 
+                               //Añadir el usuario a la lista de usuarios
                                usersList.add(user);
 
                               // Verificar si se han cargado todos los usuarios
                               if (usersList.size() == 1) {
+                                  //Notificar al adaptador de los cambios realizados
+                                  groupRecyclerViewAdapter.notifyDataSetChanged();
+
                                   // Llamar al método de devolución de llamada con el usuario construido
                                   callBack.onUsuarioRecibido(usersList.get(0), totalBalance);
-
                               }
-                              //Notificar al adaptador de los cambios realizados
-                              groupRecyclerViewAdapter.notifyDataSetChanged();
                           });
-
                        }
                     } else {
                         // Manejar errores al obtener información del usuario
@@ -214,13 +256,14 @@ public class BalanceActivity extends AppCompatActivity{
     private void getUserSpends(String groupId, String userId, BalancesCallback callback) {
         // Realizar consulta a la colección "spends" para obtener la información de los balances asociados al usuario
         fStore.collection("spends")
-                .whereEqualTo("groupId", groupId)
+                .whereEqualTo("groupID", groupId)
                 .get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         List<ExpenseItem> spends = new ArrayList<>();
 
                         for (QueryDocumentSnapshot spendDocument : task.getResult()) {
+                            //Obtener la informacion necesaria de los gastos
                             String spendId = spendDocument.getId();
                             String payerId = spendDocument.getString("payer");
                             double amount = spendDocument.getDouble("amount");
@@ -232,11 +275,7 @@ public class BalanceActivity extends AppCompatActivity{
 
                         }
                         // Calcular el saldo total del usuario en el grupo
-                        double totalBalance = calculateTotalBalance(userId, spends);
-
-                        // Mostrar el saldo total del usuario en el grupo
-                        Log.e("BalanceActivity", "El saldo total del usuario: " + userId + " en el grupo es: " + totalBalance);
-
+                        double totalBalance = calculateTotalBalance(userId,groupId, spends);
 
                         // Llamar al método de devolución de llamada con la lista de balances
                         callback.onBalancesRecibidos(spends, totalBalance);
@@ -248,17 +287,27 @@ public class BalanceActivity extends AppCompatActivity{
                 });
     }
 
-    private double calculateTotalBalance(String userId, List<ExpenseItem> spends){
+    private double calculateTotalBalance(String userId, String groupId, List<ExpenseItem> spends){
         double totalBalance = 0.0;
 
         //Calcular el saldo total del usuario en el grupo
         for (ExpenseItem spend: spends){
-            if (spend.getPayerId().equals(userId)){
-                // El usuario pagó, resta el amount del gasto
-                totalBalance -= spend.getAmount();
-            } else if (spend.getSharedWith().contains(userId)) {
-                // El usuario compartió el gasto, suma su parte al saldo
-                totalBalance += spend.getAmount() / spend.getSharedWith().size();
+            //Comprobar que el groupId que se pasa sea el mismo que el del gasto
+            if (groupId.equals(spend.getGroupId())){
+                //Comrpobar que el userId que se pasa sea igual al payer del gasto
+                if (spend.getPayerId().equals(userId)) {
+                    //Obtener informacion de cada gasto
+                    double amount = spend.getAmount();
+                    List<String> sharedWith = spend.getSharedWith();
+                    int numShared = sharedWith.size();
+
+                    // El usuario pagó, se divide entre el numero de usuarios con los que se comparte el gasto
+                    totalBalance += (amount / numShared) * (numShared - 1);
+
+                }else if (spend.getSharedWith().contains(userId)) {
+                    // El usuario no pagó pero comparte el gasto con el payer
+                    totalBalance -= spend.getAmount() / spend.getSharedWith().size();
+                }
             }
         }
         return totalBalance;
@@ -274,81 +323,4 @@ public class BalanceActivity extends AppCompatActivity{
         void onBalancesRecibidos(List<ExpenseItem> balances, double spend);
     }
 }
-    /*
-        private void getExpensesForUser(String groupId, String userId){
-            fStore.collection("spends")
-                    .whereEqualTo("groupId",groupId)
-                    .whereArrayContains("sharedWith",userId)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if(task.isSuccessful()){
-                            List<ExpenseItem> expenses = new ArrayList<>();
-
-                            for(QueryDocumentSnapshot spendDocument : task.getResult()){
-                                String payerId = spendDocument.getString("payer");
-                                double amount = spendDocument.getDouble("amount");
-
-                                // Crear instancia de ExpenseItem y agregar a la lista de gastos
-                                ExpenseItem expenseItem = new ExpenseItem(payerId,amount);
-                                expenseItem.setPayerId(payerId);
-                                expenseItem.setAmount(amount);
-                                expenses.add(expenseItem);
-                            }
-
-                            // Obtener el grupo actual de manera asíncrona
-                            getGroupById(groupId, group -> {
-                                if (group != null) {
-                                    // Actualizar los gastos del usuario en el grupo
-                                    group.updateUserExpenses(userId, expenses);
-                                    lvGroups.setAdapter(adapter);
-                                    // Notificar al adaptador que los datos han cambiado
-                                    adapter.notifyDataSetChanged();
-                                } else {
-                                    // Manejar el caso en que no se pudo obtener el grupo
-                                    Log.e("BalanceActivity", "No se pudo obtener el grupo");
-                                }
-                            });
-                        } else {
-                            // Manejar el error al obtener los gastos
-                            Log.e("BalanceActivity", "Error al obtener gastos", task.getException());
-                        }
-                    });
-        }
-
-        private void getGroupById(String groupId, GroupCallback callback) {
-            fStore.collection("groups").document(groupId)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document.exists()) {
-                                // El documento existe, puedes construir un objeto Group con los datos
-                                String groupName = document.getString("name");
-                                List<User> groupUsers = (List<User>) document.get("users");
-
-                                // Construir el objeto Group
-                                Group group = new Group(groupId, groupName, groupUsers);
-
-                                // Llamar al método de devolución de llamada con el grupo construido
-                                // callback.onGroupReceived(group);
-                            } else {
-                                // El documento no existe
-                                Log.d("BalanceActivity", "No existe un grupo con ID: " + groupId);
-
-                                // Llamar al método de devolución de llamada con null, indicando que no se encontró el grupo
-                                //callback.onGroupReceived(null);
-                            }
-                        } else {
-                            // Manejar el error al obtener el documento
-                            Log.e("BalanceActivity", "Error al obtener el grupo con ID: " + groupId, task.getException());
-                        }
-                    });
-        }
-
-        // Interfaz de devolución de llamada para obtener el grupo por ID
-        interface GroupCallback {
-            void onGroupReceived(Group group);
-        }
-
-     */
 

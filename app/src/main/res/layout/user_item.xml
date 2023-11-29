@@ -11,6 +11,7 @@
             android:id="@+id/tvUserName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_weight="0.002"
             android:layout_marginRight="20dp"
             android:text="Nombre del usuario: " />
 
