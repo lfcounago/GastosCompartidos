@@ -39,23 +39,8 @@ public class User {
         this.balanceId = balanceId;
     }
 
-    public double calcularSaldo(List<ExpenseItem> expenseItems){
-        double saldo = 0;
-
-        for (ExpenseItem expenseItem: expenseItems){
-            if (expenseItem.getPayerId().equals(userId)){
-                //Si el usuario pagó el gasto, restar el total del gasto
-                saldo -= expenseItem.getAmount();
-            } else if (expenseItem.getSharedWith().contains(userId)) {
-                //Si el usuario compartió el gasto, sumar su parte al saldo
-                saldo += expenseItem.getAmount()/expenseItem.getSharedWith().size();
-            }
-        }
-        return saldo;
-    }
-    public void actualizarSaldo(List<ExpenseItem> expenseItems) {
-        // Llamar a calcularSaldo para obtener el nuevo saldo
-        double nuevoSaldo = calcularSaldo(expenseItems);
+    public double getTotalBalance() {
+        return totalBalance;
     }
 
     public void setTotalBalance(Double totalBalance){

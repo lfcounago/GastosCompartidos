@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -47,110 +48,17 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         User member = memberList.get(position);
         holder.tvMemberName.setText(member.getUserName());
 
-        //Log.e("BalanceActivity", "Entramos en onBindViewHolder");
+        //Configurar el saldo directamente desde el objeto User
+        holder.setBalance(member.getTotalBalance());
 
-        // Verifica si la lista de IDs de saldo no está vacía
-        if (member.getBalanceId() != null && !member.getBalanceId().isEmpty()) {
-            // Obtén el total de deudas y créditos para este usuario en el grupo
-            obtenerTotalDeudasCreditos(member.getBalanceId(), member.getUserId(),total->{
-                // Muestra la información en el TextView
-                if (total > 0) {
-                    holder.tvMemberBalance.setText("Crédito: " + total);
-                } else if (total < 0) {
-                    holder.tvMemberBalance.setText("Deuda: " + Math.abs(total));
-                } else {
-                    holder.tvMemberBalance.setText("Sin deudas ni créditos");
-                }
-            });
-        } else {
-            holder.tvMemberBalance.setText("Sin deudas ni créditos");
-        }
+        // Restablecer los márgenes para evitar problemas de reciclaje
+        ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams();
+        layoutParams.setMargins(0, 8, 0, 8);
+        holder.itemView.setLayoutParams(layoutParams);
     }
 
-    // Método para obtener el total de deudas y créditos para un usuario en el grupo
-    private double obtenerTotalDeudasCreditos(List<String> balanceIds, String userId, OnTotalDeudasCreditosCallback callback) {
-        AtomicInteger count = new AtomicInteger(balanceIds.size());
-        AtomicReference<Double> total = new AtomicReference<>((double) 0);
-
-        for (String balanceId : balanceIds) {
-            fStore.collection("spends")
-                    .document(balanceId)
-                    .get()
-                    .addOnCompleteListener(spendDocument ->{
-                       if (spendDocument.isSuccessful()){
-                           DocumentSnapshot spendResult = spendDocument.getResult();
-                           if (spendResult.exists()){
-                               //Obtener informacion del gasto
-                               double amount = spendResult.getDouble("amount");
-                               String payerId = spendResult.getString("payer");
-
-                               if (userId.equals(payerId)){
-                                   total.updateAndGet(v -> new Double((double) (v - amount)));
-                               }else{
-                                   total.updateAndGet(v -> new Double((double) (v + amount)));
-                               }
-
-                           }
-                       }else{
-                           Log.e("UserRecyclerViewAdapter", "No hay gasto");
-                       }
-                        if (count.decrementAndGet() == 0) {
-                            callback.onTotalDeudasCreditos(total.get());
-                        }
-                    });
-        }
-        return total.get();
-
-    }
-
-    public interface OnTotalDeudasCreditosCallback {
-        void onTotalDeudasCreditos(double total);
-    }
-
-    private void loadBalanceIdsForUsers(List<User> users, OnDataLoadedListener onDataLoadedListener) {
-        AtomicInteger usersLoadedCount = new AtomicInteger(0);
-
-        for (User user : users) {
-            fStore.collection("spends")
-                    .whereEqualTo("payer", user.getUserId())
-                    .get()
-                    .addOnSuccessListener(querySnapshot -> {
-                        // Obtener los IDs de saldo y actualizar el objeto User
-                        List<String> balanceIds = new ArrayList<>();
-                        for (QueryDocumentSnapshot document : querySnapshot) {
-                            // Agregar el ID del gasto al saldo del usuario
-                            balanceIds.add(document.getId());
-                        }
-                        user.setBalanceId(balanceIds);
-
-                        // Incrementar el contador de usuarios cargados
-                        int loadedCount = usersLoadedCount.incrementAndGet();
-
-                        // Verificar si todos los usuarios han cargado sus IDs de saldo
-                        if (loadedCount == users.size()) {
-                            onDataLoadedListener.onDataLoaded();
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        // Manejar errores al cargar los IDs de saldo
-                        Log.e("UserRecyclerViewAdapter", "Error al cargar IDs de saldo", e);
-
-                        // Incrementar el contador de usuarios cargados
-                        int loadedCount = usersLoadedCount.incrementAndGet();
-
-                        // Verificar si todos los usuarios han cargado sus IDs de saldo
-                        if (loadedCount == users.size()) {
-                            onDataLoadedListener.onDataLoaded();
-                        }
-                    });
-        }
-    }
 
     public interface OnDataLoadedListener {
-        void onDataLoaded();
-    }
-
-    public interface OnDataLoadedCallback {
         void onDataLoaded();
     }
 
@@ -167,6 +75,18 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
             super(itemView);
             tvMemberName = itemView.findViewById(R.id.tvUserName);
             tvMemberBalance = itemView.findViewById(R.id.tvUserBalance);
+        }
+
+        public void setBalance(double totalBalance){
+            if (totalBalance > 0) {
+                tvMemberBalance.setText(String.valueOf(totalBalance));
+                tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
+            } else if (totalBalance < 0) {
+                tvMemberBalance.setText(String.valueOf(totalBalance));
+                tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
+            } else {
+                tvMemberBalance.setText("Sin deudas ni créditos");
+            }
         }
     }
 }

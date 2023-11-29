@@ -59,17 +59,4 @@ public class ExpenseItem {
         this.sharedWith = sharedWith;
     }
 
-    public Map<String,Double> calculateSpends(){
-        Map<String,Double> spends = new HashMap<>();
-
-        if (sharedWith != null && !sharedWith.isEmpty()){
-            double expense = amount/sharedWith.size();
-
-            // Para cada usuario compartido, asignar el saldo
-            for (String sharedUser : sharedWith){
-                spends.put(sharedUser,expense);
-            }
-        }
-        return spends;
-    }
 }
