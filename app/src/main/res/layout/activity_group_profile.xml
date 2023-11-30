@@ -19,6 +19,7 @@
             android:ems="10"
             android:inputType="text"
             android:textSize="20sp"
+            android:layout_marginVertical="5dp"
             android:text="Nombre del grupo"
             android:textStyle="bold" />
 
@@ -26,6 +27,7 @@
             android:id="@+id/textViewCurrency"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
             android:text="Divisa del grupo"
             android:textSize="20sp" />
 
@@ -33,12 +35,14 @@
             android:id="@+id/textViewCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
             android:text="Categoría del grupo"
             android:textSize="20sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
             android:text="Participantes:"
             android:textSize="20sp" />
 

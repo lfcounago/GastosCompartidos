@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -55,6 +56,19 @@ public class GroupProfileActivity extends AppCompatActivity {
         groupId = getIntent().getStringExtra("groupId");
         fStore = FirebaseFirestore.getInstance();
         btnEliminarGrupo = findViewById(R.id.btnEliminarGrupo);
+
+        lvUsuarios.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                // Obtener el nombre del usuario seleccionado
+                String selectedUserName = usuarios.get(position);
+
+                // Mostrar un diálogo de confirmación para eliminar el usuario
+                mostrarDialogoEliminarUsuario(selectedUserName);
+
+                return true; // Indicar que se ha gestionado el evento
+            }
+        });
         btnEliminarGrupo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,14 +168,6 @@ public class GroupProfileActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    // Método que se ejecuta al pulsar el boton mas
-    public void goToAddUser(View view) {
-        // Crear un intent para iniciar la actividad GroupProfileActivity
-        Intent intent = new Intent(GroupProfileActivity.this, AddUserActivity.class);
-        intent.putExtra("groupId", groupId);
-        startActivity(intent);
-    }
-
     // Definir el método que se ejecuta al pulsar el botón de eliminar grupo
     private void eliminarGrupo() {
         fStore.collection("groups").document(groupId).delete() //Accede al documento del grupo para eliminarlo
@@ -180,6 +186,65 @@ public class GroupProfileActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    // Método para mostrar el diálogo de confirmación para eliminar un usuario
+    private void mostrarDialogoEliminarUsuario(String userName) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Eliminar Usuario");
+        builder.setMessage("¿Estás seguro de que deseas eliminar el usuario " + userName + "?");
+        builder.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Lógica para eliminar al usuario
+                eliminarUsuario(userName);
+            }
+        });
+        builder.setNegativeButton("Cancelar", null); // No es necesario gestionar la acción de Cancelar aquí
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    // Método para eliminar un usuario
+    private void eliminarUsuario(String userName) {
+        // Obtener el UID del usuario a partir del nombre
+        String uidToDelete = nameToUid.get(userName);
+
+        // Eliminar el UID de la lista de usuarios y actualizar la base de datos
+        uids.remove(uidToDelete);
+
+        // Actualizar la base de datos con la nueva lista de usuarios
+        Map<String, Object> groupData = new HashMap<>();
+        groupData.put("users", uids);
+
+        fStore.collection("groups").document(groupId).update(groupData)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        // El usuario se elimina con éxito
+                        Toast.makeText(getApplicationContext(), "Usuario eliminado con éxito", Toast.LENGTH_SHORT).show();
+                        // Actualizar la interfaz de usuario
+                        getGroupData();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Se produjo un error al intentar eliminar al usuario
+                        Toast.makeText(getApplicationContext(), "No se pudo eliminar al usuario", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    // Método que se ejecuta al pulsar el boton mas
+    public void goToAddUser(View view) {
+        // Crear un intent para iniciar la actividad GroupProfileActivity
+        Intent intent = new Intent(GroupProfileActivity.this, AddUserActivity.class);
+        intent.putExtra("groupId", groupId);
+        startActivity(intent);
+    }
+
+
 
 
 }
