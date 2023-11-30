@@ -16,13 +16,8 @@
         tools:targetApi="31">
         <activity
             android:name=".BalanceActivity"
-            android:exported="false" />
-        <activity
-            android:name=".EditSpendActivity"
-            android:exported="false" />
-        <activity
-            android:name=".AddUserActivity"
-            android:exported="false" />
+            android:exported="false" >
+        </activity>
         <activity
             android:name=".GroupDetailsActivity"
             android:exported="false" />
