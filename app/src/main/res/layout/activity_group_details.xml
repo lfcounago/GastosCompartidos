@@ -6,59 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".GroupDetailsActivity">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/textViewName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Nombre del grupo"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textViewCurrency"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Divisa del grupo"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/textViewCategory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Categoría del grupo"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/textViewDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Descripción del grupo"
-            android:textSize="18sp" />
-
-    </LinearLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnEliminarGrupo"
+    <TextView
+        android:id="@+id/tvGroupName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="eliminarGrupo"
-        android:src="@android:drawable/ic_menu_delete"/>
+        android:onClick="goToDeatilsGroup"
+        android:text="TextView" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
@@ -72,6 +25,5 @@
         android:layout_marginBottom="16dp"
         android:onClick="goToIngresarSaldo"
         android:src="@android:drawable/ic_input_add" />
-
-
 </RelativeLayout>
+
