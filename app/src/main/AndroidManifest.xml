@@ -19,7 +19,13 @@
             android:exported="false" >
         </activity>
         <activity
+            android:name=".AddUserActivity"
+            android:exported="false" />
+        <activity
             android:name=".GroupDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".GroupProfileActivity"
             android:exported="false" />
         <activity
             android:name=".ListUserGroupsActivity"
