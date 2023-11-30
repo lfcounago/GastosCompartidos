@@ -62,20 +62,21 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
 
         public void setBalance(double totalBalance, String currency){
             // Crear un objeto DecimalFormat con el formato deseado
-            DecimalFormat decimalFormat = new DecimalFormat("#.00");
+            DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
             if (totalBalance > 0) {
                 tvMemberBalance.setText(decimalFormat.format(totalBalance));
                 tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
+                tvMemberCurrency.setText(currency);
+                tvMemberCurrency.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
             } else if (totalBalance < 0) {
                 tvMemberBalance.setText(decimalFormat.format(totalBalance));
                 tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
+                tvMemberCurrency.setText(currency);
+                tvMemberCurrency.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
             } else {
                 tvMemberBalance.setText("0.00");
             }
-
-            //Mostrar la currency
-            tvMemberCurrency.setText(currency);
         }
     }
 }
