@@ -19,7 +19,12 @@
             android:id="@+id/tvUserBalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Saldo usuario" />
+            android:text="Saldo usuario " />
+        <TextView
+            android:id="@+id/tvBalanceCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Currency" />
 
     </LinearLayout>
 </LinearLayout>
