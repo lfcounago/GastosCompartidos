@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -37,6 +38,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private FloatingActionButton btnEliminarGrupo, btnAnadirUsuario;
     private String groupId;
+    FirebaseAuth fAuth;
     private FirebaseFirestore fStore;
 
     @Override
@@ -54,6 +56,8 @@ public class GroupProfileActivity extends AppCompatActivity {
         uidToName = new HashMap<>();
         nameToUid = new HashMap<>();
         groupId = getIntent().getStringExtra("groupId");
+
+        fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         btnEliminarGrupo = findViewById(R.id.btnEliminarGrupo);
 
@@ -123,7 +127,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                                                             // Añadir la correspondencia entre el UID y el nombre del usuario a los mapas
                                                             uidToName.put(uid, name);
                                                             nameToUid.put(name, uid);
-                                                            // Crear un adaptador para el Spinner de pagador con la lista de nombres de los usuarios
+                                                            //Actualizar el adaptador
                                                             lvUsuarios.setAdapter(adapter);
                                                             adapter.notifyDataSetChanged();
                                                         } else {
@@ -170,21 +174,51 @@ public class GroupProfileActivity extends AppCompatActivity {
 
     // Definir el método que se ejecuta al pulsar el botón de eliminar grupo
     private void eliminarGrupo() {
-        fStore.collection("groups").document(groupId).delete() //Accede al documento del grupo para eliminarlo
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        //El grupo se elimina con éxito
-                        Toast.makeText(getApplicationContext(), "Grupo eliminado con éxito", Toast.LENGTH_SHORT).show();
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Se produjo un error al intentar eliminar el grupo
-                        Toast.makeText(getApplicationContext(), "El grupo no se pudo eliminar", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        fStore.collection("groups").document(groupId).get()
+                        .addOnSuccessListener(documentSnapshot -> {
+                            if(documentSnapshot.exists()){
+                                //Obtener UID del propietario
+                                String ownerUid = documentSnapshot.getString("owner");
+                                //Obtener el UID del usuario actual
+                                String currentUid = fAuth.getCurrentUser().getUid();
+
+                                //Verificar si el usuario logueado es el propietario del grupo
+                                if(currentUid.equals(ownerUid)){
+                                    fStore.collection("groups").document(groupId).delete() //Accede al documento del grupo para eliminarlo
+                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    //El grupo se elimina con éxito
+                                                    Toast.makeText(getApplicationContext(), "Grupo eliminado con éxito", Toast.LENGTH_SHORT).show();
+                                                    toListUserGroups();
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    // Se produjo un error al intentar eliminar el grupo
+                                                    Toast.makeText(getApplicationContext(), "El grupo no se pudo eliminar", Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                } else{
+                                    Toast.makeText(getApplicationContext(), "Solo el propietario puede eliminar el grupo", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        })
+                    .addOnFailureListener(e -> {
+                        // Manejar el error al obtener el documento del grupo
+                        Toast.makeText(getApplicationContext(), "Error al obtener información del grupo", Toast.LENGTH_SHORT).show();
+                    });
+
+    }
+
+    // Método para cuando se elimina grupo volver a la pantalla principal de la aplicación ListUserGroupsActivity
+    private void toListUserGroups() {
+        // Crear un Intent para iniciar la actividad de detalles del grupo
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+        startActivity(intent);
+        // Cerrar la actividad actual si es necesario
+        finish();
     }
 
     // Método para mostrar el diálogo de confirmación para eliminar un usuario
