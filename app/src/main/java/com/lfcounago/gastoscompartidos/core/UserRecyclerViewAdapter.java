@@ -16,6 +16,7 @@ import com.lfcounago.gastoscompartidos.R;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -78,14 +79,17 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         }
 
         public void setBalance(double totalBalance){
+            // Crear un objeto DecimalFormat con el formato deseado
+            DecimalFormat decimalFormat = new DecimalFormat("#.00");
+
             if (totalBalance > 0) {
-                tvMemberBalance.setText(String.valueOf(totalBalance));
+                tvMemberBalance.setText(decimalFormat.format(totalBalance));
                 tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
             } else if (totalBalance < 0) {
-                tvMemberBalance.setText(String.valueOf(totalBalance));
+                tvMemberBalance.setText(decimalFormat.format(totalBalance));
                 tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
             } else {
-                tvMemberBalance.setText("Sin deudas ni créditos");
+                tvMemberBalance.setText("0.00");
             }
         }
     }

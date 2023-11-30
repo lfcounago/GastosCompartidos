@@ -3,6 +3,7 @@ package com.lfcounago.gastoscompartidos;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
 import com.lfcounago.gastoscompartidos.core.*;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -49,8 +50,8 @@ public class BalanceActivity extends AppCompatActivity{
         //Inicializar los atributos de la clase
         rvGroups = findViewById(R.id.rvGroupUsers);
         tvGroupName = findViewById(R.id.tvGroupName);
-        //uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        uid = "c4rs0VHF65W2T2aAHL840vdZh2e2";
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        //uid = "uivt6Bi7ZjapLuBKUXF8e052Oku2";
         fStore = FirebaseFirestore.getInstance();
 
         groupList = new ArrayList<>();
@@ -135,31 +136,6 @@ public class BalanceActivity extends AppCompatActivity{
                     if (groupUsers != null && groupUsers.contains(uid)) {
                         Task<Void> groupTask = getGroupInfo(groupId, groupName, groupUsers);
                         tasks.add(groupTask);
-                        /*
-                        List<User> users = new ArrayList<>();
-
-                        for (String userId : groupUsers) {
-                            getGroupUsers(groupId, userId, (user,totalBalance) -> {
-                                //Añadir los usuarios a la lista de usuarios
-                                users.add(user);
-
-                                // Verificar si se han cargado todos los usuarios
-                                if (userCount.incrementAndGet() == groupUsers.size()) {
-                                    // Construir un objeto Group con la información obtenida
-                                    Group group = new Group(groupId, groupName, users);
-
-                                    //Añadir el grupo a la lista de grupos
-                                    groupList.add(group);
-
-                                    // Verificar si se han cargado todos los grupos
-                                    if (groupList.size() == groupCount) {
-                                        onDataLoaded();
-                                    }
-                                }
-                            });
-                        }
-
-                         */
                     } else {
                         Log.e("BalanceActivity", "El usuario no pertenece a este grupo");
                     }
@@ -210,7 +186,6 @@ public class BalanceActivity extends AppCompatActivity{
     }
 
     private void getGroupUsers(String groupId, String userId, UsersCallBack callBack) {
-        Log.e("BalanceActivity", "Entramos en getGroupUsers");
         List<User> usersList = new ArrayList<>();
 
         // Realizar consulta a la colección "users" con la referencia del ID del usuario
