@@ -1,7 +1,5 @@
 package com.lfcounago.gastoscompartidos.core;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +11,7 @@ public class Group {
     public Group(String groupId, String groupName, List<User> users){
         this.groupId = groupId;
         this.groupName = groupName;
-        this.users = (users != null) ? users : new ArrayList<>();;
+        this.users = (users != null) ? users : new ArrayList<>();
     }
 
     public String getGroupId() {
@@ -39,20 +37,5 @@ public class Group {
     public void setUsers(List<User> users) {
 
         this.users = (users != null) ? users : new ArrayList<>();
-    }
-
-    public void updateUserExpenses(String userId, List<String> expenses){
-        if (users != null){
-            for (User user : users){
-                if(user != null & user.getUserId().equals(userId)){
-                    user.setBalanceId(expenses);
-                    break;
-                }
-            }
-        } else {
-            // Manejar el caso en que users es nulo
-            Log.e("Group", "La lista de usuarios es nula");
-        }
-
     }
 }

@@ -36,7 +36,6 @@ public class BalanceActivity extends AppCompatActivity{
     private TextView tvGroupName;
     private TextView tvUserBalance;
     private GroupRecyclerViewAdapter groupRecyclerViewAdapter;
-    private UserRecyclerViewAdapter userRecyclerViewAdapter;
     private List<Group> groupList;
     private String uid;
     private FirebaseFirestore fStore;
@@ -51,7 +50,6 @@ public class BalanceActivity extends AppCompatActivity{
         rvGroups = findViewById(R.id.rvGroupUsers);
         tvGroupName = findViewById(R.id.tvGroupName);
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        //uid = "uivt6Bi7ZjapLuBKUXF8e052Oku2";
         fStore = FirebaseFirestore.getInstance();
 
         groupList = new ArrayList<>();
@@ -78,14 +76,6 @@ public class BalanceActivity extends AppCompatActivity{
 
         // Añadir el TextView al LinearLayout
         llSaldos.addView(tvTituloSaldos);
-
-
-        tvGroupName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //
-            }
-        });
 
         //Llamar al método que obtiene los grupos
         getGroups();
@@ -120,27 +110,28 @@ public class BalanceActivity extends AppCompatActivity{
                 //Limpiar los grupos antes de agregar nuevos
                 groupList.clear();
 
+                //Lista para llevar una cuenta de las tareas realizadas
                 List<Task<Void>> tasks = new ArrayList<>();
-                int groupCount = task.getResult().size();
-                AtomicInteger userCount = new AtomicInteger(0);
 
                 //Recorrer cada resultado del documento
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     //Obtener los datos
                     String groupId = document.getId();
                     String groupName = document.getString("name");
+                    String currency = document.getString("currency");
                     //Lista de usuarios del grupo
                     List<String> groupUsers = (List<String>) document.get("users");
 
                     //Comprobar si hay usuarios y si el usuario actual pertenece a ese grupo
                     if (groupUsers != null && groupUsers.contains(uid)) {
-                        Task<Void> groupTask = getGroupInfo(groupId, groupName, groupUsers);
+                        //Task para llevar cuenta de los grupos comprobados
+                        Task<Void> groupTask = getGroupInfo(groupId, groupName, groupUsers, currency);
                         tasks.add(groupTask);
                     } else {
                         Log.e("BalanceActivity", "El usuario no pertenece a este grupo");
                     }
                 }
-            // Esperar a que todas las tareas se completen
+                // Esperar a que todas las tareas se completen
                 Tasks.whenAllSuccess(tasks)
                         .addOnSuccessListener(result -> {
                             // Notificar al adaptador de los cambios realizados
@@ -155,14 +146,14 @@ public class BalanceActivity extends AppCompatActivity{
         });
     }
 
-    private Task<Void> getGroupInfo(String groupId, String groupName, List<String> groupUsers){
+    private Task<Void> getGroupInfo(String groupId, String groupName, List<String> groupUsers, String currency){
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
         List<User> users = new ArrayList<>();
 
         AtomicInteger userCount = new AtomicInteger(0);
 
         for (String userId : groupUsers) {
-            getGroupUsers(groupId, userId, (user, totalBalance) -> {
+            getGroupUsers(groupId, userId, currency, (user, totalBalance) -> {
                 //Añadir los usuarios a la lista de usuarios
                 users.add(user);
 
@@ -185,7 +176,7 @@ public class BalanceActivity extends AppCompatActivity{
         return taskCompletionSource.getTask();
     }
 
-    private void getGroupUsers(String groupId, String userId, UsersCallBack callBack) {
+    private void getGroupUsers(String groupId, String userId, String currency, UsersCallBack callBack) {
         List<User> usersList = new ArrayList<>();
 
         // Realizar consulta a la colección "users" con la referencia del ID del usuario
@@ -203,7 +194,7 @@ public class BalanceActivity extends AppCompatActivity{
                           //Obtener informacion de cada gasto asociado al usuario
                           getUserSpends(groupId, userId, (spends, totalBalance) ->{
                                // Construir un objeto User con la información obtenida
-                               User user = new User(userId, userName,Collections.emptyList());
+                               User user = new User(userId, userName,Collections.emptyList(),currency);
 
                               // Configurar el saldo total del usuario
                                user.setTotalBalance(totalBalance);
