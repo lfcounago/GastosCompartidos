@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="20dp"
+    android:orientation="vertical"
+    tools:context=".LiquidationsActivity">
+
+    <TextView
+        android:id="@+id/tvTituloLiquidaciones"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:text="Liquidaciones"
+        android:textAlignment="center"
+        android:textSize="40dp"
+        android:textStyle="bold" >
+    </TextView>
+
+    <TextView
+        android:id="@+id/tvGroupName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvGroupUsers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:divider="?android:attr/dividerHorizontal"
+        android:orientation="vertical"
+        android:showDividers="middle" />
+
+</LinearLayout>
