@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lfcounago.gastoscompartidos.R;
+import com.lfcounago.gastoscompartidos.*;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -39,8 +39,16 @@ public class GroupRecyclerViewAdapter extends RecyclerView.Adapter<GroupRecycler
         LinearLayoutManager layoutManager = new LinearLayoutManager(holder.rvGroupMembers.getContext());
         holder.rvGroupMembers.setLayoutManager(layoutManager);
 
-        UserRecyclerViewAdapter memberAdapter = new UserRecyclerViewAdapter(group.getUsers());
+        UserRecyclerViewAdapter memberAdapter = new UserRecyclerViewAdapter(group.getUsers(), isBalanceActivity());
         holder.rvGroupMembers.setAdapter(memberAdapter);
+    }
+
+    private boolean isBalanceActivity() {
+        // Obtener el nombre de la clase actual
+        String className = this.getClass().getSimpleName();
+
+        // Comparar con el nombre de la clase de BalanceActivity
+        return className.equals("BalanceActivity");
     }
 
     @Override
