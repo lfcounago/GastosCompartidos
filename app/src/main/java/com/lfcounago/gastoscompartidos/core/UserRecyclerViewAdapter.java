@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lfcounago.gastoscompartidos.BalanceActivity;
 import com.lfcounago.gastoscompartidos.R;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,9 +18,12 @@ import java.util.List;
 
 public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerViewAdapter.MemberViewHolder> {
     private List<User> memberList;
+    private boolean showBalancesMode;
 
-    public UserRecyclerViewAdapter(List<User> memberList) {
+    public UserRecyclerViewAdapter(List<User> memberList, boolean showBalanceMode) {
+
         this.memberList = memberList;
+        this.showBalancesMode = showBalanceMode;
     }
 
     @NonNull
@@ -34,8 +38,13 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         holder.tvMemberName.setText(member.getUserName());
         String currency = member.getCurrency();
 
-        //Configurar el saldo directamente desde el objeto User y su currency
-        holder.setBalance(member.getTotalBalance(), currency.substring(Math.max(0, currency.length() - 4)));
+        if (showBalancesMode){
+            //Configurar el saldo directamente desde el objeto User y su currency
+            holder.setBalance(member.getTotalBalance(), currency.substring(Math.max(0, currency.length() - 4)));
+        }else{
+            //Configurar la liquidacion directamente desde el objeto User y su currency
+            holder.setLiquidations(member.getTotalBalance(), currency.substring(Math.max(0, currency.length() - 4)));
+        }
 
         // Restablecer los márgenes para evitar problemas de reciclaje
         ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams();
@@ -62,14 +71,35 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
 
         public void setBalance(double totalBalance, String currency){
             // Crear un objeto DecimalFormat con el formato deseado
-            DecimalFormat decimalFormat = new DecimalFormat("#.00");
+            DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
             if (totalBalance > 0) {
                 tvMemberBalance.setText(decimalFormat.format(totalBalance));
                 tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
+                //Mostrar la currency
+                tvMemberCurrency.setText(currency);
+                tvMemberCurrency.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
             } else if (totalBalance < 0) {
                 tvMemberBalance.setText(decimalFormat.format(totalBalance));
                 tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
+                //Mostrar la currency
+                tvMemberCurrency.setText(currency);
+                tvMemberCurrency.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
+            } else {
+                tvMemberBalance.setText("0.00");
+            }
+
+
+        }
+
+        public void setLiquidations(double totalLiquidations, String currency){
+            // Crear un objeto DecimalFormat con el formato deseado
+            DecimalFormat decimalFormat = new DecimalFormat("0.00");
+
+            if (totalLiquidations > 0) {
+                tvMemberBalance.setText(decimalFormat.format(totalLiquidations));
+            } else if (totalLiquidations < 0) {
+                tvMemberBalance.setText(decimalFormat.format(totalLiquidations));
             } else {
                 tvMemberBalance.setText("0.00");
             }
