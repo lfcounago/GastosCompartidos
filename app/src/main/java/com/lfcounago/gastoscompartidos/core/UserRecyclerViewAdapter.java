@@ -37,19 +37,36 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         User member = memberList.get(position);
         holder.tvMemberName.setText(member.getUserName());
         String currency = member.getCurrency();
+        double balance = member.getTotalBalance();
 
         if (showBalancesMode){
             //Configurar el saldo directamente desde el objeto User y su currency
             holder.setBalance(member.getTotalBalance(), currency.substring(Math.max(0, currency.length() - 4)));
         }else{
-            //Configurar la liquidacion directamente desde el objeto User y su currency
-            holder.setLiquidations(member.getTotalBalance(), currency.substring(Math.max(0, currency.length() - 4)));
+            if (balance > 0){
+                //Configurar la liquidacion directamente desde el objeto User y su currency
+                holder.setLiquidations(member.getTotalBalance(), currency.substring(Math.max(0, currency.length() - 4)));
+            }else{
+                holder.itemView.setVisibility(View.GONE);
+                ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
+                params.height = 0;
+                holder.itemView.setLayoutParams(params);
+            }
         }
 
         // Restablecer los márgenes para evitar problemas de reciclaje
         ViewGroup.MarginLayoutParams layoutParams = (ViewGroup.MarginLayoutParams) holder.itemView.getLayoutParams();
         layoutParams.setMargins(0, 8, 0, 8);
         holder.itemView.setLayoutParams(layoutParams);
+    }
+
+    public boolean groupDebts(){
+        for (User user: memberList){
+            if (user.getTotalBalance() != 0){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

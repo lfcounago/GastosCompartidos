@@ -26,7 +26,7 @@ public class GroupRecyclerViewAdapter extends RecyclerView.Adapter<GroupRecycler
     @NonNull
     @Override
     public GroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_balance, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_liquidations, parent, false);
         return new GroupViewHolder(view);
     }
 
@@ -41,6 +41,15 @@ public class GroupRecyclerViewAdapter extends RecyclerView.Adapter<GroupRecycler
 
         UserRecyclerViewAdapter memberAdapter = new UserRecyclerViewAdapter(group.getUsers(), isBalanceActivity());
         holder.rvGroupMembers.setAdapter(memberAdapter);
+
+        if (holder.tvNoDebtsMessage != null) {
+            //Verificar si hay deudas en el grupo
+            if (memberAdapter.groupDebts()) {
+                holder.tvNoDebtsMessage.setVisibility(View.GONE);
+            } else {
+                holder.tvNoDebtsMessage.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     private boolean isBalanceActivity() {
@@ -58,11 +67,13 @@ public class GroupRecyclerViewAdapter extends RecyclerView.Adapter<GroupRecycler
 
     public static class GroupViewHolder extends RecyclerView.ViewHolder {
         TextView tvGroupName;
+        TextView tvNoDebtsMessage;
         RecyclerView rvGroupMembers;
 
         public GroupViewHolder(@NonNull View itemView) {
             super(itemView);
             tvGroupName = itemView.findViewById(R.id.tvGroupName);
+            tvNoDebtsMessage = itemView.findViewById(R.id.tvNoDebtsMessage);
             rvGroupMembers = itemView.findViewById(R.id.rvGroupUsers);
         }
     }

@@ -14,8 +14,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 
+import android.util.TypedValue;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +62,22 @@ public class LiquidationsActivity extends AppCompatActivity{
         rvGroups.setLayoutManager(new LinearLayoutManager(this));
         rvGroups.setAdapter(groupRecyclerViewAdapter);
 
+        //Obtener la referencia al LinearLayout que contiene el titulo "Liquidaciones"
+        LinearLayout llLiquidaciones = findViewById(R.id.tvTituloLiquidaciones);
+
+        //Añadir el titulo "Liquidaciones" al LinearLayout
+        TextView tvTituloLiquidaciones = new TextView(this);
+        tvTituloLiquidaciones.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        tvTituloLiquidaciones.setText("Liquidaciones");
+        tvTituloLiquidaciones.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+        tvTituloLiquidaciones.setTextSize(TypedValue.COMPLEX_UNIT_SP, 44);
+        tvTituloLiquidaciones.setTypeface(null, Typeface.BOLD);
+
+        // Añadir el TextView al LinearLayout
+        llLiquidaciones.addView(tvTituloLiquidaciones);
 
         //Llamar al método que obtiene los grupos
         getGroups();
@@ -180,7 +200,6 @@ public class LiquidationsActivity extends AppCompatActivity{
                             // Obtener el nombre del usuario
                             String userName = result.getString("fName");
 
-
                                 //Obtener informacion de cada gasto asociado al usuario
                                 getUserLiquidations(groupId, userId, (spends, liquidations) ->{
                                     // Construir un objeto User con la información obtenida
@@ -192,21 +211,12 @@ public class LiquidationsActivity extends AppCompatActivity{
                                     //Añadir el usuario a la lista de usuarios
                                     usersList.add(user);
 
+
                                     // Verificar si se han cargado todos los usuarios
                                     if (usersList.size() == 1) {
                                         //Notificar al adaptador de los cambios realizados
                                         groupRecyclerViewAdapter.notifyDataSetChanged();
 
-                                        /*
-                                        //Inicializar el adaptador
-                                        userRecyclerViewAdapter = new UserRecyclerViewAdapter(usersList,false);
-                                        rvGroups.setAdapter(userRecyclerViewAdapter);
-
-                                        //Notificar al adaptador de los cambios realizados
-                                        userRecyclerViewAdapter.notifyDataSetChanged();
-
-
-                                         */
                                         // Llamar al método de devolución de llamada con el usuario construido
                                         callBack.onUsuarioRecibido(usersList.get(0), liquidations);
                                     }
