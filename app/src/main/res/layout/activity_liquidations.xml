@@ -8,16 +8,12 @@
     android:orientation="vertical"
     tools:context=".LiquidationsActivity">
 
-    <TextView
+    <LinearLayout
         android:id="@+id/tvTituloLiquidaciones"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:text="Liquidaciones"
-        android:textAlignment="center"
-        android:textSize="40dp"
-        android:textStyle="bold" >
-    </TextView>
+        android:orientation="horizontal" >
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvGroupName"
@@ -27,6 +23,18 @@
         android:layout_marginBottom="8dp"
         android:textStyle="bold" />
 
+    <TextView
+        android:id="@+id/tvNoDebtsMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvGroupName"
+        android:layout_marginTop="8dp"
+        android:layout_centerHorizontal="true"
+        android:text="No hay deudas en este grupo"
+        android:visibility="gone"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvGroupUsers"
         android:layout_width="match_parent"
@@ -35,6 +43,7 @@
         android:layout_marginBottom="8dp"
         android:divider="?android:attr/dividerHorizontal"
         android:orientation="vertical"
-        android:showDividers="middle" />
+        android:showDividers="middle"
+        android:textSize="18sp"/>
 
 </LinearLayout>
