@@ -108,9 +108,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
                                                     DocumentSnapshot groupDocument = groupTask.getResult();
                                                     if (groupDocument != null) {
                                                         String currency = groupDocument.getString("currency");
-
+                                                        String currencySymbol = CurrencySymbol.getCurrencySymbol(currency);
                                                         // Añadir a la lista
-                                                        spendNames.add(spendName + "\n" + amount + " " + currency);
+                                                        spendNames.add(spendName + "\n" + amount + " " + currencySymbol);
                                                         spendNameId.put(spendName, spendId);
                                                         spendIds.add(spendId); //Guardo el ID correspondiente para despues pueda acceder a editar el gasto
                                                         spendNombre.add(spendName); //Guardo el nombre correspondiente para despues pueda acceder a eliminar el gasto

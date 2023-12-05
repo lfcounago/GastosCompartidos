@@ -76,7 +76,8 @@ public class EditSpendActivity extends AppCompatActivity {
                                                             String groupID = documento.getId();
                                                             if(groupId != null && groupId.equalsIgnoreCase(groupID)){
                                                                 //Establecer el texto de los componentes
-                                                                tvDivisa.setText(currency);
+                                                                String currencySymbol = CurrencySymbol.getCurrencySymbol(currency);
+                                                                tvDivisa.setText(currencySymbol);
                                                             }
                                                         }
                                                     }
