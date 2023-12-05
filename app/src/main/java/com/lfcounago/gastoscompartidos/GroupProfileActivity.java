@@ -396,7 +396,8 @@ public class GroupProfileActivity extends AppCompatActivity {
     // Método para cuando se edita un grupo volver a la pantalla principal de los gastos del grupo GroupDetailsActivity
     private void toGroupDetails() {
         // Crear un Intent para iniciar la actividad de detalles del grupo
-        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+        Intent intent = new Intent(this, GroupDetailsActivity.class);
+        intent.putExtra("groupId", groupId);
         startActivity(intent);
         // Cerrar la actividad actual si es necesario
         finish();
