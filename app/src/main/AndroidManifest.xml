@@ -15,6 +15,9 @@
         android:theme="@style/Theme.GastosCompartidos"
         tools:targetApi="31">
         <activity
+            android:name=".EditSpendActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddUserActivity"
             android:exported="false" />
         <activity

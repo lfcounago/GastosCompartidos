@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +24,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,12 +35,14 @@ import java.util.Map;
 public class GroupProfileActivity extends AppCompatActivity {
 
     // Declarar los atributos de la clase
-    private TextView tvName, tvCurrency, tvCategory;
+    private EditText etName;
+    private TextView tvCurrency, tvCategory;
     private ListView lvUsuarios;
     private List<String> usuarios, uids;
     private Map<String, String> uidToName, nameToUid;
     private ArrayAdapter<String> adapter;
     private FloatingActionButton btnEliminarGrupo, btnAnadirUsuario;
+    private Button btnGuardar;
     private String groupId;
     FirebaseAuth fAuth;
     private FirebaseFirestore fStore;
@@ -47,7 +53,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_profile); // Establecer el layout correspondiente
 
         // Inicializar los atributos de la clase
-        tvName = findViewById(R.id.textViewName);
+        etName = findViewById(R.id.textViewName);
         tvCurrency = findViewById(R.id.textViewCurrency);
         tvCategory = findViewById(R.id.textViewCategory);
         lvUsuarios = (ListView) findViewById(R.id.lvUsuarios);
@@ -60,6 +66,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         btnEliminarGrupo = findViewById(R.id.btnEliminarGrupo);
+        btnGuardar = findViewById(R.id.btnGuardar);
 
         lvUsuarios.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
@@ -77,6 +84,13 @@ public class GroupProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mostrarDialogoConfirmacion();
+            }
+        });
+
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                guardarCambiosGrupo();
             }
         });
 
@@ -140,7 +154,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                                             });
                                 }
                                 // Establecer el texto de los componentes con los datos obtenidos
-                                tvName.setText(name);
+                                etName.setText(name);
                                 tvCurrency.setText(currency);
                                 tvCategory.setText(category);
                             }
@@ -276,6 +290,87 @@ public class GroupProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(GroupProfileActivity.this, AddUserActivity.class);
         intent.putExtra("groupId", groupId);
         startActivity(intent);
+    }
+
+    private void guardarCambiosGrupo() {
+
+        String nuevoNombre = etName.getText().toString();
+
+        if (!nuevoNombre.isEmpty()) {
+            // Actualizar el nombre en la base de datos
+            actualizarGrupo(nuevoNombre);
+        } else {
+            Toast.makeText(getApplicationContext(), "El nombre no puede estar vacío", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void actualizarGrupo(String nuevoNombre) {
+        // Crear un mapa con el nuevo nombre
+        Map<String, Object> newName = new HashMap<>();
+        newName.put("name", nuevoNombre);
+
+        // Actualizar el documento del grupo en la colección "groups" en la base de datos
+        fStore.collection("groups").document(groupId).update(newName)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        // Ahora, actualiza el nombre del grupo solo en los documentos de la colección "spends" que pertenecen a ese grupo
+                        fStore.collection("spends")
+                                .get()
+                                .addOnCompleteListener(task -> {
+                                    if(task.isSuccessful()){
+                                        QuerySnapshot result = task.getResult();
+                                        if(result != null){
+                                            for(QueryDocumentSnapshot document : result){
+                                                String spendId = document.getId();
+                                                String groupID = document.getString("groupID");
+                                                if(groupID.equals(groupId)){
+                                                    fStore.collection("spends").document(spendId)
+                                                            .update("group", nuevoNombre)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+                                                                    // Éxito al actualizar el nombre del grupo en la colección "spends"
+                                                                    Toast.makeText(getApplicationContext(), "Nombre del grupo actualizado en la colección 'spends'", Toast.LENGTH_SHORT).show();
+                                                                    // Actualizar la interfaz de usuario
+                                                                    etName.setText(nuevoNombre);
+                                                                    getGroupData();
+                                                                    toGroupDetails();
+                                                                    // Refrescar el listview también por si acaso
+                                                                    adapter.notifyDataSetChanged();
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    // Error al intentar actualizar el nombre del grupo en la colección "spends"
+                                                                    Toast.makeText(getApplicationContext(), "No se pudo actualizar el nombre del grupo en la colección 'spends'", Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            });
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Error al intentar actualizar el nombre del grupo en la colección "groups"
+                        Toast.makeText(getApplicationContext(), "No se pudo actualizar el nombre del grupo", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+    // Método para cuando se edita un grupo volver a la pantalla principal de los gastos del grupo GroupDetailsActivity
+    private void toGroupDetails() {
+        // Crear un Intent para iniciar la actividad de detalles del grupo
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+        startActivity(intent);
+        // Cerrar la actividad actual si es necesario
+        finish();
     }
 
 
