@@ -30,7 +30,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private ListView lvSpends;
     private ArrayAdapter<String> adapter;
     private List<String> spendNames;
-    private List<String> spendIds, spendNombre;
+    private List<String> spendIds, spendNombre, spendDate;
     private Map<String, String> spendNameId;
     private String groupId;
     private FirebaseFirestore fStore;
@@ -46,6 +46,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         spendIds = new ArrayList<>();
         spendNombre = new ArrayList<>();
         spendNameId = new HashMap<>();
+        spendDate = new  ArrayList<>();
         groupId = getIntent().getStringExtra("groupId");
         fStore = FirebaseFirestore.getInstance();
 
@@ -99,6 +100,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
                                 String groupName = document.getString("group");
                                 Number amount = document.getDouble("amount");
                                 String spendName = document.getString("title");
+                                String date = document.getString("date");
                                 if (groupID.equals(groupId)) {
                                     tvGroupName.setText(groupName);
                                     fStore.collection("groups").document(groupId)
@@ -110,10 +112,11 @@ public class GroupDetailsActivity extends AppCompatActivity {
                                                         String currency = groupDocument.getString("currency");
                                                         String currencySymbol = CurrencySymbol.getCurrencySymbol(currency);
                                                         // Añadir a la lista
-                                                        spendNames.add(spendName + "\n" + amount + " " + currencySymbol);
+                                                        spendNames.add(spendName + "\n" + amount + " " + currencySymbol + "\n" + date);
                                                         spendNameId.put(spendName, spendId);
                                                         spendIds.add(spendId); //Guardo el ID correspondiente para despues pueda acceder a editar el gasto
                                                         spendNombre.add(spendName); //Guardo el nombre correspondiente para despues pueda acceder a eliminar el gasto
+                                                        spendDate.add(date);
 
                                                         // Notificar al adaptador que los datos han cambiado
                                                         adapter.notifyDataSetChanged();
