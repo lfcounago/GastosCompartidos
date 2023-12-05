@@ -202,6 +202,35 @@ public class GroupProfileActivity extends AppCompatActivity {
                                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
+                                                    fStore.collection("spends")
+                                                            .get() // Obtener todos los documentos de la colección
+                                                            .addOnCompleteListener(task -> {
+                                                                if(task.isSuccessful()){
+                                                                    QuerySnapshot result = task.getResult();
+                                                                    if(result != null){
+                                                                        for(QueryDocumentSnapshot document : result){
+                                                                            String spendId = document.getId();
+                                                                            String groupIdspend = document.getString("groupID");
+                                                                            if(groupIdspend.equals(groupId)){
+                                                                                fStore.collection("spends").document(spendId).delete()
+                                                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                                            @Override
+                                                                                            public void onSuccess(Void unused) {
+                                                                                                //El grupo se elimina con éxito
+                                                                                                Toast.makeText(getApplicationContext(), "Gasto perteneciente al grupo eliminado", Toast.LENGTH_SHORT).show();
+                                                                                            }
+                                                                                        })
+                                                                                        .addOnFailureListener(new OnFailureListener() {
+                                                                                            @Override
+                                                                                            public void onFailure(@NonNull Exception e) {
+                                                                                                Toast.makeText(getApplicationContext(), "El gasto no se pudo eliminar", Toast.LENGTH_SHORT).show();
+                                                                                            }
+                                                                                        });
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
                                                     //El grupo se elimina con éxito
                                                     Toast.makeText(getApplicationContext(), "Grupo eliminado con éxito", Toast.LENGTH_SHORT).show();
                                                     toListUserGroups();
