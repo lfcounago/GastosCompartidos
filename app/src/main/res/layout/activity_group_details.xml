@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".GroupDetailsActivity">
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:onClick="goToListUserGroups"
+        android:src="@android:drawable/ic_menu_revert" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

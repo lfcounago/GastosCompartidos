@@ -172,9 +172,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
     public void goToIngresarSaldo(View view) {
         // Crear un intent para iniciar la actividad AddSpendActivity a la que se le pasa el groupId
         Intent intent = new Intent(view.getContext(), AddSpendActivity.class);
-
         intent.putExtra("groupId", groupId);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
 
+    public void goToListUserGroups(View view) {
+        // Crear un intent para iniciar la actividad AddSpendActivity a la que se le pasa el groupId
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
         // Iniciar la actividad
         startActivity(intent);
     }

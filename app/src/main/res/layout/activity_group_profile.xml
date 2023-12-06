@@ -49,7 +49,9 @@
         <ListView
             android:id="@+id/lvUsuarios"
             android:layout_width="match_parent"
-            android:layout_height="300dp"/>
+            android:layout_height="300dp">
+
+        </ListView>
 
     </LinearLayout>
 
@@ -59,9 +61,19 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="70dp"
         android:onClick="guardarCambiosGrupo"
         android:text="Guardar" />
+
+    <Button
+        android:id="@+id/btnCancelar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp"
+        android:onClick="goToDeatilsGroup"
+        android:text="Cancelar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnEliminarGrupo"
