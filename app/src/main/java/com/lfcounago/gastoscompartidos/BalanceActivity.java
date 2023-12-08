@@ -33,9 +33,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BalanceActivity extends AppCompatActivity{
     //Declarar los atributos de la clase
     private RecyclerView rvGroups;
-    private TextView tvGroupName;
-    private TextView tvUserBalance;
     private GroupRecyclerViewAdapter groupRecyclerViewAdapter;
+    private UserRecyclerViewAdapter userRecyclerViewAdapter;
     private List<Group> groupList;
     private String uid;
     private FirebaseFirestore fStore;
@@ -48,14 +47,14 @@ public class BalanceActivity extends AppCompatActivity{
 
         //Inicializar los atributos de la clase
         rvGroups = findViewById(R.id.rvGroupUsers);
-        tvGroupName = findViewById(R.id.tvGroupName);
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
 
         groupList = new ArrayList<>();
 
+
         //Inicializar el adaptador
-        groupRecyclerViewAdapter = new GroupRecyclerViewAdapter(groupList);
+        groupRecyclerViewAdapter = new GroupRecyclerViewAdapter(groupList,true);
 
         rvGroups.setLayoutManager(new LinearLayoutManager(this));
         rvGroups.setAdapter(groupRecyclerViewAdapter);
@@ -76,6 +75,9 @@ public class BalanceActivity extends AppCompatActivity{
 
         // Añadir el TextView al LinearLayout
         llSaldos.addView(tvTituloSaldos);
+
+        //Indicar que se trata de los saldos
+        //groupRecyclerViewAdapter.setShowBalancesMode(true);
 
         //Llamar al método que obtiene los grupos
         getGroups();

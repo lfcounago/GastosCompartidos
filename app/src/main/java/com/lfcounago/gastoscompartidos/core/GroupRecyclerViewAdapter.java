@@ -17,16 +17,19 @@ import java.util.List;
 
 public class GroupRecyclerViewAdapter extends RecyclerView.Adapter<GroupRecyclerViewAdapter.GroupViewHolder> {
     private List<Group> groupList;
+    private boolean showBalancesMode;
 
-    public GroupRecyclerViewAdapter(List<Group> groupList) {
+    public GroupRecyclerViewAdapter(List<Group> groupList, boolean showBalancesMode) {
 
         this.groupList = groupList;
+        this.showBalancesMode = showBalancesMode;
     }
 
     @NonNull
     @Override
     public GroupViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_liquidations, parent, false);
+        int layoutRes = showBalancesMode ? R.layout.activity_balance : R.layout.activity_liquidations;
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
         return new GroupViewHolder(view);
     }
 
@@ -39,25 +42,23 @@ public class GroupRecyclerViewAdapter extends RecyclerView.Adapter<GroupRecycler
         LinearLayoutManager layoutManager = new LinearLayoutManager(holder.rvGroupMembers.getContext());
         holder.rvGroupMembers.setLayoutManager(layoutManager);
 
-        UserRecyclerViewAdapter memberAdapter = new UserRecyclerViewAdapter(group.getUsers(), isBalanceActivity());
+        UserRecyclerViewAdapter memberAdapter = new UserRecyclerViewAdapter(group.getUsers(), showBalancesMode);
         holder.rvGroupMembers.setAdapter(memberAdapter);
 
-        if (holder.tvNoDebtsMessage != null) {
-            //Verificar si hay deudas en el grupo
-            if (memberAdapter.groupDebts()) {
-                holder.tvNoDebtsMessage.setVisibility(View.GONE);
-            } else {
-                holder.tvNoDebtsMessage.setVisibility(View.VISIBLE);
+        if (!showBalancesMode) {
+            if (holder.tvNoDebtsMessage != null) {
+                //Verificar si hay deudas en el grupo
+                if (memberAdapter.groupDebts()) {
+                    holder.tvNoDebtsMessage.setVisibility(View.GONE);
+                } else {
+                    holder.tvNoDebtsMessage.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
 
-    private boolean isBalanceActivity() {
-        // Obtener el nombre de la clase actual
-        String className = this.getClass().getSimpleName();
-
-        // Comparar con el nombre de la clase de BalanceActivity
-        return className.equals("BalanceActivity");
+    public void setShowBalancesMode(boolean showBalancesMode) {
+        this.showBalancesMode = showBalancesMode;
     }
 
     @Override

@@ -19,28 +19,39 @@ import android.os.Bundle;
 
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LiquidationsActivity extends AppCompatActivity{
     //Declarar los atributos de la clase
     private RecyclerView rvGroups;
-    private TextView tvGroupName;
-    private TextView tvUserBalance;
     private GroupRecyclerViewAdapter groupRecyclerViewAdapter;
-    private UserRecyclerViewAdapter userRecyclerViewAdapter;
     private List<Group> groupList;
+    private List<User> usersListSp;
+    private List<ExpenseItem> currencyListSp;
     private String uid;
+    private Spinner spCurrency;
+    private Spinner spUsers;
+    private TextView tvUsers;
+    private TextView tvCurrencies;
     private FirebaseFirestore fStore;
+
+    private String lastSelectedUserId;
+    private String lastSelectedCurrency;
+
+    //Array para spinner
+    private String[] currencies;
 
 
     @Override
@@ -50,35 +61,119 @@ public class LiquidationsActivity extends AppCompatActivity{
 
         //Inicializar los atributos de la clase
         rvGroups = findViewById(R.id.rvGroupUsers);
-        tvGroupName = findViewById(R.id.tvGroupName);
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
+        tvUsers = findViewById(R.id.tvUsers);
+        tvCurrencies = findViewById(R.id.tvCurrencies);
 
+        //Inicializar las listas
         groupList = new ArrayList<>();
+        usersListSp = new ArrayList<>();
+        currencyListSp = new ArrayList<>();
+
+        //Inicializar las divisas
+        currencies = getResources().getStringArray(R.array.currencies);
 
         //Inicializar el adaptador
-        groupRecyclerViewAdapter = new GroupRecyclerViewAdapter(groupList);
+        groupRecyclerViewAdapter = new GroupRecyclerViewAdapter(groupList,false);
 
         rvGroups.setLayoutManager(new LinearLayoutManager(this));
         rvGroups.setAdapter(groupRecyclerViewAdapter);
 
+        //Añadir texto a los TextView de los spinners
+        tvUsers.setText("Filtrado por usuario:");
+        tvCurrencies.setText("Filtrado por divisa:");
+
         //Obtener la referencia al LinearLayout que contiene el titulo "Liquidaciones"
         LinearLayout llLiquidaciones = findViewById(R.id.tvTituloLiquidaciones);
+        //Obtener la referencia al LinearLayout que contiene el spinner de usuarios
+        LinearLayout llSpUsers = findViewById(R.id.llspUsers);
+        //Obtener la referencia al LinearLayout que contiene el spinner de divisas
+        LinearLayout llSpCurrency = findViewById(R.id.llspCurrency);
+
+        //Parametros generales
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
 
         //Añadir el titulo "Liquidaciones" al LinearLayout
         TextView tvTituloLiquidaciones = new TextView(this);
-        tvTituloLiquidaciones.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
+        tvTituloLiquidaciones.setLayoutParams(layoutParams);
         tvTituloLiquidaciones.setText("Liquidaciones");
         tvTituloLiquidaciones.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         tvTituloLiquidaciones.setTextSize(TypedValue.COMPLEX_UNIT_SP, 44);
         tvTituloLiquidaciones.setTypeface(null, Typeface.BOLD);
 
-        // Añadir el TextView al LinearLayout
-        llLiquidaciones.addView(tvTituloLiquidaciones);
+        //Añadir el spinner al LinearLayout
+        spUsers = new Spinner(this);
+        spUsers.setLayoutParams(layoutParams);
+        spUsers.setAccessibilityPaneTitle("Filtrar por usuario");
 
+        //Añadir el spinner al LinearLayout
+        spCurrency = new Spinner(this);
+        spCurrency.setLayoutParams(layoutParams);
+        spCurrency.setAccessibilityPaneTitle("Filtrar por divisa");
+
+        // Añadir al LinearLayout
+        llLiquidaciones.addView(tvTituloLiquidaciones);
+        llSpUsers.addView(spUsers);
+        llSpCurrency.addView(spCurrency);
+
+        //Inicializar el adaptador de currencies
+        ArrayAdapter<String> currencyAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,currencies);
+        currencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCurrency.setAdapter(currencyAdapter);
+
+        //Indicar que se trata de las liquidaciones
+        groupRecyclerViewAdapter.setShowBalancesMode(false);
+
+        // Inicializar el adaptador de users
+        ArrayAdapter<User> userAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, usersListSp);
+        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spUsers.setAdapter(userAdapter);
+
+/*
+
+        spUsers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!usersListSp.isEmpty() && spUsers.getSelectedItem() != null) {
+                    //Llamar al método que obtiene los grupos
+                    getGroupsForUser(usersListSp.get(position).getUserId());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                if (!usersListSp.isEmpty()) {
+                    //Llamar al método que obtiene los grupos
+                    getGroupsForUser(null);
+                }
+            }
+        });
+
+
+        spCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (!currencyListSp.isEmpty() && spCurrency.getSelectedItem() != null) {
+                    lastSelectedCurrency = spCurrency.getSelectedItem().toString();
+                    //Llamar al método que obtiene los grupos
+                    getGroupsForUser(lastSelectedUserId);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                if (!currencyListSp.isEmpty()) {
+                    lastSelectedCurrency = null;
+                    //Llamar al método que obtiene los grupos
+                    getGroupsForUser(lastSelectedUserId);
+                }
+            }
+        });
+*/
         //Llamar al método que obtiene los grupos
         getGroups();
     }
@@ -94,7 +189,6 @@ public class LiquidationsActivity extends AppCompatActivity{
                 // Verifica si groupList tiene datos
                 if (groupList != null && !groupList.isEmpty()) {
                     Log.e("LiquidationsActivity", "La lista de grupos no está vacía o nula");
-
                 } else {
                     Log.e("LiquidationsActivity", "La lista de grupos está vacía o nula");
                 }
@@ -136,17 +230,18 @@ public class LiquidationsActivity extends AppCompatActivity{
                         // Esperar a que todas las tareas se completen
                         Tasks.whenAllSuccess(tasks)
                                 .addOnSuccessListener(result -> {
-                                    // Notificar al adaptador de los cambios realizados
-                                    groupRecyclerViewAdapter.notifyDataSetChanged();
-                                    onDataLoaded();
+                                            // Notificar al adaptador de los cambios realizados
+                                            groupRecyclerViewAdapter.notifyDataSetChanged();
+                                            onDataLoaded();
                                 })
                                 .addOnFailureListener(e -> Log.e("LiquidationsActivity", "Error al obtener información de grupos", e));
-
                     } else {
                         Log.e("LiquidationsActivity", "Error al obtener grupos", task.getException());
                     }
                 });
     }
+
+
 
     private Task<Void> getGroupInfo(String groupId, String groupName, List<String> groupUsers, String currency){
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
@@ -154,24 +249,26 @@ public class LiquidationsActivity extends AppCompatActivity{
 
         AtomicInteger userCount = new AtomicInteger(0);
 
-        for (String userId : groupUsers) {
+        for (String uId : groupUsers) {
             //Filtrar el usuario actual
-            if (!userId.equals(uid)){
-                getGroupUsers(groupId, userId, currency, (user, totalBalance) -> {
+            if (!uId.equals(uid)){
+                getGroupUsers(groupId, uId, currency, (user, totalBalance) -> {
                     //Añadir los usuarios a la lista de usuarios, excepto el currentUser
                     users.add(user);
 
                     // Verificar si se han cargado todos los usuarios
-                    if (userCount.incrementAndGet() == groupUsers.size()) {
-                        // Construir un objeto Group con la información obtenida
-                        Group group = new Group(groupId, groupName, users);
+                    if (userCount.incrementAndGet() == groupUsers.size() - 1) {//Se resta uno porque el usuario actual no se procesa aqui
+                                // Construir un objeto Group con la información obtenida
+                                Group group = new Group(groupId, groupName, users);
 
-                        //Añadir el grupo a la lista de grupos
-                        groupList.add(group);
+                                //Añadir el grupo a la lista de grupos
+                                groupList.add(group);
 
-                        taskCompletionSource.trySetResult(null);
+                                //Notificar al adaptador de los cambios
+                                groupRecyclerViewAdapter.notifyDataSetChanged();
+
+                                taskCompletionSource.trySetResult(null);
                     }
-
                 });
             }else{
                 // Incrementar userCount para evitar que la condición de verificación se active antes de tiempo
@@ -193,6 +290,7 @@ public class LiquidationsActivity extends AppCompatActivity{
                 .get()
                 .addOnCompleteListener(userDocument -> {
                     if (userDocument.isSuccessful()) {
+                        usersListSp.clear();
                         // Obtener resultado de la consulta de Firestore
                         DocumentSnapshot result = userDocument.getResult();
 
@@ -208,9 +306,33 @@ public class LiquidationsActivity extends AppCompatActivity{
                                     // Configurar el saldo total del usuario
                                     user.setTotalBalance(liquidations);
 
+                                    //Verificar si el usuario ya está en la lista del spinner
+                                    boolean userExists = false;
+                                    for (User existingUser : usersListSp){
+                                        if (existingUser.getUserId().equals(user.getUserId())){
+                                            userExists = true;
+                                            break;
+                                        }
+                                    }
+
+                                    //Añadir a la lista del spinner los usuarios si no estan en la lista
+                                    if (!userExists) {
+                                        usersListSp.add(user);
+
+                                        if (!usersListSp.isEmpty()) {
+                                            // Configurar el adaptador para el Spinner de usuarios
+                                            ArrayAdapter<User> adapter = new ArrayAdapter<>(LiquidationsActivity.this,
+                                                    android.R.layout.simple_spinner_item, usersListSp);
+                                            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                                            // Establecer el adaptador para el Spinner de usuarios
+                                            spUsers.setAdapter(adapter);
+                                        }
+                                    }
+
+
                                     //Añadir el usuario a la lista de usuarios
                                     usersList.add(user);
-
 
                                     // Verificar si se han cargado todos los usuarios
                                     if (usersList.size() == 1) {
