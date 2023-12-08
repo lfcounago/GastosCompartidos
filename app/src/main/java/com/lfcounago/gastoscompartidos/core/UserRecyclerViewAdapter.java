@@ -1,5 +1,6 @@
 package com.lfcounago.gastoscompartidos.core;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.lfcounago.gastoscompartidos.R;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerViewAdapter.MemberViewHolder> {
@@ -61,17 +63,26 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
     }
 
     public boolean groupDebts(){
-        for (User user: memberList){
-            if (user.getTotalBalance() != 0){
-                return true;
+        if (showBalancesMode){
+            return true;
+        }else {
+            for (User user : memberList) {
+                if (user.getTotalBalance() > 0) {
+                    return true;
+                }
             }
+            return false;
         }
-        return false;
     }
 
     @Override
     public int getItemCount() {
         return memberList.size();
+    }
+
+    public void filtrar(ArrayList<User> filtroUsers){
+        this.memberList = filtroUsers;
+        notifyDataSetChanged();
     }
 
     public static class MemberViewHolder extends RecyclerView.ViewHolder {
@@ -93,17 +104,20 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
             if (totalBalance > 0) {
                 tvMemberBalance.setText(decimalFormat.format(totalBalance));
                 tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
+
                 //Mostrar la currency
                 tvMemberCurrency.setText(currency);
                 tvMemberCurrency.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.green));
             } else if (totalBalance < 0) {
                 tvMemberBalance.setText(decimalFormat.format(totalBalance));
                 tvMemberBalance.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
+
                 //Mostrar la currency
                 tvMemberCurrency.setText(currency);
                 tvMemberCurrency.setBackgroundColor(ContextCompat.getColor(itemView.getContext(), R.color.red));
             } else {
                 tvMemberBalance.setText("0.00");
+                tvMemberCurrency.setText(currency);
             }
 
 

@@ -65,4 +65,8 @@ public class User {
     public void setDebtUser(Double debtUser) {
         this.debtUser = debtUser;
     }
+
+    public String toString(){
+        return this.userName;
+    }
 }
