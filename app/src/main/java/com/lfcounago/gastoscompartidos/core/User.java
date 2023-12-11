@@ -8,6 +8,7 @@ public class User {
     private List<String> balanceId;
     private double totalBalance;
     private String currency;
+    private  Double debtUser;
 
     public User (String userId, String userName, List<String> balanceId, String currency){
         this.userId = userId;
@@ -55,5 +56,17 @@ public class User {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public Double getDebtUser() {
+        return debtUser;
+    }
+
+    public void setDebtUser(Double debtUser) {
+        this.debtUser = debtUser;
+    }
+
+    public String toString(){
+        return this.userName;
     }
 }
