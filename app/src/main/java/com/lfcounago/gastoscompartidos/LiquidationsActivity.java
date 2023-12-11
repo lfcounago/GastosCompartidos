@@ -120,63 +120,54 @@ public class LiquidationsActivity extends AppCompatActivity{
         llSpUsers.addView(spUsers);
         llSpCurrency.addView(spCurrency);
 
+        //Indicar que se trata de las liquidaciones
+        groupRecyclerViewAdapter.setShowBalancesMode(false);
+
         //Inicializar el adaptador de currencies
         ArrayAdapter<String> currencyAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item,currencies);
         currencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCurrency.setAdapter(currencyAdapter);
 
-        //Indicar que se trata de las liquidaciones
-        groupRecyclerViewAdapter.setShowBalancesMode(false);
-
-        // Inicializar el adaptador de users
-        ArrayAdapter<User> userAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, usersListSp);
-        userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spUsers.setAdapter(userAdapter);
+        //Verificar si el adaptaddor del spinner de divisas tiene elementos antes de intentar seleccionar uno
+        if (currencyAdapter.getCount() > 0) {
+            // Seleccionar el elemento en la posición 0 (o la posición que desees)
+            spCurrency.setSelection(0);
+        } else {
+            // El adaptador no tiene elementos, manejar esto según tus necesidades
+            Log.e("LiquidationsActivity", "El adaptador del Spinner de divisas no tiene elementos.");
+        }
 
 /*
-
-        spUsers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!usersListSp.isEmpty() && spUsers.getSelectedItem() != null) {
-                    //Llamar al método que obtiene los grupos
-                    getGroupsForUser(usersListSp.get(position).getUserId());
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                if (!usersListSp.isEmpty()) {
-                    //Llamar al método que obtiene los grupos
-                    getGroupsForUser(null);
-                }
-            }
-        });
-
-
         spCurrency.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!currencyListSp.isEmpty() && spCurrency.getSelectedItem() != null) {
-                    lastSelectedCurrency = spCurrency.getSelectedItem().toString();
-                    //Llamar al método que obtiene los grupos
-                    getGroupsForUser(lastSelectedUserId);
-                }
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+                // Obtener la divisa seleccionada
+                lastSelectedCurrency = currencies[position];
+                applyFilters();
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                if (!currencyListSp.isEmpty()) {
-                    lastSelectedCurrency = null;
-                    //Llamar al método que obtiene los grupos
-                    getGroupsForUser(lastSelectedUserId);
-                }
+            public void onNothingSelected(AdapterView<?> parentView) {
+                // No hacer nada en este caso
             }
         });
 */
+
         //Llamar al método que obtiene los grupos
         getGroups();
     }
+
+    /*
+    // Método para aplicar filtros
+    private void applyFilters() {
+        // Limpiar la lista de grupos
+        groupList.clear();
+
+        // Volver a obtener los grupos con los nuevos filtros
+        getGroups();
+    }
+    */
+
 
 
     public void onDataLoaded() {
@@ -197,8 +188,9 @@ public class LiquidationsActivity extends AppCompatActivity{
         });
     }
 
-    //Método que obtiene los miembros del grupo
-    private void getGroups() {
+    //Método para listar los grupos una vez seleccionado un usuario del filtro
+    private void getGroupsForUserSpinner(String userId) {
+        Log.e("LIquidationsActivity", "entro en getgroupsforuserspinner");
         //Realizar consulta a la coleccion "groups" de la base de datos de Firestore
         fStore.collection("groups").get()
                 .addOnCompleteListener(task -> {
@@ -218,21 +210,37 @@ public class LiquidationsActivity extends AppCompatActivity{
                             //Lista de usuarios del grupo
                             List<String> groupUsers = (List<String>) document.get("users");
 
+                            Log.e("LiquidationsActivity", "getgroupfor users Groupname: " + groupName);
+                            Log.e("LiquidationsActivity", "Groupusers for users: " + groupUsers);
+
                             //Comprobar si hay usuarios y si el usuario actual pertenece a ese grupo
-                            if (groupUsers != null && groupUsers.contains(uid)) {
-                                //Task para llevar cuenta de los grupos comprobados
-                                Task<Void> groupTask = getGroupInfo(groupId, groupName, groupUsers, currency);
-                                tasks.add(groupTask);
+                            if (groupUsers != null && groupUsers.contains(uid) && groupUsers.contains(userId)) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //Task para llevar cuenta de los grupos comprobados
+                                        Task<Void> groupTask = getGroupInfo(groupId, groupName, groupUsers, currency);
+                                        tasks.add(groupTask);
+                                    }
+                                });
+
+
                             } else {
-                                Log.e("LiquidationsActivity", "El usuario no pertenece a este grupo");
+                                Log.e("LiquidationsActivity", "El usuario no pertenece a este grupo, funcion de spinner");
                             }
                         }
                         // Esperar a que todas las tareas se completen
                         Tasks.whenAllSuccess(tasks)
                                 .addOnSuccessListener(result -> {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
                                             // Notificar al adaptador de los cambios realizados
                                             groupRecyclerViewAdapter.notifyDataSetChanged();
                                             onDataLoaded();
+                                        }
+                                    });
+
                                 })
                                 .addOnFailureListener(e -> Log.e("LiquidationsActivity", "Error al obtener información de grupos", e));
                     } else {
@@ -241,48 +249,199 @@ public class LiquidationsActivity extends AppCompatActivity{
                 });
     }
 
+    //Método que obtiene los miembros del grupo
+    private void getGroups() {
+        //Realizar consulta a la coleccion "groups" de la base de datos de Firestore
+        fStore.collection("groups").get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        //Limpiar los grupos antes de agregar nuevos
+                        groupList.clear();
+                        //Limpiar la lista de usuarios antes de agregar nuevos
+                        usersListSp.clear();
 
+                        //Lista para llevar una cuenta de las tareas realizadas
+                        List<Task<Void>> tasks = new ArrayList<>();
+
+                        //Recorrer cada resultado del documento
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            if (document != null) {
+                                //Obtener los datos
+                                String groupId = document.getId();
+                                String groupName = document.getString("name");
+                                String currency = document.getString("currency");
+                                //Lista de usuarios del grupo
+                                List<String> groupUsers = (List<String>) document.get("users");
+
+                                //Comprobar si hay usuarios y si el usuario actual pertenece a ese grupo
+                                if (groupUsers != null && groupUsers.contains(uid)) {
+
+                                    Log.d("LiquidationsActivity", "El usuario pertenece a este grupo. Iniciando tarea para obtener información del grupo...");
+
+                                    //Task para llevar cuenta de los grupos comprobados
+                                    Task<Void> groupTask = getGroupInfo(groupId, groupName, groupUsers, currency);
+
+                                    // Verificar si la tarea no es null antes de agregarla a la lista
+                                    if (groupTask != null) {
+                                        tasks.add(groupTask);
+                                        Log.e("LiquidationsActivity", "La tarea no es null para el grupo: " + groupId);
+                                    } else {
+                                        Log.e("LiquidationsActivity", "La tarea es null para el grupo: " + groupId);
+                                    }
+
+                                } else {
+                                    Log.e("LiquidationsActivity", "El usuario no pertenece a este grupo");
+                                }
+                                Log.e("LiquidationsActivity", "groupId: " + groupId + ", groupName: " + groupName + ", groupUsers: " + groupUsers);
+                            }else{
+                                Log.e("LiquidationsActivity", "El document es null");
+                            }
+                        }
+
+                        for (Task<Void> task1 : tasks) {
+                            if (task1 != null) {
+                                if (!task1.isSuccessful()) {
+                                    Exception exception = task1.getException();
+                                    if (exception != null) {
+                                        exception.printStackTrace();
+                                        Log.e("LiquidationsActivity", "Estado de la tarea: false. Mensaje de error: " + exception.getMessage());
+                                    } else {
+                                        Log.e("LiquidationsActivity", "Estado de la tarea: false. La excepción es null.");
+                                    }
+                                } else {
+                                    Log.d("LiquidationsActivity", "Estado de la tarea: true");
+                                }
+                            }else{
+                                Log.e("LiquidationsActivity", "La tarea es null en el bucle for.");
+                            }
+                        }
+
+                        Log.d("LiquidationsActivity", "Contenido de tasks: " + tasks);
+                        // Esperar a que todas las tareas se completen
+                        Tasks.whenAllSuccess(tasks)
+                                .continueWith(taskResult ->{
+                                    Log.d("LiquidationsActivity", "Todas las tareas completadas con éxito.");
+                                    if (taskResult.isSuccessful()) {
+                                        // Verificar si el resultado de la tarea no es nulo
+                                        if (taskResult.getResult() != null) {
+                                            // Notificar al adaptador de los cambios realizados
+                                            groupRecyclerViewAdapter.notifyDataSetChanged();
+                                            onDataLoaded();
+
+                                            Log.d("GetGroups", "Tamaño de usersListSp antes de configurar el adaptador: " + usersListSp.size());
+
+                                            //Configurar el adaptador de usuarios
+                                            ArrayAdapter<User> userAdapter = new ArrayAdapter<>(LiquidationsActivity.this, android.R.layout.simple_spinner_item, usersListSp);
+                                            userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                                            spUsers.setAdapter(userAdapter);
+
+                                            Log.e("Getgrousp", "la lista es: " + usersListSp);
+
+                                            if (spUsers.getCount() > 0) {
+                                                //Configurar el listener para el spinner de usuarios
+                                                spUsers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                                    @Override
+                                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                                        if (position >= 0 && position < parent.getCount()) {
+                                                            User selectedUser = (User) parent.getItemAtPosition(position);
+                                                            lastSelectedUserId = selectedUser.getUserId();
+                                                            getGroupsForUserSpinner(lastSelectedUserId);
+
+                                                            String selection = parent.getItemAtPosition(position).toString();
+                                                            Toast.makeText(LiquidationsActivity.this, "Seleccion actual: " + selection, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onNothingSelected(AdapterView<?> parent) {
+                                                        //No hacer nada en este caso
+                                                    }
+                                                });
+                                            } else {
+                                                Log.e("LiquidationsActivivty", "El spinner de usuarios está vacío");
+                                            }
+                                        }else {
+                                            // Manejar el caso en que taskResult.getResult() es nulo
+                                            Log.e("LiquidationsActivity", "El resultado de la tarea es nulo");
+                                        }
+                                    }else {
+                                        Exception exception = taskResult.getException();
+                                        if (exception != null) {
+                                            Log.e("LiquidationsActivity", "Error al esperar a que todas las tareas se completen", exception);
+                                            Log.e("LiquidationsActivity", "Error al obtener información de grupos", exception);
+                                        } else {
+                                            Log.e("LiquidationsActivity", "Error al esperar a que todas las tareas se completen. La excepción es null.");
+                                        }
+                                    }
+                                    return null;
+                                })
+                                .addOnFailureListener(e->{
+                                    Log.e("LiquidationsActivity", "Error al esperar a que todas las tareas se completen", e);
+                                    Log.e("LiquidationsActivity", "Error al obtener información de grupos", e);
+                                });
+                    } else {
+                        Log.e("LiquidationsActivity", "Error al obtener grupos", task.getException());
+                    }
+                });
+    }
 
     private Task<Void> getGroupInfo(String groupId, String groupName, List<String> groupUsers, String currency){
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
         List<User> users = new ArrayList<>();
+        List<Task<Void>> userTasks = new ArrayList<>();
 
-        AtomicInteger userCount = new AtomicInteger(0);
+        // Verificar si no hay usuarios en el grupo
+        if (groupUsers.isEmpty()) {
+            taskCompletionSource.trySetResult(null);
+            return taskCompletionSource.getTask();
+        }
 
-        for (String uId : groupUsers) {
-            //Filtrar el usuario actual
-            if (!uId.equals(uid)){
-                getGroupUsers(groupId, uId, currency, (user, totalBalance) -> {
-                    //Añadir los usuarios a la lista de usuarios, excepto el currentUser
+        for (String userId : groupUsers) {
+            if (!userId.equals(uid)) {
+                Log.d("LiquidationsActivity", "Llamando a getGroupUsers para usuario: " + userId);
+                Task<Void> userTask = getGroupUsers(groupId, userId, currency, (user, totalBalance) -> {
                     users.add(user);
-
-                    // Verificar si se han cargado todos los usuarios
-                    if (userCount.incrementAndGet() == groupUsers.size() - 1) {//Se resta uno porque el usuario actual no se procesa aqui
-                                // Construir un objeto Group con la información obtenida
-                                Group group = new Group(groupId, groupName, users);
-
-                                //Añadir el grupo a la lista de grupos
-                                groupList.add(group);
-
-                                //Notificar al adaptador de los cambios
-                                groupRecyclerViewAdapter.notifyDataSetChanged();
-
-                                taskCompletionSource.trySetResult(null);
-                    }
                 });
-            }else{
-                // Incrementar userCount para evitar que la condición de verificación se active antes de tiempo
-                userCount.incrementAndGet();
+                if (userTask != null) {
+                    userTasks.add(userTask);
+                    Log.e("LiquidationsActivity", "La tarea no es null para el usuario: " + userId);
+                }else{
+                    Log.e("LiquidationsActivity", "La tarea es null para el usuario: " + userId);
+                }
             }
         }
 
-        // Esperar a que todas las tareas de usuario se completen
-        Tasks.whenAllSuccess(Collections.singletonList(taskCompletionSource.getTask()));
+        Tasks.whenAllComplete(userTasks)
+                .addOnSuccessListener(result ->{
+                    // Construir un objeto Group con la información obtenida
+                    Group group = new Group(groupId, groupName, users);
 
+                    // Añadir el grupo a la lista de grupos
+                    groupList.add(group);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            // Notificar al adaptador de los cambios
+                            groupRecyclerViewAdapter.notifyDataSetChanged();
+                            onDataLoaded();
+                        }
+                    });
+
+                    // Indicar que la tarea se ha completado
+                    taskCompletionSource.trySetResult(null);
+                })
+                .addOnFailureListener(e->{
+                    // Al menos una tarea falló
+                    taskCompletionSource.setException(e);
+                });
         return taskCompletionSource.getTask();
     }
 
-    private void getGroupUsers(String groupId, String userId, String currency, UsersCallBack callBack) {
+
+
+    private Task<Void> getGroupUsers(String groupId, String userId, String currency, UsersCallBack callBack) {
+        TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
         List<User> usersList = new ArrayList<>();
 
         // Realizar consulta a la colección "users" con la referencia del ID del usuario
@@ -290,7 +449,7 @@ public class LiquidationsActivity extends AppCompatActivity{
                 .get()
                 .addOnCompleteListener(userDocument -> {
                     if (userDocument.isSuccessful()) {
-                        usersListSp.clear();
+                        //usersListSp.clear();
                         // Obtener resultado de la consulta de Firestore
                         DocumentSnapshot result = userDocument.getResult();
 
@@ -329,27 +488,33 @@ public class LiquidationsActivity extends AppCompatActivity{
                                             spUsers.setAdapter(adapter);
                                         }
                                     }
-
-
                                     //Añadir el usuario a la lista de usuarios
                                     usersList.add(user);
 
                                     // Verificar si se han cargado todos los usuarios
                                     if (usersList.size() == 1) {
-                                        //Notificar al adaptador de los cambios realizados
-                                        groupRecyclerViewAdapter.notifyDataSetChanged();
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                //Notificar al adaptador de los cambios realizados
+                                                groupRecyclerViewAdapter.notifyDataSetChanged();
 
-                                        // Llamar al método de devolución de llamada con el usuario construido
-                                        callBack.onUsuarioRecibido(usersList.get(0), liquidations);
+                                                // Llamar al método de devolución de llamada con el usuario construido
+                                                callBack.onUsuarioRecibido(user, liquidations);
+                                            }
+                                        });
                                     }
+                                    // Intentar establecer el resultado de la tarea después de que todo esté completo
+                                    taskCompletionSource.trySetResult(null);
                                 });
-
                         }
                     } else {
                         // Manejar errores al obtener información del usuario
                         Log.e("LiquidationsActivity", "Error al obtener información del usuario", userDocument.getException());
                     }
                 });
+
+        return taskCompletionSource.getTask();
     }
 
     private void getUserLiquidations(String groupId, String userId, BalancesCallback callback) {
@@ -375,8 +540,16 @@ public class LiquidationsActivity extends AppCompatActivity{
                         // Calcular el saldo total del usuario en el grupo
                         double liquidation = calculateLiquidations(userId, groupId, spends);
 
-                        // Llamar al método de devolución de llamada con la lista de balances
-                        callback.onBalancesRecibidos(spends, liquidation);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // Notificar al adaptador de los cambios realizados
+                                groupRecyclerViewAdapter.notifyDataSetChanged();
+                                // Llamar al método de devolución de llamada con la lista de balances
+                                callback.onBalancesRecibidos(spends, liquidation);
+                            }
+                        });
+
                     } else {
                         // Manejar el error al obtener los balances
                         Log.e("LiquidationsActivity", "Error al obtener balances del usuario", task.getException());
@@ -417,6 +590,56 @@ public class LiquidationsActivity extends AppCompatActivity{
     interface BalancesCallback {
         void onBalancesRecibidos(List<ExpenseItem> balances, double liquidations);
     }
+
+    interface UsersListCallback{
+        void onUsersListReceived(List<User> usersList);
+    }
 }
 
+/*
+    private Task<Void> getGroupInfoAntiguo(String groupId, String groupName, List<String> groupUsers, String currency){
+        TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
+        List<User> users = new ArrayList<>();
+
+        AtomicInteger userCount = new AtomicInteger(0);
+
+        for (String uId : groupUsers) {
+            //Filtrar el usuario actual
+            if (!uId.equals(uid)){
+                getGroupUsers(groupId, uId, currency, (user, totalBalance) -> {
+                    //Añadir los usuarios a la lista de usuarios, excepto el currentUser
+                    users.add(user);
+
+                    // Verificar si se han cargado todos los usuarios
+                    if (!groupUsers.isEmpty() && userCount.incrementAndGet() == groupUsers.size() - 1) {//Se resta uno porque el usuario actual no se procesa aqui
+                                // Construir un objeto Group con la información obtenida
+                                Group group = new Group(groupId, groupName, users);
+
+                                //Añadir el grupo a la lista de grupos
+                                groupList.add(group);
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        //Notificar al adaptador de los cambios
+                                        groupRecyclerViewAdapter.notifyDataSetChanged();
+
+                                        taskCompletionSource.trySetResult(null);
+                                    }
+                                });
+
+                    }
+                });
+            }else{
+                // Incrementar userCount para evitar que la condición de verificación se active antes de tiempo
+                userCount.incrementAndGet();
+            }
+        }
+
+        // Esperar a que todas las tareas de usuario se completen
+        Tasks.whenAllSuccess(Collections.singletonList(taskCompletionSource.getTask()));
+
+        return taskCompletionSource.getTask();
+    }
+    */
 
