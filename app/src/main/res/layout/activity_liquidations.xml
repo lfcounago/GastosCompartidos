@@ -32,24 +32,9 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tvCurrencies"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"/>
-
-    <LinearLayout
-        android:id="@+id/llspCurrency"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-    </LinearLayout>
-
-    <TextView
         android:id="@+id/tvGroupName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:textStyle="bold" />
 
@@ -69,7 +54,6 @@
         android:id="@+id/rvGroupUsers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:divider="?android:attr/dividerHorizontal"
         android:orientation="vertical"
