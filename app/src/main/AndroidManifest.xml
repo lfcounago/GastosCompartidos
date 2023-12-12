@@ -41,6 +41,9 @@
             android:name=".EditProfileActivity"
             android:exported="false" />
         <activity
+            android:name=".EditSpendActivity"
+            android:exported="false" />
+        <activity
             android:name=".ProfileActivity"
             android:exported="false" />
         <activity
