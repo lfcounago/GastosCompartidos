@@ -32,6 +32,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class LiquidationsActivity extends AppCompatActivity{
     //Declarar los atributos de la clase
