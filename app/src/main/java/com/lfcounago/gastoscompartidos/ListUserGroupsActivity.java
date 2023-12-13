@@ -2,6 +2,8 @@ package com.lfcounago.gastoscompartidos;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Gravity;
 import android.view.View;
@@ -194,7 +196,7 @@ public class ListUserGroupsActivity extends AppCompatActivity{
 
     // Método que se ejecuta al pulsar el botón de perfil en el menu
     public void goToProfile(){
-        // Crear un intent para iniciar la actividad ProfileActivity
+        // Crear un intent para iniciar la actividad CreateGroupActivity
         Intent intent = new Intent(this, ProfileActivity.class);
 
         startActivity(intent);
@@ -202,7 +204,7 @@ public class ListUserGroupsActivity extends AppCompatActivity{
 
     // Método que se ejecuta al pulsar el botón de liquidaciones en el menu
     public void goToLiquidations(){
-        // Crear un intent para iniciar la actividad LiquidationsActivity
+        // Crear un intent para iniciar la actividad CreateGroupActivity
         Intent intent = new Intent(this, LiquidationsActivity.class);
 
         startActivity(intent);
