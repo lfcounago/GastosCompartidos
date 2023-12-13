@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/mnProfile"
+            android:title="Mi perfil" />
+        <item
+            android:id="@+id/mnLiquidations"
+            android:title="Liquidaciones"/>
+        <item
+            android:id="@+id/mnCerrarSesion"
+            android:title="Cerrar Sesión" />
+    </group>
+
+</menu>
