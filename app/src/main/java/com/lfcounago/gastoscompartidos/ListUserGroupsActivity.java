@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
@@ -107,8 +106,6 @@ public class ListUserGroupsActivity extends AppCompatActivity{
 
         //Llamar al método que configura la barra de herramientas
         setToolBar();
-        drawerLayout = findViewById(R.id.dlMenuLateral);
-        navigationView = findViewById(R.id.navView);
 
         // Llamar al método que obtiene los grupos a los que pertenece el usuario
         getGroups();
