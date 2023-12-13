@@ -207,7 +207,7 @@ public class ListUserGroupsActivity extends AppCompatActivity{
 
     // Método que se ejecuta al pulsar el botón de perfil en el menu
     public void goToProfile(){
-        // Crear un intent para iniciar la actividad CreateGroupActivity
+        // Crear un intent para iniciar la actividad ProfileActivity
         Intent intent = new Intent(this, ProfileActivity.class);
 
         startActivity(intent);
@@ -215,7 +215,7 @@ public class ListUserGroupsActivity extends AppCompatActivity{
 
     // Método que se ejecuta al pulsar el botón de liquidaciones en el menu
     public void goToLiquidations(){
-        // Crear un intent para iniciar la actividad CreateGroupActivity
+        // Crear un intent para iniciar la actividad LiquidationsActivity
         Intent intent = new Intent(this, LiquidationsActivity.class);
 
         startActivity(intent);
