@@ -79,7 +79,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="¡Email sin verificar!"
+        android:text="Email Not Verfied !"
         android:textColor="#C2185B"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -92,7 +92,7 @@
         android:id="@+id/resendCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Verificar ahora"
+        android:text="Verify Now"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -195,7 +195,7 @@
         android:layout_margin="10dp"
         android:clickable="true"
         android:onClick="goToListUserGroups"
-        android:src="@drawable/ic_return"
+        android:src="@android:drawable/ic_menu_revert"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
 
