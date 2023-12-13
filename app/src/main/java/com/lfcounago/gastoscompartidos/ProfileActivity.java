@@ -189,4 +189,12 @@ public class ProfileActivity extends AppCompatActivity {
         finish();
     }
 
+    // Método que se ejecuta al pulsar el botón de inicio en el menu
+    public void goToListUserGroups(View view){
+        // Crear un intent para iniciar la actividad ListUserGroupsActivity
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+
+        startActivity(intent);
+    }
+
 }
