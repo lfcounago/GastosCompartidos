@@ -2,18 +2,29 @@ package com.lfcounago.gastoscompartidos;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.lfcounago.gastoscompartidos.R;
 
 public class ListUserGroupsActivity extends AppCompatActivity {
 
@@ -24,6 +35,9 @@ public class ListUserGroupsActivity extends AppCompatActivity {
     private List<String> groupIds;
     private String uid;
     private FirebaseFirestore fStore;
+    private FirebaseAuth fAuth;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +50,7 @@ public class ListUserGroupsActivity extends AppCompatActivity {
         groupIds = new ArrayList<>();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
+        fAuth = FirebaseAuth.getInstance();
 
         // Crear un adaptador que vincula los nombres de los grupos con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, groupNames);
@@ -52,8 +67,48 @@ public class ListUserGroupsActivity extends AppCompatActivity {
             }
         });
 
+        setToolBar();
+        drawerLayout = findViewById(R.id.dlMenuLateral);
+        navigationView = findViewById(R.id.navView);
+
         // Llamar al método que obtiene los grupos a los que pertenece el usuario
         getGroups();
+    }
+
+    private void setToolBar(){
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_home);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        super.onCreateOptionsMenu(menu);
+        this.getMenuInflater().inflate( R.menu.nav_options, menu );
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+                /*
+            case R.id.mnProfile:
+                goToProfile();
+                return true;
+            case R.id.mnLiquidations:
+                goToLiquidations();
+                return true;
+            case R.id.mnCerrarSesion:
+                fAuth.signOut();
+                return true;
+
+                 */
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // Método que obtiene los grupos a los que pertenece el usuario
@@ -94,6 +149,22 @@ public class ListUserGroupsActivity extends AppCompatActivity {
     public void goToCrearGrupo(View view) {
         // Crear un intent para iniciar la actividad CreateGroupActivity
         Intent intent = new Intent(this, CreateGroupActivity.class);
+
+        startActivity(intent);
+    }
+
+    // Método que se ejecuta al pulsar el botón de perfil en el menu
+    public void goToProfile(){
+        // Crear un intent para iniciar la actividad CreateGroupActivity
+        Intent intent = new Intent(this, ProfileActivity.class);
+
+        startActivity(intent);
+    }
+
+    // Método que se ejecuta al pulsar el botón de liquidaciones en el menu
+    public void goToLiquidations(){
+        // Crear un intent para iniciar la actividad CreateGroupActivity
+        Intent intent = new Intent(this, LiquidationsActivity.class);
 
         startActivity(intent);
     }
