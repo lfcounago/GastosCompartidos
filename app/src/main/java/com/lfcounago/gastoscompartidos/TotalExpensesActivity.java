@@ -5,6 +5,7 @@ import static java.lang.Math.round;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -56,8 +57,8 @@ public class TotalExpensesActivity extends AppCompatActivity {
         tvGastoTotal = findViewById(R.id.tvGastoTotal);
         tvTotalPagoUsu = findViewById(R.id.tvTotalPagoUsu);
         tvPagosRecibidos = findViewById(R.id.tvPagosRecibidos);
-        gid = "bmMYudVqJVuPzEaWwVNj";
-        uid = "uivt6Bi7ZjapLuBKUXF8e052Oku2";//FirebaseAuth.getInstance().getCurrentUser().getUid();
+        gid = getIntent().getStringExtra("groupId");//"bmMYudVqJVuPzEaWwVNj";
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();//"uivt6Bi7ZjapLuBKUXF8e052Oku2";
         fStore = FirebaseFirestore.getInstance();
 
         // Crear un adaptador que vincula los nombres de los usuarios con la vista del listView
@@ -91,7 +92,6 @@ public class TotalExpensesActivity extends AppCompatActivity {
                                 String groupID = document.getString("groupID");
                                 String payer = document.getString("payer");
                                 String gasto = document.getString("title");
-                                uids = (List<String>) document.get("sharedWith");
                                 // Limpiar la lista de nombres de los usuarios
                                 usuarios.clear();
                                 // Limpiar los mapas de correspondencia entre UID y nombre de los usuarios
@@ -100,6 +100,8 @@ public class TotalExpensesActivity extends AppCompatActivity {
                                 if (groupID != null && groupID.equals(groupId) && amount != null) { // Si la lista de gastos contiene el id del grupo actual
                                     // Añadir el gasto del grupo a la lista de gastos del grupo
                                     gastos.add(amount);
+                                    //Cogemos los usuarios correspondientes al gasto
+                                    uids = (List<String>) document.get("sharedWith");
                                     if(payer != null && payer.equals(uid)){
                                         gastosPag.add(amount);
                                         gastosTitulo.add(gasto);
