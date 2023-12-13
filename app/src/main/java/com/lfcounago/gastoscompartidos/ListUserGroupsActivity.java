@@ -2,6 +2,8 @@ package com.lfcounago.gastoscompartidos;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -9,9 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
@@ -22,7 +24,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListUserGroupsActivity extends AppCompatActivity{
+import com.lfcounago.gastoscompartidos.R;
+
+public class ListUserGroupsActivity extends AppCompatActivity {
 
     // Declarar los atributos de la clase
     private ListView lvGroups;
@@ -33,7 +37,6 @@ public class ListUserGroupsActivity extends AppCompatActivity{
     private FirebaseFirestore fStore;
     private FirebaseAuth fAuth;
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavigationView navigationView;
 
     @Override
@@ -48,8 +51,6 @@ public class ListUserGroupsActivity extends AppCompatActivity{
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
         fAuth = FirebaseAuth.getInstance();
-        navigationView = findViewById(R.id.navView);
-        drawerLayout = findViewById(R.id.dlMenuLateral);
 
         // Crear un adaptador que vincula los nombres de los grupos con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, groupNames);
@@ -66,45 +67,14 @@ public class ListUserGroupsActivity extends AppCompatActivity{
             }
         });
 
-        // Configurar el ActionBarDrawerToggle para el menú lateral
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_nav, R.string.close_nav);
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
-
-        // Configurar la barra de acción
-        setSupportActionBar(findViewById(R.id.toolbar));
-
-        // Configurar el botón de "Atrás"
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Manejar eventos del menú lateral
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int itemId = item.getItemId();
-
-                if (itemId == R.id.mnProfile){
-                    goToProfile();
-                } else if (itemId == R.id.mnLiquidations) {
-                    goToLiquidations();
-                } else if (itemId == R.id.mnLogOut) {
-                    goToLogin();
-                }
-
-                // Cerrar el menú lateral después de la selección
-                drawerLayout.closeDrawers();
-                return true;
-            }
-        });
-
-        //Llamar al método que configura la barra de herramientas
         setToolBar();
+        drawerLayout = findViewById(R.id.dlMenuLateral);
+        navigationView = findViewById(R.id.navView);
 
         // Llamar al método que obtiene los grupos a los que pertenece el usuario
         getGroups();
     }
 
-    // Método para configurar la barra de herramientas
     private void setToolBar(){
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -112,11 +82,31 @@ public class ListUserGroupsActivity extends AppCompatActivity{
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        super.onCreateOptionsMenu(menu);
+        this.getMenuInflater().inflate( R.menu.nav_options, menu );
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)){
-            return true;
+        switch (item.getItemId()){
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+                /*
+            case R.id.mnProfile:
+                goToProfile();
+                return true;
+            case R.id.mnLiquidations:
+                goToLiquidations();
+                return true;
+            case R.id.mnCerrarSesion:
+                fAuth.signOut();
+                return true;
+
+                 */
         }
         return super.onOptionsItemSelected(item);
     }
@@ -165,7 +155,7 @@ public class ListUserGroupsActivity extends AppCompatActivity{
 
     // Método que se ejecuta al pulsar el botón de perfil en el menu
     public void goToProfile(){
-        // Crear un intent para iniciar la actividad ProfileActivity
+        // Crear un intent para iniciar la actividad CreateGroupActivity
         Intent intent = new Intent(this, ProfileActivity.class);
 
         startActivity(intent);
@@ -173,25 +163,8 @@ public class ListUserGroupsActivity extends AppCompatActivity{
 
     // Método que se ejecuta al pulsar el botón de liquidaciones en el menu
     public void goToLiquidations(){
-        // Crear un intent para iniciar la actividad LiquidationsActivity
+        // Crear un intent para iniciar la actividad CreateGroupActivity
         Intent intent = new Intent(this, LiquidationsActivity.class);
-
-        startActivity(intent);
-    }
-
-    // Método que se ejecuta al pulsar el botón de inicio en el menu
-    public void goToListUserGroups(){
-        // Crear un intent para iniciar la actividad ListUserGroupsActivity
-        Intent intent = new Intent(this, ListUserGroupsActivity.class);
-
-        startActivity(intent);
-    }
-
-    // Método que se ejecuta al pulsar el botón de cerrar sesion en el menu
-    public void goToLogin(){
-        FirebaseAuth.getInstance().signOut();
-        // Crear un intent para iniciar la actividad LoginActivity
-        Intent intent = new Intent(this, LoginActivity.class);
 
         startActivity(intent);
     }
