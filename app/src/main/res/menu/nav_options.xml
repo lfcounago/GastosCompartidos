@@ -1,37 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <group android:checkableBehavior="single">
-
         <item
-            android:id="@+id/mnHome"
-            android:title="Inicio"
-            android:icon="@drawable/nav_home"/>
-        <item
-            android:id="@+id/mnBalances"
-            android:title="Saldos"
-            android:icon="@drawable/nav_balances"/>
+            android:id="@+id/mnProfile"
+            android:title="Mi perfil" />
         <item
             android:id="@+id/mnLiquidations"
-            android:title="Liquidaciones"
-            android:icon="@drawable/nav_liquidations"/>
+            android:title="Liquidaciones"/>
+        <item
+            android:id="@+id/mnCerrarSesion"
+            android:title="Cerrar Sesión" />
     </group>
-
-    <item
-        android:title="">
-
-        <menu>
-            <item
-                android:id="@+id/mnProfile"
-                android:title="Mi perfil"
-                android:icon="@drawable/ic_person_black_24dp"/>
-            <item
-                android:id="@+id/mnLogOut"
-                android:title="Cerrar Sesión"
-                android:icon="@drawable/nav_logout"/>
-
-        </menu>
-
-    </item>
 
 </menu>
