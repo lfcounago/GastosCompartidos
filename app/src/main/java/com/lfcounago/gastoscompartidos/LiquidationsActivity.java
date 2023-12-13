@@ -38,8 +38,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class LiquidationsActivity extends AppCompatActivity{
     //Declarar los atributos de la clase
@@ -78,7 +76,6 @@ public class LiquidationsActivity extends AppCompatActivity{
 
         //Añadir texto al TextView del spinner
         tvUsers.setText("Filtrado por usuario:");
-
 
         //Obtener la referencia al LinearLayout que contiene el titulo "Liquidaciones"
         LinearLayout llLiquidaciones = findViewById(R.id.tvTituloLiquidaciones);
