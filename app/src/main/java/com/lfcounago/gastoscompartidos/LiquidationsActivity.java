@@ -25,7 +25,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 
 import android.util.TypedValue;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
