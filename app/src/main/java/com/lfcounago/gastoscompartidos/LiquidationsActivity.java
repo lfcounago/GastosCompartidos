@@ -16,14 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
 import android.util.TypedValue;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
@@ -42,14 +39,12 @@ public class LiquidationsActivity extends AppCompatActivity{
     private GroupRecyclerViewAdapter groupRecyclerViewAdapter;
     private List<Group> groupList;
     private List<User> usersListSp;
-    private String uid, lastSelectedUserId, primaryDark, white;
+    private String uid, lastSelectedUserId;
     private Spinner spUsers;
     private TextView tvUsers;
     private FirebaseFirestore fStore;
     private boolean isDataLoaded;
     private FloatingActionButton fab;
-    private int colorIntDark, colorWhite;
-    private Window window;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +57,6 @@ public class LiquidationsActivity extends AppCompatActivity{
         fStore = FirebaseFirestore.getInstance();
         tvUsers = findViewById(R.id.tvUsers);
         isDataLoaded = false;
-        primaryDark = "#063642";
-        colorIntDark = Color.parseColor(primaryDark);
-        white = "#FFFFFFFF";
-        colorWhite = Color.parseColor(white);
 
         //Inicializar las listas
         groupList = new ArrayList<>();
@@ -80,10 +71,11 @@ public class LiquidationsActivity extends AppCompatActivity{
         //Añadir texto al TextView del spinner
         tvUsers.setText("Filtrado por usuario:");
 
+
         //Obtener la referencia al LinearLayout que contiene el titulo "Liquidaciones"
         LinearLayout llLiquidaciones = findViewById(R.id.tvTituloLiquidaciones);
-        //Obtener la referencia al LinearLayout que contiene el boton
-        LinearLayout llButtom = findViewById(R.id.llButtom);
+        ////Obtener la referencia al LinearLayout que contiene el boton
+        LinearLayout llButton = findViewById(R.id.llButton);
         //Obtener la referencia al LinearLayout que contiene el spinner de usuarios
         LinearLayout llSpUsers = findViewById(R.id.llspUsers);
 
@@ -105,9 +97,6 @@ public class LiquidationsActivity extends AppCompatActivity{
         fab = new FloatingActionButton(this);
         fab.setLayoutParams(layoutParams);
         fab.setImageResource(R.drawable.ic_return);
-        fab.setBackgroundTintList(ColorStateList.valueOf(colorWhite));
-        fab.setElevation(0);
-        fab.setStateListAnimator(null);
 
         //Añadir el spinner al LinearLayout
         spUsers = new Spinner(this);
@@ -116,26 +105,24 @@ public class LiquidationsActivity extends AppCompatActivity{
 
         // Añadir al LinearLayout
         llLiquidaciones.addView(tvTituloLiquidaciones);
-        llButtom.addView(fab);
+        llButton.addView(fab);
         llSpUsers.addView(spUsers);
 
         //Indicar que se trata de las liquidaciones
         groupRecyclerViewAdapter.setShowBalancesMode(false);
 
-        //Parámetros para cambiar el color de la barra de estado
-        this.window = getWindow();
-        window.setStatusBarColor(Color.parseColor(primaryDark));
+
 
         //Llamar al método que obtiene los grupos
         getGroups();
 
-        //Establecer la función a realizar al pulsar el botón de atrás
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToListUserGroups(v);
             }
         });
+
     }
 
     public void onDataLoaded() {
@@ -225,7 +212,6 @@ public class LiquidationsActivity extends AppCompatActivity{
         userAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spUsers.setAdapter(userAdapter);
 
-        //Comprobar que item se ha seleccionado del spinner
         spUsers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -313,26 +299,20 @@ public class LiquidationsActivity extends AppCompatActivity{
                 });
     }
 
-    //Método para obtener la información del grupo
     private Task<Void> getGroupInfo(String groupId, String groupName, List<String> groupUsers, String currency){
-        //Objeto para indicar la finalizacion de la tarea
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
         List<User> users = new ArrayList<>();
-        //Lista de tareas para obtener la información de cada user del grupo
         List<Task<Void>> userTasks = new ArrayList<>();
 
         // Verificar si no hay usuarios en el grupo
         if (groupUsers.isEmpty()) {
-            //Si no hay usuarios, completar la tarea y salir
             taskCompletionSource.trySetResult(null);
             return taskCompletionSource.getTask();
         }
 
         //Recorrer todos los usuarios del grupo
         for (String userId : groupUsers) {
-            //Verificar si el usuario no es el usuario actual
             if (!userId.equals(uid)) {
-                //Obtener información del usuario y su balance total en el grupo
                 Task<Void> userTask = getGroupUsers(groupId, userId, currency, (user, totalBalance) -> {
                     users.add(user);
                 });
@@ -344,8 +324,6 @@ public class LiquidationsActivity extends AppCompatActivity{
                 }
             }
         }
-
-        //Esperar a que todad las tareas del usuario se completen
         Tasks.whenAllComplete(userTasks)
                 .addOnSuccessListener(result ->{
                     // Construir un objeto Group con la información obtenida
@@ -354,7 +332,6 @@ public class LiquidationsActivity extends AppCompatActivity{
                     // Añadir el grupo a la lista de grupos
                     groupList.add(group);
 
-                    // Ejecutar en el hilo principal para actualizar la interfaz de usuario
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -368,17 +345,13 @@ public class LiquidationsActivity extends AppCompatActivity{
                     taskCompletionSource.trySetResult(null);
                 })
                 .addOnFailureListener(e->{
-                    //Indicar que al menos una tarea falló
+                    //Al menos una tarea falló
                     taskCompletionSource.setException(e);
                 });
-
-        //Devolver la tarea asociada a taskCompletionSource
         return taskCompletionSource.getTask();
     }
 
-    //Método que obtiene información de un usario en un grupo
     private Task<Void> getGroupUsers(String groupId, String userId, String currency, UsersCallBack callBack) {
-        // Objeto para indicar la finalización de la tarea
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
         List<User> usersList = new ArrayList<>();
 
@@ -451,11 +424,9 @@ public class LiquidationsActivity extends AppCompatActivity{
                     }
                 });
 
-        // Devolver la tarea asociada a taskCompletionSource
         return taskCompletionSource.getTask();
     }
 
-    //Método que obtiene información de los gastos asociados a un usuario
     private void getUserLiquidations(String groupId, String userId, BalancesCallback callback) {
         // Realizar consulta a la colección "spends" para obtener la información de los balances asociados al usuario
         fStore.collection("spends")
@@ -465,21 +436,12 @@ public class LiquidationsActivity extends AppCompatActivity{
                     if (task.isSuccessful()) {
                         List<ExpenseItem> spends = new ArrayList<>();
 
-                        //Iterar sobre los documentos de gastos obtenidos en la consulta
                         for (QueryDocumentSnapshot spendDocument : task.getResult()) {
                             //Obtener la informacion necesaria de los gastos
                             String spendId = spendDocument.getId();
                             String payerId = spendDocument.getString("payer");
                             double amount = spendDocument.getDouble("amount");
-                            Object sharedWithObj = spendDocument.get("sharedWith");
-                            List<String> sharedWith;
-
-                            // Verificar si "sharedWith" es una lista
-                            if (sharedWithObj instanceof List<?>) {
-                                sharedWith = (List<String>) sharedWithObj;
-                            }else{
-                                return;
-                            }
+                            List<String> sharedWith = (List<String>) spendDocument.get("sharedWith");
 
                             // Crear instancia de Balance y agregar a la lista de balances
                             ExpenseItem balance = new ExpenseItem(spendId, groupId, payerId, amount, sharedWith);
@@ -488,13 +450,12 @@ public class LiquidationsActivity extends AppCompatActivity{
                         // Calcular el saldo total del usuario en el grupo
                         double liquidation = calculateLiquidations(userId, groupId, spends);
 
-                        //Ejecutar en el hilo principal para actualizar la interfaz de usuario
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                //Notificar al adaptador de los cambios realizados
+                                // Notificar al adaptador de los cambios realizados
                                 groupRecyclerViewAdapter.notifyDataSetChanged();
-                                //Llamar al método de devolución de llamada con la lista de balances
+                                // Llamar al método de devolución de llamada con la lista de balances
                                 callback.onBalancesRecibidos(spends, liquidation);
                             }
                         });
@@ -502,19 +463,15 @@ public class LiquidationsActivity extends AppCompatActivity{
                     } else {
                         // Manejar el error al obtener los balances
                         Log.e("LiquidationsActivity", "Error al obtener balances del usuario", task.getException());
-                        //Llamar al método de devolución de llamada con una lista vacía y saldo cero
                         callback.onBalancesRecibidos(Collections.emptyList(),0.0);
                     }
                 });
     }
 
-    //Método para calcular las deudas de un usuario en un grupo
     private double calculateLiquidations(String userId, String groupId, List<ExpenseItem> spends){
        double totalDebt = 0.0;
 
-        //Iterar sobre la lista de gastos
         for (ExpenseItem spend : spends) {
-            //Verificar si el gasto pertenece al grupo y si el pagador es el usuario actual
             if (groupId.equals(spend.getGroupId())) {
                 if (spend.getPayerId().equals(userId)) {
                     // El usuario es el pagador, calcular las deudas específicas del currentUser
@@ -531,25 +488,24 @@ public class LiquidationsActivity extends AppCompatActivity{
             }
         }
 
-        //Devolver la deuda del usuario
         return totalDebt;
     }
 
-    //Interfaz de devolución de llamada para obtener información de usuarios
     interface UsersCallBack {
+
         void onUsuarioRecibido(User user, Double totalBalance);
     }
 
-    //Interfaz de devolución de llamada para obtener los gastos del usuario
+    // Interfaz de devolución de llamada para obtener balances del usuario
     interface BalancesCallback {
         void onBalancesRecibidos(List<ExpenseItem> balances, double liquidations);
     }
 
     // Método que se ejecuta al pulsar el botón de inicio en el menu
     public void goToListUserGroups(View view){
-        //Crear un intent para iniciar la actividad ListUserGroupsActivity
+        // Crear un intent para iniciar la actividad ListUserGroupsActivity
         Intent intent = new Intent(this, ListUserGroupsActivity.class);
-        //Iniciar la actividad
+
         startActivity(intent);
     }
 }
