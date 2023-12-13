@@ -3,6 +3,7 @@ package com.lfcounago.gastoscompartidos;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lfcounago.gastoscompartidos.core.*;
 
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -30,8 +32,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class LiquidationsActivity extends AppCompatActivity{
     //Declarar los atributos de la clase
@@ -44,6 +44,7 @@ public class LiquidationsActivity extends AppCompatActivity{
     private TextView tvUsers;
     private FirebaseFirestore fStore;
     private boolean isDataLoaded;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +71,11 @@ public class LiquidationsActivity extends AppCompatActivity{
         //Añadir texto al TextView del spinner
         tvUsers.setText("Filtrado por usuario:");
 
+
         //Obtener la referencia al LinearLayout que contiene el titulo "Liquidaciones"
         LinearLayout llLiquidaciones = findViewById(R.id.tvTituloLiquidaciones);
+        ////Obtener la referencia al LinearLayout que contiene el boton
+        LinearLayout llButton = findViewById(R.id.llButton);
         //Obtener la referencia al LinearLayout que contiene el spinner de usuarios
         LinearLayout llSpUsers = findViewById(R.id.llspUsers);
 
@@ -89,6 +93,11 @@ public class LiquidationsActivity extends AppCompatActivity{
         tvTituloLiquidaciones.setTextSize(TypedValue.COMPLEX_UNIT_SP, 44);
         tvTituloLiquidaciones.setTypeface(null, Typeface.BOLD);
 
+        //Añadir el boton al LinearLayout
+        fab = new FloatingActionButton(this);
+        fab.setLayoutParams(layoutParams);
+        fab.setImageResource(R.drawable.ic_return);
+
         //Añadir el spinner al LinearLayout
         spUsers = new Spinner(this);
         spUsers.setLayoutParams(layoutParams);
@@ -96,13 +105,24 @@ public class LiquidationsActivity extends AppCompatActivity{
 
         // Añadir al LinearLayout
         llLiquidaciones.addView(tvTituloLiquidaciones);
+        llButton.addView(fab);
         llSpUsers.addView(spUsers);
 
         //Indicar que se trata de las liquidaciones
         groupRecyclerViewAdapter.setShowBalancesMode(false);
 
+
+
         //Llamar al método que obtiene los grupos
         getGroups();
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToListUserGroups(v);
+            }
+        });
+
     }
 
     public void onDataLoaded() {
@@ -481,55 +501,12 @@ public class LiquidationsActivity extends AppCompatActivity{
         void onBalancesRecibidos(List<ExpenseItem> balances, double liquidations);
     }
 
-    interface UsersListCallback{
-        void onUsersListReceived(List<User> usersList);
+    // Método que se ejecuta al pulsar el botón de inicio en el menu
+    public void goToListUserGroups(View view){
+        // Crear un intent para iniciar la actividad ListUserGroupsActivity
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+
+        startActivity(intent);
     }
 }
-
-/*
-    private Task<Void> getGroupInfoAntiguo(String groupId, String groupName, List<String> groupUsers, String currency){
-        TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
-        List<User> users = new ArrayList<>();
-
-        AtomicInteger userCount = new AtomicInteger(0);
-
-        for (String uId : groupUsers) {
-            //Filtrar el usuario actual
-            if (!uId.equals(uid)){
-                getGroupUsers(groupId, uId, currency, (user, totalBalance) -> {
-                    //Añadir los usuarios a la lista de usuarios, excepto el currentUser
-                    users.add(user);
-
-                    // Verificar si se han cargado todos los usuarios
-                    if (!groupUsers.isEmpty() && userCount.incrementAndGet() == groupUsers.size() - 1) {//Se resta uno porque el usuario actual no se procesa aqui
-                                // Construir un objeto Group con la información obtenida
-                                Group group = new Group(groupId, groupName, users);
-
-                                //Añadir el grupo a la lista de grupos
-                                groupList.add(group);
-
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        //Notificar al adaptador de los cambios
-                                        groupRecyclerViewAdapter.notifyDataSetChanged();
-
-                                        taskCompletionSource.trySetResult(null);
-                                    }
-                                });
-
-                    }
-                });
-            }else{
-                // Incrementar userCount para evitar que la condición de verificación se active antes de tiempo
-                userCount.incrementAndGet();
-            }
-        }
-
-        // Esperar a que todas las tareas de usuario se completen
-        Tasks.whenAllSuccess(Collections.singletonList(taskCompletionSource.getTask()));
-
-        return taskCompletionSource.getTask();
-    }
-    */
 

@@ -50,14 +50,23 @@
         android:fitsSystemWindows="true">
 
         <LinearLayout
+            android:id="@+id/llContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/llContent"
             android:orientation="vertical">
 
-            <include
+            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
-                layout="@layout/toolbar" />
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@color/purple"
+                android:elevation="4dp" />
+
+            <FrameLayout
+                android:id="@+id/fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
         </LinearLayout>
 
         <com.google.android.material.navigation.NavigationView
@@ -65,12 +74,11 @@
             android:layout_height="match_parent"
             android:id="@+id/navView"
             android:fitsSystemWindows="true"
+            android:layout_gravity="start"
             app:headerLayout="@layout/header_navigation_drawer"
-            app:menu="@menu/nav_options"
-            android:layout_gravity="start">
+            app:menu="@menu/nav_options">
 
         </com.google.android.material.navigation.NavigationView>
-
 
     </androidx.drawerlayout.widget.DrawerLayout>
 
