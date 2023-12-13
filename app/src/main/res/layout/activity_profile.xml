@@ -195,7 +195,7 @@
         android:layout_margin="10dp"
         android:clickable="true"
         android:onClick="goToListUserGroups"
-        android:src="@android:drawable/ic_menu_revert"
+        android:src="@drawable/ic_return"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
 
