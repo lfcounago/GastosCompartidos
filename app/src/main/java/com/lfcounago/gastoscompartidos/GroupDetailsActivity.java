@@ -1,16 +1,20 @@
 package com.lfcounago.gastoscompartidos;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -34,6 +38,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     private Map<String, String> spendNameId;
     private String groupId;
     private FirebaseFirestore fStore;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +54,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         spendDate = new  ArrayList<>();
         groupId = getIntent().getStringExtra("groupId");
         fStore = FirebaseFirestore.getInstance();
+        toolbar = findViewById(R.id.toolbar);
 
         // Crear un adaptador que vincula los gastos del grupo con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, spendNames);
@@ -76,8 +82,39 @@ public class GroupDetailsActivity extends AppCompatActivity {
             }
         });
 
+        setSupportActionBar(toolbar);
+
         // Llamar al método que obtiene los gastos pertenecientes al grupo
         getSpends();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        this.getMenuInflater().inflate(R.menu.group_details_menu, menu);
+
+        return true;
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        boolean toret = false;
+        View view;
+
+        if (item.getItemId() == R.id.itGroupProfile){
+            //goToGroupProfile(view);
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupSpends) {
+            goToGroupSpends();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupLiquidations) {
+            goToGroupSpendLiquidations();
+            toret = true;
+        }
+
+        return toret;
     }
 
     // Método que obtiene los gastos del grupo pulsado
@@ -182,5 +219,23 @@ public class GroupDetailsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ListUserGroupsActivity.class);
         // Iniciar la actividad
         startActivity(intent);
+    }
+
+    public void goToGroupProfile(View view) {
+        Intent intent = new Intent(this, GroupProfileActivity.class);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
+
+    public void goToGroupSpends() {
+        //Intent intent = new Intent(this, GroupProfileActivity.class);
+        // Iniciar la actividad
+        //startActivity(intent);
+    }
+
+    public void goToGroupSpendLiquidations() {
+        //Intent intent = new Intent(this, GroupProfileActivity.class);
+        // Iniciar la actividad
+        //startActivity(intent);
     }
 }
