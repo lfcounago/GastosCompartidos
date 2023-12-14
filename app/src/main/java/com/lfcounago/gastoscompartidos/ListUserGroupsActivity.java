@@ -85,6 +85,8 @@ public class ListUserGroupsActivity extends AppCompatActivity{
 
                 if (itemId == R.id.mnProfile){
                     goToProfile();
+                } else if (itemId == R.id.mnBalances) {
+                    goToBalances();
                 } else if (itemId == R.id.mnLiquidations) {
                     goToLiquidations();
                 } else if (itemId == R.id.mnLogOut) {
@@ -179,10 +181,10 @@ public class ListUserGroupsActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
-    // Método que se ejecuta al pulsar el botón de inicio en el menu
-    public void goToListUserGroups(){
-        // Crear un intent para iniciar la actividad ListUserGroupsActivity
-        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+    // Método que se ejecuta al pulsar el botón de saldos en el menu
+    public void goToBalances(){
+        // Crear un intent para iniciar la actividad BalanceActivity
+        Intent intent = new Intent(this, BalanceActivity.class);
 
         startActivity(intent);
     }

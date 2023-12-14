@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/itHome"
-        android:title="Inicio"/>
-    <item
         android:id="@+id/itGroupProfile"
         android:title="Perfil del grupo"/>
     <item
         android:id="@+id/itGroupSpends"
-        android:title="Gastos totales del grupo"/>
+        android:title="Gastos del grupo"/>
     <item
         android:id="@+id/itGroupLiquidations"
         android:title="Deudas del grupo"/>
