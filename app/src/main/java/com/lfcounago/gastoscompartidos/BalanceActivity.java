@@ -3,6 +3,7 @@ package com.lfcounago.gastoscompartidos;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lfcounago.gastoscompartidos.core.*;
 
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
@@ -38,6 +40,7 @@ public class BalanceActivity extends AppCompatActivity{
     private List<Group> groupList;
     private String uid;
     private FirebaseFirestore fStore;
+    private FloatingActionButton fab;
 
 
     @Override
@@ -62,25 +65,41 @@ public class BalanceActivity extends AppCompatActivity{
         //Obtener la referencia al LinearLayout que contiene el titulo "Saldos"
         LinearLayout llSaldos = findViewById(R.id.tvTituloSaldos);
 
-        //Añadir el titulo "Saldos" al LinearLayout
-        TextView tvTituloSaldos = new TextView(this);
-        tvTituloSaldos.setLayoutParams(new LinearLayout.LayoutParams(
+        //Obtener la referencia al LinearLayout que contiene el boton
+        LinearLayout llButtom = findViewById(R.id.llButtom);
+
+        //Parametros generales
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
+        );
+
+        //Añadir el titulo "Saldos" al LinearLayout
+        TextView tvTituloSaldos = new TextView(this);
+        tvTituloSaldos.setLayoutParams(layoutParams);
         tvTituloSaldos.setText("Saldos");
         tvTituloSaldos.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         tvTituloSaldos.setTextSize(TypedValue.COMPLEX_UNIT_SP, 44);
         tvTituloSaldos.setTypeface(null, Typeface.BOLD);
 
-        // Añadir el TextView al LinearLayout
-        llSaldos.addView(tvTituloSaldos);
+        //Añadir el boton al LinearLayout
+        fab = new FloatingActionButton(this);
+        fab.setLayoutParams(layoutParams);
+        fab.setImageResource(R.drawable.ic_return);
 
-        //Indicar que se trata de los saldos
-        //groupRecyclerViewAdapter.setShowBalancesMode(true);
+        // Añadir al LinearLayout
+        llSaldos.addView(tvTituloSaldos);
+        llButtom.addView(fab);
 
         //Llamar al método que obtiene los grupos
         getGroups();
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToListUserGroups(v);
+            }
+        });
     }
 
 
@@ -289,6 +308,14 @@ public class BalanceActivity extends AppCompatActivity{
     // Interfaz de devolución de llamada para obtener balances del usuario
     interface BalancesCallback {
         void onBalancesRecibidos(List<ExpenseItem> balances, double spend);
+    }
+
+    // Método que se ejecuta al pulsar el botón de inicio en el menu
+    public void goToListUserGroups(View view){
+        // Crear un intent para iniciar la actividad ListUserGroupsActivity
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+
+        startActivity(intent);
     }
 }
 

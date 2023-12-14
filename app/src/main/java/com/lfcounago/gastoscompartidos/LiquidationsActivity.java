@@ -75,7 +75,7 @@ public class LiquidationsActivity extends AppCompatActivity{
         //Obtener la referencia al LinearLayout que contiene el titulo "Liquidaciones"
         LinearLayout llLiquidaciones = findViewById(R.id.tvTituloLiquidaciones);
         ////Obtener la referencia al LinearLayout que contiene el boton
-        LinearLayout llButton = findViewById(R.id.llButton);
+        LinearLayout llButtom = findViewById(R.id.llButton);
         //Obtener la referencia al LinearLayout que contiene el spinner de usuarios
         LinearLayout llSpUsers = findViewById(R.id.llspUsers);
 
@@ -105,7 +105,7 @@ public class LiquidationsActivity extends AppCompatActivity{
 
         // Añadir al LinearLayout
         llLiquidaciones.addView(tvTituloLiquidaciones);
-        llButton.addView(fab);
+        llButtom.addView(fab);
         llSpUsers.addView(spUsers);
 
         //Indicar que se trata de las liquidaciones
