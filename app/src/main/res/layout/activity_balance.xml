@@ -9,6 +9,14 @@
     tools:context=".BalanceActivity">
 
     <LinearLayout
+        android:id="@+id/llButtom"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="10dp">
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/tvTituloSaldos"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
