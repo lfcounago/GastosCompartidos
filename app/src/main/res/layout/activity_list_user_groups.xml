@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Grupos a los que pertenece"
+            android:text="@string/list_user_groups_title"
             android:textSize="24sp"
             android:textStyle="bold" />
 

@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:gravity="center"
-            android:text="Gastos Totales"
+            android:text="@string/total_expenses_title"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -35,7 +35,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Gasto total del grupo:" />
+            android:text="@string/total_expenses_total_spend" />
 
         <TextView
             android:id="@+id/tvGastoTotal"
@@ -58,7 +58,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Total pagado:" />
+            android:text="@string/total_expenses_total_pay" />
 
         <TextView
             android:id="@+id/tvTotalPagoUsu"
@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cuota del total:" />
+            android:text="@string/total_expenses_partial_spend" />
 
         <ListView
             android:id="@+id/listView"
@@ -102,7 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Pagos realizados:" />
+            android:text="@string/total_expenses_pay_sent" />
 
         <ListView
             android:id="@+id/listViewGastos"
@@ -123,7 +123,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Pagos recibidos:" />
+            android:text="@string/total_expenses_pay_recived" />
 
         <TextView
             android:id="@+id/tvPagosRecibidos"
