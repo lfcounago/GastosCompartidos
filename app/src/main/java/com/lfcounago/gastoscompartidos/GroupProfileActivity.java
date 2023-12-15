@@ -102,12 +102,14 @@ public class GroupProfileActivity extends AppCompatActivity {
         // Crear un adaptador que vincula los nombres de los usuarios con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, usuarios);
 
+        // Configurar la barra de acción
         setSupportActionBar(toolbar);
 
         // Llamar al método que obtiene los datos del grupo
         getGroupData();
     }
 
+    //Método para crear las opciones del menú
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -117,6 +119,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    //Método para saber que opción ha sido seleccionada y actuar en consecuencia
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         boolean toret = false;
@@ -197,6 +200,7 @@ public class GroupProfileActivity extends AppCompatActivity {
                 });
     }
 
+    //Método para mostrar el diálogo de confirmación
     private void mostrarDialogoConfirmacion() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Eliminar Grupo");
@@ -355,6 +359,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //Método para guardar los cambios del grupo
     private void guardarCambiosGrupo() {
 
         String nuevoNombre = etName.getText().toString();
@@ -367,6 +372,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         }
     }
 
+    //Método para actualizar el grupo cuando haya cambios
     private void actualizarGrupo(String nuevoNombre) {
         // Crear un mapa con el nuevo nombre
         Map<String, Object> newName = new HashMap<>();
@@ -437,14 +443,15 @@ public class GroupProfileActivity extends AppCompatActivity {
         finish();
     }
 
+    //Método que se ejecuta al pulsar la opción de gastos del grupo
     public void goToGroupSpends() {
-        //CAMBIAR activity
-        Intent intent = new Intent(this, GroupProfileActivity.class);
+        Intent intent = new Intent(this, TotalExpensesActivity.class);
         intent.putExtra("groupId", groupId);
         // Iniciar la actividad
         startActivity(intent);
     }
 
+    //Método que se ejecuta al pulsar la opción de deudas del grupo
     public void goToGroupSpendLiquidations() {
         //CAMBIAR activity
         Intent intent = new Intent(this, GroupProfileActivity.class);
