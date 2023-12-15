@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">GastosCompartidos</string>
     <string name="prefs_file">com.lfcounago.gastoscompartidos.PREFERENCE_FILE_KEY</string>
@@ -80,42 +81,42 @@
         <item>Zloty polaco - PLN</item>
     </string-array>
     <string-array name="categories">
-        <item>Viaje</item>
-        <item>Casa compartida</item>
-        <item>Pareja</item>
-        <item>Celebración</item>
-        <item>Proyecto</item>
-        <item>Otros</item>
+        <item>Trip</item>
+        <item>Share house</item>
+        <item>Partner</item>
+        <item>Celebration</item>
+        <item>Project</item>
+        <item>Other</item>
     </string-array>
 
     <!---
     GENERAL
     -->
-    <string name="cancel">Cancelar</string>
-    <string name="acept">Aceptar</string>
-    <string name="save">Guardar</string>
-    <string name="edit">Editar</string>
+    <string name="cancel">Cancel</string>
+    <string name="acept">Acept</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
 
     <!---
     activity_add_spend
     -->
-    <string name="add_spend_title">Añadir un nuevo gasto</string>
-    <string name="add_spend_spend_title">Título del gasto</string>
-    <string name="add_spend_spend_Date">Fecha del gasto</string>
-    <string name="add_spend_select_date">Seleccionar fecha</string>
-    <string name="add_spend_spend_amount">Cantidad del gasto</string>
-    <string name="add_spend_write_amount">Escribe la cantidad del gasto</string>
-    <string name="add_spend_payer">Usuario del grupo que pagó el gasto</string>
-    <string name="add_spend_shared">Usuarios con los que se comparte el gasto</string>
-    <string name="add_spend_group_user">Todos los usuarios del grupo</string>
-    <string name="add_spend_save_spend">Guardar gasto</string>
+    <string name="add_spend_title">Add a new spend </string>
+    <string name="add_spend_spend_title">Spend title</string>
+    <string name="add_spend_spend_Date">Spend date</string>
+    <string name="add_spend_select_date">Select date</string>
+    <string name="add_spend_spend_amount">Spend amount</string>
+    <string name="add_spend_write_amount">Write the spend amount</string>
+    <string name="add_spend_payer">Group user who paid the spend</string>
+    <string name="add_spend_shared">Users with whom spending is shared</string>
+    <string name="add_spend_group_user">All group users</string>
+    <string name="add_spend_save_spend">Save spend</string>
 
     <!---
     activity_add_user
     -->
-    <string name="add_user_title">Añadir Usuarios</string>
-    <string name="add_user_users">Añadir usuarios al grupo</string>
-    <string name="add_user_emails">Escribe los emails separados por comas</string>
+    <string name="add_user_title">Add users</string>
+    <string name="add_user_users">Add users to the group</string>
+    <string name="add_user_emails">Write emails separated by commas</string>
 
     <!---
     activity_balance
@@ -127,46 +128,46 @@
     <!---
     activity_create_group
     -->
-    <string name="create_group_title">Crear un grupo</string>
-    <string name="create_group_name">Nombre del grupo</string>
-    <string name="create_group_write_name">Escribe el nombre del grupo</string>
-    <string name="create_group_currency">Divisa</string>
-    <string name="create_group_catergories">Categoría</string>
-    <string name="create_group_users">Usuarios del grupo</string>
-    <string name="create_group_write_users">Escribe los emails separados por comas</string>
-    <string name="create_group_create_group">Crear grupo</string>
+    <string name="create_group_title">Create a group</string>
+    <string name="create_group_name">Group name</string>
+    <string name="create_group_write_name">Write the group name</string>
+    <string name="create_group_currency">Currency</string>
+    <string name="create_group_catergories">Category</string>
+    <string name="create_group_users">Group users</string>
+    <string name="create_group_write_users">Write emails separated by commas</string>
+    <string name="create_group_create_group">Create group</string>
 
     <!---
     activity_edit_profile
     -->
-    <string name="edit_profile_name">Tu nombre</string>
-    <string name="edit_profile_email">Correo electrónico</string>
-    <string name="edit_profile_phone">Número de teléfono</string>
+    <string name="edit_profile_name">Your name</string>
+    <string name="edit_profile_email">Email</string>
+    <string name="edit_profile_phone">Phone number</string>
 
     <!---
     activity_edit_spend
     -->
-    <string name="edit_spend_title">Editar Gasto</string>
-    <string name="edit_spend_spend_title">Título Gasto</string>
-    <string name="edit_spend_spend">Gasto</string>
-    <string name="edit_spend_currency">Divisa</string>
+    <string name="edit_spend_title">Edit spend</string>
+    <string name="edit_spend_spend_title">Spend title</string>
+    <string name="edit_spend_spend">Spend</string>
+    <string name="edit_spend_currency">Currency</string>
 
     <!---
     activity_group_details
     -->
-    <string name="group_details_title">Gastos</string>
-    <string name="group_details_group">Grupo</string>
+    <string name="group_details_title">Spends</string>
+    <string name="group_details_group">Groups</string>
 
     <!---
         activity_group_profile
     -->
-    <string name="group_profile_name">Nombre del grupo</string>
-    <string name="group_profile_currency">Divisa del grupo</string>
-    <string name="group_profile_categories">Categoría del grupo</string>
-    <string name="group_profile_users">Participantes:</string>
+    <string name="group_profile_name">Group name</string>
+    <string name="group_profile_currency">Group currency</string>
+    <string name="group_profile_categories">Group category</string>
+    <string name="group_profile_users">Participants:</string>
 
     <!---
-        activity_liquidations
+       activity_liquidations
 
         <string name=""></string>
     -->
@@ -175,52 +176,52 @@
     <!---
         activity_list_user_groups
     -->
-    <string name="list_user_groups_title">Grupos a los que perteneces</string>
+    <string name="list_user_groups_title">Groups to which you belong</string>
 
     <!---
         activity_login
     -->
-    <string name="login_login">Iniciar sesión</string>
+    <string name="login_login">Log in</string>
     <string name="login_email">Email</string>
-    <string name="login_password">Contraseña</string>
-    <string name="login_register">¿Nuevo por aquí? Regístrate</string>
-    <string name="login_reset_password">Recuperar contraseña</string>
+    <string name="login_password">Password</string>
+    <string name="login_register">New here? Sign up</string>
+    <string name="login_reset_password">Reset password</string>
 
     <!---
         activity_profile
     -->
-    <string name="profile_name">Nombre</string>
-    <string name="profile_name2">Tu nombre</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_name2">Your name</string>
     <string name="profile_email">Email</string>
-    <string name="profile_email2">Tu dirección de email</string>
-    <string name="profile_phone">Teléfono</string>
-    <string name="profile_phone2">Número de teléfono</string>
-    <string name="profile_edit_profile">Modificar perfil</string>
-    <string name="profile_reset_password">Cambiar contraseña</string>
-    <string name="profile_logout">Cerrar sesión</string>
+    <string name="profile_email2">Your email</string>
+    <string name="profile_phone">Phone</string>
+    <string name="profile_phone2">Phone number</string>
+    <string name="profile_edit_profile">Edit profile</string>
+    <string name="profile_reset_password">Reset password</string>
+    <string name="profile_logout">Log out</string>
 
     <!---
         activity_register
     -->
-    <string name="register_title">Crear una cuenta nueva</string>
-    <string name="register_register">Registrarse</string>
-    <string name="register_login">¿Ya tienes una cuenta? Inicia sesión</string>
+    <string name="register_title">Create a new account</string>
+    <string name="register_register">Register</string>
+    <string name="register_login">Already have an account? Log in</string>
 
     <!---
         activity_total_expenses
     -->
-    <string name="total_expenses_title">Gastos Totales</string>
-    <string name="total_expenses_total_spend">Gasto total del grupo:</string>
-    <string name="total_expenses_total_pay">Total pagado:</string>
-    <string name="total_expenses_partial_spend">Cuota del total:</string>
-    <string name="total_expenses_pay_sent">Pagos realizados:</string>
-    <string name="total_expenses_pay_recived">Pagos recibidos:</string>
+    <string name="total_expenses_title">Total spends</string>
+    <string name="total_expenses_total_spend">Group total spend:</string>
+    <string name="total_expenses_total_pay">Total paid:</string>
+    <string name="total_expenses_partial_spend">Share of the total:</string>
+    <string name="total_expenses_pay_sent">Payments made:</string>
+    <string name="total_expenses_pay_recived">Payments received:</string>
 
     <!---
         user_item
     -->
-    <string name="user_item_user_name">Nombre del usuario: </string>
-    <string name="user_item_user_amount">Saldo usuario </string>
-    <string name="user_item_currency">Divisa</string>
+    <string name="user_item_user_name">User name: </string>
+    <string name="user_item_user_amount">User balance </string>
+    <string name="user_item_currency">Currency</string>
 
 </resources>

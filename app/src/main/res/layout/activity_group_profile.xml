@@ -16,11 +16,11 @@
             android:id="@+id/textViewName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginVertical="5dp"
             android:ems="10"
             android:inputType="text"
+            android:text="@string/group_profile_name"
             android:textSize="20sp"
-            android:layout_marginVertical="5dp"
-            android:text="Nombre del grupo"
             android:textStyle="bold" />
 
         <TextView
@@ -28,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
-            android:text="Divisa del grupo"
+            android:text="@string/group_profile_currency"
             android:textSize="20sp" />
 
         <TextView
@@ -36,14 +36,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
-            android:text="Categoría del grupo"
+            android:text="@string/group_profile_categories"
             android:textSize="20sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginVertical="5dp"
-            android:text="Participantes:"
+            android:text="@string/group_profile_users"
             android:textSize="20sp" />
 
         <ListView
@@ -63,7 +63,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="70dp"
         android:onClick="guardarCambiosGrupo"
-        android:text="Guardar" />
+        android:text="@string/save" />
 
     <Button
         android:id="@+id/btnCancelar"
@@ -73,7 +73,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:onClick="goToDeatilsGroup"
-        android:text="Cancelar" />
+        android:text="@string/cancel" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnEliminarGrupo"

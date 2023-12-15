@@ -19,7 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Crear un grupo"
+                android:text="@string/create_group_title"
                 android:textSize="34sp" />
 
             <Space
@@ -29,21 +29,21 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Nombre del grupo"
+                android:text="@string/create_group_name"
                 android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/group_name_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Escribe el nombre del grupo"
+                android:hint="@string/create_group_write_name"
                 android:inputType="text" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Divisa"
+                android:text="@string/create_group_currency"
                 android:textSize="18sp" />
 
             <Spinner
@@ -55,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Categoría"
+                android:text="@string/create_group_catergories"
                 android:textSize="18sp" />
 
             <Spinner
@@ -67,14 +67,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Usuarios del grupo"
+                android:text="@string/create_group_users"
                 android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/users_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Escribe los emails separados por comas"
+                android:hint="@string/create_group_write_users"
                 android:inputType="textEmailAddress" />
 
             <Button
@@ -82,14 +82,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Crear grupo" />
+                android:text="@string/create_group_create_group" />
 
             <Button
                 android:id="@+id/bttCancelar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="goToActividadAnterior"
-                android:text="Cancelar" />
+                android:text="@string/cancel" />
         </LinearLayout>
     </ScrollView>
 
