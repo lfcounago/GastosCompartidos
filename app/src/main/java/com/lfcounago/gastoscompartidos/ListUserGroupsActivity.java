@@ -2,10 +2,8 @@ package com.lfcounago.gastoscompartidos;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,11 +16,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -125,6 +120,7 @@ public class ListUserGroupsActivity extends AppCompatActivity{
     }
 
 
+    //Método para crear las opciones del menú
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         super.onCreateOptionsMenu(menu);
@@ -132,24 +128,29 @@ public class ListUserGroupsActivity extends AppCompatActivity{
         return true;
     }
 
+    //Método para saber que opción ha sido seleccionada y actuar en consecuencia
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case android.R.id.home:
                 drawerLayout.openDrawer(GravityCompat.START);
                 return true;
-                /*
-            case R.id.mnProfile:
-                goToProfile();
-                return true;
-            case R.id.mnLiquidations:
-                goToLiquidations();
-                return true;
-            case R.id.mnCerrarSesion:
-                fAuth.signOut();
-                return true;
-
-                 */
+        }
+        if (item.getItemId() == R.id.mnHome){
+            goToListUserGroups();
+            return true;
+        }else if (item.getItemId() == R.id.mnLiquidations) {
+            goToLiquidations();
+            return true;
+        } else if (item.getItemId() == R.id.mnBalances) {
+            goToBalances();
+            return true;
+        } else if (item.getItemId() == R.id.mnLogOut) {
+            goToLogin();
+            return true;
+        }else if (item.getItemId() == R.id.mnProfile) {
+            goToProfile();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
