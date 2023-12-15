@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lfcounago.gastoscompartidos.core.*;
 
@@ -11,7 +12,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +25,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -76,8 +82,8 @@ public class LiquidationsActivity extends AppCompatActivity{
 
         //Obtener la referencia al LinearLayout que contiene el titulo "Liquidaciones"
         LinearLayout llLiquidaciones = findViewById(R.id.tvTituloLiquidaciones);
-        ////Obtener la referencia al LinearLayout que contiene el boton
-        LinearLayout llButtom = findViewById(R.id.llButton);
+        //Obtener la referencia al LinearLayout que contiene el boton
+        LinearLayout llButtom = findViewById(R.id.llButtom);
         //Obtener la referencia al LinearLayout que contiene el spinner de usuarios
         LinearLayout llSpUsers = findViewById(R.id.llspUsers);
 
@@ -113,8 +119,6 @@ public class LiquidationsActivity extends AppCompatActivity{
         //Indicar que se trata de las liquidaciones
         groupRecyclerViewAdapter.setShowBalancesMode(false);
 
-
-
         //Llamar al método que obtiene los grupos
         getGroups();
 
@@ -124,7 +128,6 @@ public class LiquidationsActivity extends AppCompatActivity{
                 goToListUserGroups(v);
             }
         });
-
     }
 
     public void onDataLoaded() {
