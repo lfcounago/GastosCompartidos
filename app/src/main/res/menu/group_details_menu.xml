@@ -5,7 +5,7 @@
         android:title="Perfil del grupo"/>
     <item
         android:id="@+id/itGroupSpends"
-        android:title="Gastos del grupo"/>
+        android:title="Gastos totales del grupo"/>
     <item
         android:id="@+id/itGroupLiquidations"
         android:title="Deudas del grupo"/>
