@@ -23,6 +23,10 @@
             android:exported="false" >
         </activity>
         <activity
+            android:name=".TotalExpensesActivity"
+            android:exported="false">
+        </activity>
+        <activity
             android:name=".GroupDetailsActivity"
             android:exported="false" />
         <activity
