@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +23,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,12 +81,14 @@ public class GroupDetailsActivity extends AppCompatActivity {
             }
         });
 
+        // Configurar la barra de acción
         setSupportActionBar(toolbar);
 
         // Llamar al método que obtiene los gastos pertenecientes al grupo
         getSpends();
     }
 
+    //Método para crear las opciones del menú
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -99,6 +99,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
     }
 
 
+    //Método para saber que opción ha sido seleccionada y actuar en consecuencia
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         boolean toret = false;
@@ -221,6 +222,7 @@ public class GroupDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //Método que se ejecuta al pulsar la opción del perfil del grupo
     public void goToGroupProfile() {
         Intent intent = new Intent(this, GroupProfileActivity.class);
         intent.putExtra("groupId", groupId);
@@ -228,14 +230,18 @@ public class GroupDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    //Método que se ejecuta al pulsar la opción de gastos del grupo
     public void goToGroupSpends() {
-        //Intent intent = new Intent(this, GroupProfileActivity.class);
+        Intent intent = new Intent(this, TotalExpensesActivity.class);
+        intent.putExtra("groupId", groupId);
         // Iniciar la actividad
-        //startActivity(intent);
+        startActivity(intent);
     }
 
+    //Método que se ejecuta al pulsar la opción de deudas del grupo
     public void goToGroupSpendLiquidations() {
         //Intent intent = new Intent(this, GroupProfileActivity.class);
+        //intent.putExtra("groupId", groupId);
         // Iniciar la actividad
         //startActivity(intent);
     }
