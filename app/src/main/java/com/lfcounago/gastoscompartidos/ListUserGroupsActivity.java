@@ -91,12 +91,14 @@ public class ListUserGroupsActivity extends AppCompatActivity{
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
 
-                if (itemId == R.id.mnProfile){
-                    goToProfile();
+                if (itemId == R.id.mnHome){
+                    goToListUserGroups();
                 } else if (itemId == R.id.mnBalances) {
                     goToBalances();
                 } else if (itemId == R.id.mnLiquidations) {
                     goToLiquidations();
+                }if (itemId == R.id.mnProfile){
+                    goToProfile();
                 } else if (itemId == R.id.mnLogOut) {
                     goToLogin();
                 }
@@ -190,6 +192,14 @@ public class ListUserGroupsActivity extends AppCompatActivity{
     public void goToCrearGrupo(View view) {
         // Crear un intent para iniciar la actividad CreateGroupActivity
         Intent intent = new Intent(this, CreateGroupActivity.class);
+
+        startActivity(intent);
+    }
+
+    // Método que se ejecuta al pulsar el botón de perfil en el menu
+    public void goToListUserGroups(){
+        // Crear un intent para iniciar la actividad ProfileActivity
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
 
         startActivity(intent);
     }
