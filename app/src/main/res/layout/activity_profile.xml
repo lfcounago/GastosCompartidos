@@ -197,6 +197,6 @@
         android:onClick="goToListUserGroups"
         android:src="@drawable/ic_return"
         tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
+        tools:layout_editor_absoluteY="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

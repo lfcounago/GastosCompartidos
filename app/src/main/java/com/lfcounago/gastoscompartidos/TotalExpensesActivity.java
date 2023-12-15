@@ -1,24 +1,21 @@
 package com.lfcounago.gastoscompartidos;
 
-import static java.lang.Math.round;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -36,10 +33,11 @@ public class TotalExpensesActivity extends AppCompatActivity {
     private  List<String> usuarios, uids, detalleGasto;
     private Map<String, String> uidToName, nameToUid;
     private ArrayAdapter<String> adapter, adapterG;
-    private TextView tvGastoTotal, tvTotalPagoUsu, tvPagoRealizadoUsu;
-    private String gid, titulo;
+    private TextView tvGastoTotal, tvTotalPagoUsu, tvPagoRealizadoUsu, tvPagosRecibidos;
+    private String gid;
     private String uid;
     private FirebaseFirestore fStore;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +54,11 @@ public class TotalExpensesActivity extends AppCompatActivity {
         detalleGasto = new ArrayList<>();
         tvGastoTotal = findViewById(R.id.tvGastoTotal);
         tvTotalPagoUsu = findViewById(R.id.tvTotalPagoUsu);
-        titulo = "Liquidación";
-        gid = getIntent().getStringExtra("groupId");//"bmMYudVqJVuPzEaWwVNj";
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();//"uivt6Bi7ZjapLuBKUXF8e052Oku2";
+        tvPagosRecibidos = findViewById(R.id.tvPagosRecibidos);
+        gid = getIntent().getStringExtra("groupId");
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
+        toolbar = findViewById(R.id.toolbar);
 
         // Crear un adaptador que vincula los nombres de los usuarios con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, usuarios);
@@ -67,8 +66,40 @@ public class TotalExpensesActivity extends AppCompatActivity {
         // Crear un adaptador que vincula los nombres del gasto con el vista del listView
         adapterG = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, detalleGasto);
 
+        // Configurar la barra de acción
+        setSupportActionBar(toolbar);
+
         // Llamar al método que obtiene los gastos
         getSpends(gid);
+    }
+
+    //Método para crear las opciones del menú
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        this.getMenuInflater().inflate(R.menu.group_expenses, menu);
+
+        return true;
+    }
+
+    //Método para saber que opción ha sido seleccionada y actuar en consecuencia
+    @Override
+    public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
+        boolean toret = false;
+
+        if (item.getItemId() == R.id.itGroupProfile){
+            goToGroupProfile();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupDetails) {
+            goToGroupDetails();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupLiquidations) {
+            goToGroupSpendLiquidations();
+            toret = true;
+        }
+
+        return toret;
     }
 
     //Recorre la colección "spends" para obtener todos los datos necesarios
@@ -88,7 +119,6 @@ public class TotalExpensesActivity extends AppCompatActivity {
                             // Recorrer cada documento del resultado
                             for (QueryDocumentSnapshot document : result) {
                                 // Obtener los valores correspondientes
-                                String title = document.getString("title");
                                 Number amount = document.getDouble("amount");
                                 String groupID = document.getString("groupID");
                                 String payer = document.getString("payer");
@@ -98,7 +128,7 @@ public class TotalExpensesActivity extends AppCompatActivity {
                                 // Limpiar los mapas de correspondencia entre UID y nombre de los usuarios
                                 uidToName.clear();
                                 nameToUid.clear();
-                                if (groupID != null && groupID.equals(groupId) && amount != null && !title.equals(titulo)) { // Si la lista de gastos contiene el id del grupo actual
+                                if (groupID != null && groupID.equals(groupId) && amount != null) { // Si la lista de gastos contiene el id del grupo actual
                                     // Añadir el gasto del grupo a la lista de gastos del grupo
                                     gastos.add(amount);
                                     //Cogemos los usuarios correspondientes al gasto
@@ -115,6 +145,7 @@ public class TotalExpensesActivity extends AppCompatActivity {
                 });
     }
 
+    //Método para obtener los gastos totales
     private void totalExpenses(List<Number> gastos, List<Number> gastosPag, List<String> uidsUsu, List<String> gastosTitulo) {
         double gastosTotales = 0;
         double gastosPagador = 0;
@@ -180,6 +211,30 @@ public class TotalExpensesActivity extends AppCompatActivity {
     public static double round2(double value) {
 
         return Math.round(value * 100.0) / 100.0;
+    }
+
+    //Método que se ejecuta al pulsar la opción del perfil del grupo
+    public void goToGroupProfile() {
+        Intent intent = new Intent(this, GroupProfileActivity.class);
+        intent.putExtra("groupId", gid);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
+
+    //Método que se ejecuta al pulsar la opción de detalles del grupo
+    public void goToGroupDetails() {
+        Intent intent = new Intent(this, GroupDetailsActivity.class);
+        intent.putExtra("groupId", gid);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
+
+    //Método que se ejecuta al pulsar la opción de deudas del grupo
+    public void goToGroupSpendLiquidations() {
+        //Intent intent = new Intent(this, GroupProfileActivity.class);
+        //intent.putExtra("groupId", groupId);
+        // Iniciar la actividad
+        //startActivity(intent);
     }
 
 }
