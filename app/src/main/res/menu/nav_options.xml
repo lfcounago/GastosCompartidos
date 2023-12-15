@@ -2,10 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
+
         <item
-            android:id="@+id/mnProfile"
-            android:title="Mi perfil"
-            android:icon="@drawable/ic_person_black_24dp"/>
+            android:id="@+id/mnHome"
+            android:title="Inicio"
+            android:icon="@drawable/nav_home"/>
         <item
             android:id="@+id/mnBalances"
             android:title="Saldos"
@@ -20,6 +21,10 @@
         android:title="">
 
         <menu>
+            <item
+                android:id="@+id/mnProfile"
+                android:title="Mi perfil"
+                android:icon="@drawable/ic_person_black_24dp"/>
             <item
                 android:id="@+id/mnLogOut"
                 android:title="Cerrar Sesión"

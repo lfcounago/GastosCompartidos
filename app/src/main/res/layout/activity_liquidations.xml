@@ -16,7 +16,7 @@
         tools:context=".LiquidationsActivity">
 
         <LinearLayout
-            android:id="@+id/llButton"
+            android:id="@+id/llButtom"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
