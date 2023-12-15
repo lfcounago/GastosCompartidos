@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -101,10 +102,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         boolean toret = false;
-        View view;
 
         if (item.getItemId() == R.id.itGroupProfile){
-            //goToGroupProfile(view);
+            goToGroupProfile();
             toret = true;
         } else if (item.getItemId() == R.id.itGroupSpends) {
             goToGroupSpends();
@@ -221,8 +221,9 @@ public class GroupDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToGroupProfile(View view) {
+    public void goToGroupProfile() {
         Intent intent = new Intent(this, GroupProfileActivity.class);
+        intent.putExtra("groupId", groupId);
         // Iniciar la actividad
         startActivity(intent);
     }
