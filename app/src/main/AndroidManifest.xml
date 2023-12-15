@@ -15,17 +15,26 @@
         android:theme="@style/Theme.GastosCompartidos"
         tools:targetApi="31">
         <activity
-            android:name=".LiquidationsActivity"
-            android:exported="false" >
+            android:name=".SettleDebtActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DebtLiquidationActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".LiquidationsActivity"
+            android:exported="false" />
         <activity
             android:name=".BalanceActivity"
-            android:exported="false" >
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".TotalExpensesActivity"
-            android:exported="false">
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".GroupDetailsActivity"
             android:exported="false" />
@@ -52,12 +61,8 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 
