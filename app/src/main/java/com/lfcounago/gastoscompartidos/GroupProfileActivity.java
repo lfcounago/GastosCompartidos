@@ -3,6 +3,8 @@ package com.lfcounago.gastoscompartidos;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -11,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -46,6 +49,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     private String groupId;
     FirebaseAuth fAuth;
     private FirebaseFirestore fStore;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         uidToName = new HashMap<>();
         nameToUid = new HashMap<>();
         groupId = getIntent().getStringExtra("groupId");
+        toolbar = findViewById(R.id.toolbar);
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
@@ -97,8 +102,37 @@ public class GroupProfileActivity extends AppCompatActivity {
         // Crear un adaptador que vincula los nombres de los usuarios con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, usuarios);
 
+        setSupportActionBar(toolbar);
+
         // Llamar al método que obtiene los datos del grupo
         getGroupData();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        this.getMenuInflater().inflate(R.menu.group_profile_menu, menu);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        boolean toret = false;
+
+        if (item.getItemId() == R.id.itGroupDetails){
+            toGroupDetails();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupSpends) {
+            goToGroupSpends();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupLiquidations) {
+            goToGroupSpendLiquidations();
+            toret = true;
+        }
+
+        return toret;
     }
 
     // Definir el método que obtiene los datos del grupo
@@ -403,7 +437,21 @@ public class GroupProfileActivity extends AppCompatActivity {
         finish();
     }
 
+    public void goToGroupSpends() {
+        //CAMBIAR activity
+        Intent intent = new Intent(this, GroupProfileActivity.class);
+        intent.putExtra("groupId", groupId);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
 
+    public void goToGroupSpendLiquidations() {
+        //CAMBIAR activity
+        Intent intent = new Intent(this, GroupProfileActivity.class);
+        intent.putExtra("groupId", groupId);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
 
 
 }
