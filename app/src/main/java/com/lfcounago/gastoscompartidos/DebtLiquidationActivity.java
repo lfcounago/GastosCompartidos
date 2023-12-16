@@ -29,7 +29,7 @@ public class DebtLiquidationActivity extends AppCompatActivity {
 
     // Declarar los atributos de la clase
     private ListView lvUsuarios;
-    private List<String> usuarios, uids, idsUsuario;
+    private List<String> usuarios, uids, idsUsuario, deudas;
     private Map<String, String> uidToName, nameToUid;
     private ArrayAdapter<String> adapter;
     private String gid, titulo;
@@ -46,11 +46,12 @@ public class DebtLiquidationActivity extends AppCompatActivity {
         usuarios = new ArrayList<>();
         uids = new ArrayList<>();
         idsUsuario = new ArrayList<>();
+        deudas = new ArrayList<>();
         uidToName = new HashMap<>();
         nameToUid = new HashMap<>();
         titulo = "Liquidación";
-        gid = "bmMYudVqJVuPzEaWwVNj";//getIntent().getStringExtra("groupId");//"bmMYudVqJVuPzEaWwVNj";
-        uidU = "uivt6Bi7ZjapLuBKUXF8e052Oku2";//FirebaseAuth.getInstance().getCurrentUser().getUid();//"uivt6Bi7ZjapLuBKUXF8e052Oku2";
+        gid = getIntent().getStringExtra("groupId");//"bmMYudVqJVuPzEaWwVNj";
+        uidU = FirebaseAuth.getInstance().getCurrentUser().getUid();//"uivt6Bi7ZjapLuBKUXF8e052Oku2";
         fStore = FirebaseFirestore.getInstance();
 
         // Crear un adaptador que vincula los nombres de los usuarios con la vista del listView
@@ -86,31 +87,38 @@ public class DebtLiquidationActivity extends AppCompatActivity {
                         QuerySnapshot result = task.getResult();
                         if (result != null) {
                             // Recorrer cada documento del resultado
+                            deudas.clear();
                             for (QueryDocumentSnapshot document : result) {
                                 // Obtener los valores correspondientes
                                 String title = document.getString("title");
                                 Number amount = document.getDouble("amount");
                                 String groupID = document.getString("groupID");
+                                String payer = document.getString("payer");
                                 // Limpiar la lista de nombres de los usuarios
                                 usuarios.clear();
                                 // Limpiar los mapas de correspondencia entre UID y nombre de los usuarios
                                 uidToName.clear();
                                 nameToUid.clear();
-                                if (groupID != null && groupID.equals(groupId) && amount != null) { // Si la lista de gastos contiene el id del grupo actual
-                                    if(title != titulo) {// Añadir el gasto del grupo a la lista de gastos del grupo
-                                        gastos.add(amount);
-                                        //Cogemos los usuarios correspondientes al gasto
-                                        uids = (List<String>) document.get("sharedWith");
+                                if(groupID != null && groupID.equals(groupId) && title.equals(titulo) && uidU.equals(payer)){
+                                    Object sharedWithObj = document.get("sharedWith");
+                                    if (sharedWithObj instanceof String) {
+                                        deudas.add((String) sharedWithObj);
                                     }
                                 }
+                                if (groupID != null && groupID.equals(groupId) && amount != null && !title.equals(titulo)) { // Si la lista de gastos contiene el id del grupo actual
+                                    // Añadir el gasto del grupo a la lista de gastos del grupo
+                                    gastos.add(amount);
+                                    //Cogemos los usuarios correspondientes al gasto
+                                    uids = (List<String>) document.get("sharedWith");
+                                }
                             }
-                            totalExpenses(gastos, uids); //Llama a la función que obtiene los gastos del grupo y del "payer"
+                            totalExpenses(gastos, uids, deudas); //Llama a la función que obtiene los gastos del grupo y del "payer"
                         }
                     }
                 });
     }
 
-    private void totalExpenses(List<Number> gastos, List<String> uidsUsu) {
+    private void totalExpenses(List<Number> gastos, List<String> uidsUsu, List<String> deudas) {
         double gastosTotales = 0;
         int numUsu = uidsUsu.size();
 
@@ -121,7 +129,7 @@ public class DebtLiquidationActivity extends AppCompatActivity {
         double gastoUsu = round2(gastosTotales/numUsu);
         gastoUsuario = gastoUsu;
         for(String uid : uidsUsu){
-            if(!uid.equals(uidU)) {
+            if(!uid.equals(uidU) && !deudas.contains(uid)) {
                 // Obtener el documento correspondiente al UID del usuario de la colección users de Firebase
                 fStore.collection("users").document(uid)
                         .get()
