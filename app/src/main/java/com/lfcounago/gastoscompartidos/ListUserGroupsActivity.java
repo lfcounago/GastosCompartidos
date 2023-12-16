@@ -51,9 +51,6 @@ public class ListUserGroupsActivity extends AppCompatActivity{
         groupIds = new ArrayList<>();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
-        fAuth = FirebaseAuth.getInstance();
-        navigationView = findViewById(R.id.navView);
-        drawerLayout = findViewById(R.id.dlMenuLateral);
 
         // Crear un adaptador que vincula los nombres de los grupos con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, groupNames);

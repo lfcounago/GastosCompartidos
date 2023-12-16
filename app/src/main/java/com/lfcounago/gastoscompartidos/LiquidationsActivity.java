@@ -119,6 +119,8 @@ public class LiquidationsActivity extends AppCompatActivity{
         //Indicar que se trata de las liquidaciones
         groupRecyclerViewAdapter.setShowBalancesMode(false);
 
+
+
         //Llamar al método que obtiene los grupos
         getGroups();
 
