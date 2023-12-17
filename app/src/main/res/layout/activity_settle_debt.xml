@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="20dp"
     tools:context=".AddSpendActivity">
+
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -126,7 +127,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="Guardar liquidación" />
+                android:text="Guardar liquidación"
+                android:backgroundTint="@color/red2"
+                android:textColor="@color/black"/>
 
             <Button
                 android:id="@+id/btCancelar"
@@ -135,7 +138,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:onClick="goToActividadAnterior"
-                android:text="Cancelar" />
+                android:text="Cancelar"
+                android:backgroundTint="@color/red2"
+                android:textColor="@color/black"/>
 
         </LinearLayout>
     </ScrollView>

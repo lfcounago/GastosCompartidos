@@ -2,11 +2,14 @@ package com.lfcounago.gastoscompartidos;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -43,11 +46,12 @@ public class SettleDebtActivity extends AppCompatActivity {
     private Button btGuardar;
 
     // Declaración de variables para almacenar los datos
-    private String usuConectado, titulo, grupo, groupId, userId;
+    private String usuConectado, titulo, grupo, groupId, userId, rojo;
     private double amount;
 
     // Declaración de variables para acceder a la base de datos de Firebase
     private FirebaseFirestore fStore;
+    private Window window;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +64,7 @@ public class SettleDebtActivity extends AppCompatActivity {
         tvPagador = findViewById(R.id.tvPagador);
         tvUsuDeuda = findViewById(R.id.tvUsuDeuda);
         btGuardar = findViewById(R.id.btGuardar);
+        rojo = "#ff4561";
 
         fStore = FirebaseFirestore.getInstance();
 
@@ -106,9 +111,7 @@ public class SettleDebtActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-        tvTitulo.setText("Liquidación");
-        tvCantidad.setText(String.valueOf(amount));
+        actualizarInterfazUsuario();
 
         //Obtener el nombre del grupo mediante su ID
         fStore.collection("groups").document(groupId)
@@ -158,6 +161,10 @@ public class SettleDebtActivity extends AppCompatActivity {
                 }
             }
         });
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(rojo));
     }
 
     // Método para validar los datos introducidos por el usuario
@@ -171,11 +178,10 @@ public class SettleDebtActivity extends AppCompatActivity {
         return true;
     }
 
-    // Método para cuando se elimina grupo volver a la pantalla principal de la aplicación DebtLiquidationActivity
+    // Método para cuando se elimina grupo volver a la pantalla principal de la aplicación ListUserGroupsActivity
     private void toDebtLiquidation() {
         // Crear un Intent para iniciar la actividad de detalles del grupo
         Intent intent = new Intent(this, DebtLiquidationActivity.class);
-        intent.putExtra("groupId", groupId);
         startActivity(intent);
         // Cerrar la actividad actual si es necesario
         finish();
@@ -185,6 +191,7 @@ public class SettleDebtActivity extends AppCompatActivity {
         // Crear un intent para iniciar la actividad DebtLiquidationActivity
         Intent intent = new Intent(this, DebtLiquidationActivity.class);
         intent.putExtra("groupId", groupId);
+
         startActivity(intent);
     }
 

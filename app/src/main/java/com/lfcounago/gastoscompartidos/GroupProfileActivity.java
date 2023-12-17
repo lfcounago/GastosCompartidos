@@ -472,8 +472,7 @@ public class GroupProfileActivity extends AppCompatActivity {
 
     //Método que se ejecuta al pulsar la opción de deudas del grupo
     public void goToGroupSpendLiquidations() {
-        //CAMBIAR activity
-        Intent intent = new Intent(this, GroupProfileActivity.class);
+        Intent intent = new Intent(this, DebtLiquidationActivity.class);
         intent.putExtra("groupId", groupId);
         // Iniciar la actividad
         startActivity(intent);

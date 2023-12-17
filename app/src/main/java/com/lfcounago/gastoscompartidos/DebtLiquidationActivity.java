@@ -1,11 +1,16 @@
 package com.lfcounago.gastoscompartidos;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -33,9 +38,11 @@ public class DebtLiquidationActivity extends AppCompatActivity {
     private Map<String, String> uidToName, nameToUid;
     private ArrayAdapter<String> adapter;
     private String gid, titulo;
-    private String uidU;
+    private String uidU, rojo;
     private Double gastoUsuario;
     private FirebaseFirestore fStore;
+    private Toolbar toolbar;
+    private Window window;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +60,8 @@ public class DebtLiquidationActivity extends AppCompatActivity {
         gid = getIntent().getStringExtra("groupId");//"bmMYudVqJVuPzEaWwVNj";
         uidU = FirebaseAuth.getInstance().getCurrentUser().getUid();//"uivt6Bi7ZjapLuBKUXF8e052Oku2";
         fStore = FirebaseFirestore.getInstance();
+        toolbar = findViewById(R.id.toolbar);
+        rojo = "#ff4561";
 
         // Crear un adaptador que vincula los nombres de los usuarios con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, usuarios);
@@ -70,8 +79,47 @@ public class DebtLiquidationActivity extends AppCompatActivity {
             }
         });
 
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(rojo));
+
+        // Configurar la barra de acción
+        setSupportActionBar(toolbar);
+
         // Llamar al método que obtiene los gastos
         getSpends(gid);
+    }
+
+    //Método para crear las opciones del menú
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        this.getMenuInflater().inflate(R.menu.group_liquidations_menu, menu);
+
+        return true;
+    }
+
+    //Método para saber que opción ha sido seleccionada y actuar en consecuencia
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        boolean toret = false;
+
+        if (item.getItemId() == R.id.itHome){
+            goToListUserGroups();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupDetails){
+            goToGroupDetails();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupProfile) {
+            goToGroupProfile();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupSpends) {
+            goToGroupSpends();
+            toret = true;
+        }
+
+        return toret;
     }
 
     //Recorre la colección "spends" para obtener todos los datos necesarios
@@ -169,4 +217,34 @@ public class DebtLiquidationActivity extends AppCompatActivity {
         return Math.round(value * 100.0) / 100.0;
     }
 
+    //Método que se ejecuta al pulsar la opción de inicio en el menu
+    public void goToListUserGroups() {
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
+
+    //Método que se ejecuta al pulsar la opción de detalles del grupo
+    public void goToGroupDetails() {
+        Intent intent = new Intent(this, GroupDetailsActivity.class);
+        intent.putExtra("groupId", gid);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
+
+    //Método que se ejecuta al pulsar la opción de perfil del grupo
+    public void goToGroupProfile() {
+        Intent intent = new Intent(this, GroupProfileActivity.class);
+        intent.putExtra("groupId", gid);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
+
+    //Método que se ejecuta al pulsar la opción de gastos del grupo
+    public void goToGroupSpends() {
+        Intent intent = new Intent(this, TotalExpensesActivity.class);
+        intent.putExtra("groupId", gid);
+        // Iniciar la actividad
+        startActivity(intent);
+    }
 }
