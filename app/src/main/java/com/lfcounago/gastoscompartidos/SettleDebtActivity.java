@@ -106,7 +106,9 @@ public class SettleDebtActivity extends AppCompatActivity {
                         }
                     }
                 });
-        actualizarInterfazUsuario();
+
+        tvTitulo.setText("Liquidación");
+        tvCantidad.setText(String.valueOf(amount));
 
         //Obtener el nombre del grupo mediante su ID
         fStore.collection("groups").document(groupId)
@@ -169,10 +171,11 @@ public class SettleDebtActivity extends AppCompatActivity {
         return true;
     }
 
-    // Método para cuando se elimina grupo volver a la pantalla principal de la aplicación ListUserGroupsActivity
+    // Método para cuando se elimina grupo volver a la pantalla principal de la aplicación DebtLiquidationActivity
     private void toDebtLiquidation() {
         // Crear un Intent para iniciar la actividad de detalles del grupo
         Intent intent = new Intent(this, DebtLiquidationActivity.class);
+        intent.putExtra("groupId", groupId);
         startActivity(intent);
         // Cerrar la actividad actual si es necesario
         finish();
@@ -181,7 +184,7 @@ public class SettleDebtActivity extends AppCompatActivity {
     public void goToActividadAnterior(View view) {
         // Crear un intent para iniciar la actividad DebtLiquidationActivity
         Intent intent = new Intent(this, DebtLiquidationActivity.class);
-
+        intent.putExtra("groupId", groupId);
         startActivity(intent);
     }
 
