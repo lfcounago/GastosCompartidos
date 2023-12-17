@@ -196,14 +196,17 @@
         android:id="@+id/floatingActionButtonProfile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:backgroundTint="@color/dark"
+        android:layout_marginTop="28dp"
+        android:backgroundTint="@color/white"
         android:clickable="true"
+        android:elevation="0dp"
         android:onClick="goToListUserGroups"
-        android:src="@drawable/ic_return_white"
-        app:layout_constraintHorizontal_bias="0.081"
+        android:src="@drawable/ic_return"
+        app:borderWidth="0dp"
+        app:layout_constraintHorizontal_bias="0.048"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:useCompatPadding="true" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

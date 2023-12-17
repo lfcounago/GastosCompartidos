@@ -258,10 +258,10 @@ public class TotalExpensesActivity extends AppCompatActivity {
 
     //Método que se ejecuta al pulsar la opción de deudas del grupo
     public void goToGroupSpendLiquidations() {
-        //Intent intent = new Intent(this, GroupProfileActivity.class);
-        //intent.putExtra("groupId", groupId);
+        Intent intent = new Intent(this, DebtLiquidationActivity.class);
+        intent.putExtra("groupId", gid);
         // Iniciar la actividad
-        //startActivity(intent);
+        startActivity(intent);
     }
 
 }
