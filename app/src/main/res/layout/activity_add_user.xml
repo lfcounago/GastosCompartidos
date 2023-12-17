@@ -33,7 +33,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Aceptar"
-        android:backgroundTint="@color/lila"/>
+        android:backgroundTint="@color/lila"
+        android:text="Aceptar" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/lila"
+        android:onClick="toGroupDetails"
+        android:text="@android:string/cancel" />
 
 </LinearLayout>

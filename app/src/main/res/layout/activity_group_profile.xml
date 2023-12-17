@@ -82,9 +82,9 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:onClick="goToDeatilsGroup"
-        android:text="Cancelar"
-        android:backgroundTint="@color/lila"/>
+        android:backgroundTint="@color/lila"
+        android:onClick="toGroupDetails"
+        android:text="Cancelar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnEliminarGrupo"
@@ -110,9 +110,9 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/lila"
         android:onClick="goToAddUser"
-        android:src="@android:drawable/ic_input_add"
-        android:backgroundTint="@color/lila"/>
+        android:src="@android:drawable/ic_input_add" />
 
 
 
