@@ -227,4 +227,21 @@
     <string name="user_item_user_amount">Saldo usuario </string>
     <string name="user_item_currency">Divisa</string>
 
+    <!---
+        activity_debt_liquidation
+    -->
+    <string name="debt_liquidation_title">Deudas con usuarios</string>
+    <string name="debt_liquidation_debts">Deudas: </string>
+
+    <!---
+        activity_settle_debt
+    -->
+    <string name="settle_debt_title">Liquidar Deuda</string>
+    <string name="settle_debt_liquidation">Liquidadicón</string>
+    <string name="settle_debt_amount">Cantidad del gasto</string>
+    <string name="settle_debt_payer">Usuario que paga la deuda</string>
+    <string name="settle_debt_user">El usuario</string>
+    <string name="settle_debt_user_to_pay">Usuario al que le paga la deuda</string>
+
+
 </resources>
