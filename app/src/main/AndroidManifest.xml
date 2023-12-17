@@ -29,10 +29,8 @@
         <activity
             android:name=".TotalExpensesActivity"
             android:exported="false" />
-        <activity
-            android:name=".TotalExpensesActivity"
-            android:exported="false">
-        </activity>
+        <activity android:name=".AddUserActivity"
+            android:exported="false" />
         <activity
             android:name=".GroupDetailsActivity"
             android:exported="false" />

@@ -3,8 +3,10 @@ package com.lfcounago.gastoscompartidos;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,12 +26,13 @@ import java.util.Map;
 
 public class AddUserActivity extends AppCompatActivity {
 
-    private String groupId;
+    private String groupId, lila;
     private FirebaseFirestore fStore;
     private CollectionReference usersRef;
     private CollectionReference groupsRef;
     private EditText etUsers;
     private Button btnAceptar;
+    private Window window;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,11 @@ public class AddUserActivity extends AppCompatActivity {
         btnAceptar = findViewById(R.id.btnAceptar);
 
         etUsers = findViewById(R.id.etUsers);
+        lila = "#8838f1";
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(lila));
 
         // Listener para crear un grupo
         btnAceptar.setOnClickListener(new View.OnClickListener() {
@@ -52,6 +60,7 @@ public class AddUserActivity extends AppCompatActivity {
                 addUser();
             }
         });
+
     }
 
     // Metodo para añadir usuarios al grupo

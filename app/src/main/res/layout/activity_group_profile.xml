@@ -6,11 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".GroupProfileActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/lila"
+        android:elevation="4dp"
+        android:theme="?attr/actionBarTheme" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:layout_marginTop="65dp">
 
         <EditText
             android:id="@+id/textViewName"
@@ -63,7 +72,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="70dp"
         android:onClick="guardarCambiosGrupo"
-        android:text="Guardar" />
+        android:text="Guardar"
+        android:backgroundTint="@color/lila"/>
 
     <Button
         android:id="@+id/btnCancelar"
@@ -72,7 +82,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:onClick="goToDeatilsGroup"
+        android:backgroundTint="@color/lila"
+        android:onClick="toGroupDetails"
         android:text="Cancelar" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -86,7 +97,8 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:onClick="eliminarGrupo"
-        android:src="@android:drawable/ic_menu_delete"/>
+        android:src="@android:drawable/ic_menu_delete"
+        android:backgroundTint="@color/lila"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAnadirUsuario"
@@ -98,6 +110,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
+        android:backgroundTint="@color/lila"
         android:onClick="goToAddUser"
         android:src="@android:drawable/ic_input_add" />
 

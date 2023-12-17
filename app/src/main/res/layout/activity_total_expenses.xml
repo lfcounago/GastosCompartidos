@@ -5,8 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
     tools:context=".TotalExpensesActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/purple"
+        android:elevation="4dp"
+        android:theme="?attr/actionBarTheme"
+        android:backgroundTint="@color/yellow"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -109,6 +117,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:choiceMode="singleChoice" />
+
+    </LinearLayout>
+
+    <!-- Pagos recibidos (deudas saldadas por otros usuarios) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Pagos recibidos:" />
+
+        <TextView
+            android:id="@+id/tvPagosRecibidos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:inputType="numberDecimal" />
 
     </LinearLayout>
 

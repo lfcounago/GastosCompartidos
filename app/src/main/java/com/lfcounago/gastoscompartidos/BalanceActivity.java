@@ -3,6 +3,7 @@ package com.lfcounago.gastoscompartidos;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.lfcounago.gastoscompartidos.core.*;
 
@@ -14,11 +15,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 
 import android.view.View;
 
+import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,8 +41,11 @@ public class BalanceActivity extends AppCompatActivity{
     private GroupRecyclerViewAdapter groupRecyclerViewAdapter;
     private UserRecyclerViewAdapter userRecyclerViewAdapter;
     private List<Group> groupList;
-    private String uid;
+    private String uid, primaryDark, white;
     private FirebaseFirestore fStore;
+    private FloatingActionButton fab;
+    private int colorIntDark, colorIntWhite;
+    private Window window;
 
 
     @Override
@@ -49,6 +57,10 @@ public class BalanceActivity extends AppCompatActivity{
         rvGroups = findViewById(R.id.rvGroupUsers);
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
+        primaryDark = "#063642";
+        colorIntDark = Color.parseColor(primaryDark);
+        white = "#ffffff";
+        colorIntWhite = Color.parseColor(white);
 
         groupList = new ArrayList<>();
 
@@ -62,25 +74,49 @@ public class BalanceActivity extends AppCompatActivity{
         //Obtener la referencia al LinearLayout que contiene el titulo "Saldos"
         LinearLayout llSaldos = findViewById(R.id.tvTituloSaldos);
 
-        //Añadir el titulo "Saldos" al LinearLayout
-        TextView tvTituloSaldos = new TextView(this);
-        tvTituloSaldos.setLayoutParams(new LinearLayout.LayoutParams(
+        //Obtener la referencia al LinearLayout que contiene el boton
+        LinearLayout llButtom = findViewById(R.id.llButtom);
+
+        //Parametros generales
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
+        );
+
+        //Añadir el titulo "Saldos" al LinearLayout
+        TextView tvTituloSaldos = new TextView(this);
+        tvTituloSaldos.setLayoutParams(layoutParams);
         tvTituloSaldos.setText("Saldos");
         tvTituloSaldos.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         tvTituloSaldos.setTextSize(TypedValue.COMPLEX_UNIT_SP, 44);
         tvTituloSaldos.setTypeface(null, Typeface.BOLD);
 
-        // Añadir el TextView al LinearLayout
-        llSaldos.addView(tvTituloSaldos);
+        //Añadir el boton al LinearLayout
+        fab = new FloatingActionButton(this);
+        fab.setLayoutParams(layoutParams);
+        fab.setImageResource(R.drawable.ic_return);
+        fab.setBackgroundTintList(ColorStateList.valueOf(colorIntWhite));
+        fab.setElevation(0);
+        fab.setStateListAnimator(null);
 
-        //Indicar que se trata de los saldos
-        //groupRecyclerViewAdapter.setShowBalancesMode(true);
+        // Añadir al LinearLayout
+        llSaldos.addView(tvTituloSaldos);
+        llButtom.addView(fab);
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(primaryDark));
 
         //Llamar al método que obtiene los grupos
         getGroups();
+
+        //Establecer la función a realizar al pulsar el botón de atrás
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToListUserGroups(v);
+            }
+        });
     }
 
 
@@ -98,7 +134,6 @@ public class BalanceActivity extends AppCompatActivity{
                 } else {
                     Log.e("BalanceActivity", "La lista de grupos está vacía o nula");
                 }
-
             }
         });
     }
@@ -148,18 +183,23 @@ public class BalanceActivity extends AppCompatActivity{
         });
     }
 
+    //Método para obtener la información del grupo
     private Task<Void> getGroupInfo(String groupId, String groupName, List<String> groupUsers, String currency){
+        //Objeto para indicar la finalizacion de la tarea
         TaskCompletionSource<Void> taskCompletionSource = new TaskCompletionSource<>();
         List<User> users = new ArrayList<>();
 
+        //Contador atómico para realizar un seguimiento del número de usuarios procesados
         AtomicInteger userCount = new AtomicInteger(0);
 
+        //Iterar sobre la lista de usuarios del grupo
         for (String userId : groupUsers) {
+            //Obtener información de cada usuario y su saldo total en el grupo
             getGroupUsers(groupId, userId, currency, (user, totalBalance) -> {
                 //Añadir los usuarios a la lista de usuarios
                 users.add(user);
 
-                // Verificar si se han cargado todos los usuarios
+                //Verificar si se han cargado todos los usuarios
                 if (userCount.incrementAndGet() == groupUsers.size()) {
                     // Construir un objeto Group con la información obtenida
                     Group group = new Group(groupId, groupName, users);
@@ -167,17 +207,20 @@ public class BalanceActivity extends AppCompatActivity{
                     //Añadir el grupo a la lista de grupos
                     groupList.add(group);
 
+                    //Indicar que la tarea se ha completado
                     taskCompletionSource.trySetResult(null);
                 }
             });
         }
 
-        // Esperar a que todas las tareas de usuario se completen
+        //Esperar a que todas las tareas de usuario se completen
         Tasks.whenAllSuccess(Collections.singletonList(taskCompletionSource.getTask()));
 
+        //Devolver la tarea asociada a taskCompletionSource
         return taskCompletionSource.getTask();
     }
 
+    //Método para obtener información de un usuario en un grupo
     private void getGroupUsers(String groupId, String userId, String currency, UsersCallBack callBack) {
         List<User> usersList = new ArrayList<>();
 
@@ -221,6 +264,7 @@ public class BalanceActivity extends AppCompatActivity{
                 });
     }
 
+    //Método para obtener información de los gastos asociados a un usuario en un grupo
     private void getUserSpends(String groupId, String userId, BalancesCallback callback) {
         // Realizar consulta a la colección "spends" para obtener la información de los balances asociados al usuario
         fStore.collection("spends")
@@ -230,31 +274,43 @@ public class BalanceActivity extends AppCompatActivity{
                     if (task.isSuccessful()) {
                         List<ExpenseItem> spends = new ArrayList<>();
 
+                        //Iterar sobre los documentos de gastos obtenidos en la consulta
                         for (QueryDocumentSnapshot spendDocument : task.getResult()) {
                             //Obtener la informacion necesaria de los gastos
                             String spendId = spendDocument.getId();
                             String payerId = spendDocument.getString("payer");
                             double amount = spendDocument.getDouble("amount");
-                            List<String> sharedWith = (List<String>) spendDocument.get("sharedWith");
+                            Object sharedWithObj = spendDocument.get("sharedWith");
+                            List<String> sharedWith;
 
-                            // Crear instancia de Balance y agregar a la lista de balances
+                            //Verificar si "sharedWith" es una lista
+                            if (sharedWithObj instanceof List<?>) {
+                                sharedWith = (List<String>) sharedWithObj;
+                            } else {
+                                Log.e("BalanceActivity", "El campo 'sharedWith' no es una lista");
+                                return;
+                            }
+
+                            //Crear instancia de Balance y agregar a la lista de balances
                             ExpenseItem balance = new ExpenseItem(spendId, groupId, payerId, amount, sharedWith);
                             spends.add(balance);
 
                         }
-                        // Calcular el saldo total del usuario en el grupo
+                        //Calcular el saldo total del usuario en el grupo
                         double totalBalance = calculateTotalBalance(userId,groupId, spends);
 
-                        // Llamar al método de devolución de llamada con la lista de balances
+                        //Llamar al método de devolución de llamada con la lista de balances
                         callback.onBalancesRecibidos(spends, totalBalance);
                     } else {
-                        // Manejar el error al obtener los balances
+                        //Manejar el error al obtener los balances
                         Log.e("BalanceActivity", "Error al obtener balances del usuario", task.getException());
+                        //Llamar al método de devolución de llamada con una lista vacía y saldo cero
                         callback.onBalancesRecibidos(Collections.emptyList(),0.0);
                     }
                 });
     }
 
+    //Método para calcular el saldo total de un usuario en un grupo
     private double calculateTotalBalance(String userId, String groupId, List<ExpenseItem> spends){
         double totalBalance = 0.0;
 
@@ -281,14 +337,22 @@ public class BalanceActivity extends AppCompatActivity{
         return totalBalance;
     }
 
+    //Interfaz de devolución de llamada para obtener información de usuarios
     interface UsersCallBack {
-
         void onUsuarioRecibido(User user, Double totalBalance);
     }
 
-    // Interfaz de devolución de llamada para obtener balances del usuario
+    //Interfaz de devolución de llamada para obtener balances del usuario
     interface BalancesCallback {
         void onBalancesRecibidos(List<ExpenseItem> balances, double spend);
+    }
+
+    // Método que se ejecuta al pulsar el botón de inicio en el menú
+    public void goToListUserGroups(View view){
+        // Crear un intent para iniciar la actividad ListUserGroupsActivity
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+        //Iniciar la actividad
+        startActivity(intent);
     }
 }
 

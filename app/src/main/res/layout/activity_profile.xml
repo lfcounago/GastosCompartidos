@@ -18,7 +18,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resetPasswordLocal" />
+        app:layout_constraintTop_toBottomOf="@+id/resetPasswordLocal"
+        android:backgroundTint="@color/dark"/>
 
     <ImageView
         android:id="@+id/profileImage"
@@ -79,7 +80,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="¡Email sin verificar!"
+        android:text="Email Not Verfied !"
         android:textColor="#C2185B"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -92,11 +93,12 @@
         android:id="@+id/resendCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Verificar ahora"
+        android:text="Verify Now"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/verifyMsg" />
+        app:layout_constraintTop_toBottomOf="@+id/verifyMsg"
+        android:backgroundTint="@color/dark"/>
 
     <Button
         android:id="@+id/resetPasswordLocal"
@@ -109,7 +111,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/changeProfile"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        android:backgroundTint="@color/dark"/>
 
     <TextView
         android:id="@+id/textView3"
@@ -186,5 +189,24 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profilePhone"
-        app:layout_constraintVertical_bias="0.59000003" />
+        app:layout_constraintVertical_bias="0.59000003"
+        android:backgroundTint="@color/dark"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:backgroundTint="@color/white"
+        android:clickable="true"
+        android:elevation="0dp"
+        android:onClick="goToListUserGroups"
+        android:src="@drawable/ic_return"
+        app:borderWidth="0dp"
+        app:layout_constraintHorizontal_bias="0.048"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:useCompatPadding="true" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
