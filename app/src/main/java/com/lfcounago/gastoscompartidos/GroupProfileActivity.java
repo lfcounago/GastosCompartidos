@@ -2,10 +2,12 @@ package com.lfcounago.gastoscompartidos;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -46,10 +48,11 @@ public class GroupProfileActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter;
     private FloatingActionButton btnEliminarGrupo, btnAnadirUsuario;
     private Button btnGuardar;
-    private String groupId;
+    private String groupId, lila;
     FirebaseAuth fAuth;
     private FirebaseFirestore fStore;
     private Toolbar toolbar;
+    private Window window;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class GroupProfileActivity extends AppCompatActivity {
         nameToUid = new HashMap<>();
         groupId = getIntent().getStringExtra("groupId");
         toolbar = findViewById(R.id.toolbar);
+        lila = "#8838f1";
 
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
@@ -102,6 +106,10 @@ public class GroupProfileActivity extends AppCompatActivity {
         // Crear un adaptador que vincula los nombres de los usuarios con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, usuarios);
 
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(lila));
+
         // Configurar la barra de acción
         setSupportActionBar(toolbar);
 
@@ -124,7 +132,10 @@ public class GroupProfileActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         boolean toret = false;
 
-        if (item.getItemId() == R.id.itGroupDetails){
+        if (item.getItemId() == R.id.itHome){
+            goToListUserGroups();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupDetails){
             toGroupDetails();
             toret = true;
         } else if (item.getItemId() == R.id.itGroupSpends) {
@@ -433,6 +444,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     }
 
 
+
     // Método para cuando se edita un grupo volver a la pantalla principal de los gastos del grupo GroupDetailsActivity
     private void toGroupDetails() {
         // Crear un Intent para iniciar la actividad de detalles del grupo
@@ -441,6 +453,13 @@ public class GroupProfileActivity extends AppCompatActivity {
         startActivity(intent);
         // Cerrar la actividad actual si es necesario
         finish();
+    }
+
+    //Método que se ejecuta al pulsar la opción de inicio en el menu
+    public void goToListUserGroups() {
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+        // Iniciar la actividad
+        startActivity(intent);
     }
 
     //Método que se ejecuta al pulsar la opción de gastos del grupo

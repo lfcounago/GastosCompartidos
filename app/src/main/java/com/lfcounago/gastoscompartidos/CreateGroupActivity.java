@@ -3,8 +3,10 @@ package com.lfcounago.gastoscompartidos;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +37,8 @@ public class CreateGroupActivity extends AppCompatActivity {
     private Spinner spCategory;
     private EditText etUsers;
     private Button btCreateGroup;
+    private Window window;
+    private String green;
 
     // Arrays for spinners
     private String[] currencies;
@@ -57,6 +61,7 @@ public class CreateGroupActivity extends AppCompatActivity {
         spCategory = findViewById(R.id.category_spinner);
         etUsers = findViewById(R.id.users_edit_text);
         btCreateGroup = findViewById(R.id.create_group_button);
+        green = "#40eda7";
 
         // Inicializar los arrays de los spinners
         currencies = getResources().getStringArray(R.array.currencies);
@@ -70,6 +75,10 @@ public class CreateGroupActivity extends AppCompatActivity {
         ArrayAdapter<String> categoryAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCategory.setAdapter(categoryAdapter);
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(green));
 
         // Listener para crear un grupo
         btCreateGroup.setOnClickListener(new View.OnClickListener() {
