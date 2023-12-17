@@ -1,9 +1,12 @@
 package com.lfcounago.gastoscompartidos;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -12,10 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
+import androidx.core.view.GravityCompat;
+
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.collection.LLRBNode;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -35,6 +42,8 @@ public class ListUserGroupsActivity extends AppCompatActivity{
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavigationView navigationView;
+    private Window window;
+    private String green;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +56,17 @@ public class ListUserGroupsActivity extends AppCompatActivity{
         groupIds = new ArrayList<>();
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
-        fAuth = FirebaseAuth.getInstance();
-        navigationView = findViewById(R.id.navView);
         drawerLayout = findViewById(R.id.dlMenuLateral);
+        navigationView = findViewById(R.id.navView);
+        green = "#40eda7";
 
         // Crear un adaptador que vincula los nombres de los grupos con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, groupNames);
         lvGroups.setAdapter(adapter); // Establecer el adaptador al listView
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(green));
 
         // Añadir un listener al listView que se activa cuando se hace clic en un elemento de la lista
         lvGroups.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -83,10 +96,14 @@ public class ListUserGroupsActivity extends AppCompatActivity{
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int itemId = item.getItemId();
 
-                if (itemId == R.id.mnProfile){
-                    goToProfile();
+                if (itemId == R.id.mnHome){
+                    goToListUserGroups();
+                } else if (itemId == R.id.mnBalances) {
+                    goToBalances();
                 } else if (itemId == R.id.mnLiquidations) {
                     goToLiquidations();
+                }if (itemId == R.id.mnProfile){
+                    goToProfile();
                 } else if (itemId == R.id.mnLogOut) {
                     goToLogin();
                 }
@@ -113,9 +130,36 @@ public class ListUserGroupsActivity extends AppCompatActivity{
     }
 
 
+    //Método para crear las opciones del menú
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        super.onCreateOptionsMenu(menu);
+        this.getMenuInflater().inflate( R.menu.nav_options, menu );
+        return true;
+    }
+
+    //Método para saber que opción ha sido seleccionada y actuar en consecuencia
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)){
+        switch (item.getItemId()){
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);
+                return true;
+        }
+        if (item.getItemId() == R.id.mnHome){
+            goToListUserGroups();
+            return true;
+        }else if (item.getItemId() == R.id.mnLiquidations) {
+            goToLiquidations();
+            return true;
+        } else if (item.getItemId() == R.id.mnBalances) {
+            goToBalances();
+            return true;
+        } else if (item.getItemId() == R.id.mnLogOut) {
+            goToLogin();
+            return true;
+        }else if (item.getItemId() == R.id.mnProfile) {
+            goToProfile();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -164,6 +208,14 @@ public class ListUserGroupsActivity extends AppCompatActivity{
     }
 
     // Método que se ejecuta al pulsar el botón de perfil en el menu
+    public void goToListUserGroups(){
+        // Crear un intent para iniciar la actividad ProfileActivity
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+
+        startActivity(intent);
+    }
+
+    // Método que se ejecuta al pulsar el botón de perfil en el menu
     public void goToProfile(){
         // Crear un intent para iniciar la actividad ProfileActivity
         Intent intent = new Intent(this, ProfileActivity.class);
@@ -179,10 +231,10 @@ public class ListUserGroupsActivity extends AppCompatActivity{
         startActivity(intent);
     }
 
-    // Método que se ejecuta al pulsar el botón de inicio en el menu
-    public void goToListUserGroups(){
-        // Crear un intent para iniciar la actividad ListUserGroupsActivity
-        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+    // Método que se ejecuta al pulsar el botón de saldos en el menu
+    public void goToBalances(){
+        // Crear un intent para iniciar la actividad BalanceActivity
+        Intent intent = new Intent(this, BalanceActivity.class);
 
         startActivity(intent);
     }
