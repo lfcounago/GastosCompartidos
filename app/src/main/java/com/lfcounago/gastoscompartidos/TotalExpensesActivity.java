@@ -1,10 +1,13 @@
 package com.lfcounago.gastoscompartidos;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,9 +38,10 @@ public class TotalExpensesActivity extends AppCompatActivity {
     private ArrayAdapter<String> adapter, adapterG;
     private TextView tvGastoTotal, tvTotalPagoUsu, tvPagoRealizadoUsu, tvPagosRecibidos;
     private String gid;
-    private String uid;
+    private String uid, yellow;
     private FirebaseFirestore fStore;
     private Toolbar toolbar;
+    private Window window;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +49,8 @@ public class TotalExpensesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_total_expenses);
 
         // Inicializar los atributos de la clase
-        lvUsuarios = (ListView) findViewById(R.id.listView);
-        lvGasto = (ListView) findViewById(R.id.listViewGastos);
+        lvUsuarios = findViewById(R.id.listView);
+        lvGasto = findViewById(R.id.listViewGastos);
         usuarios = new ArrayList<>();
         uids = new ArrayList<>();
         uidToName = new HashMap<>();
@@ -59,12 +63,17 @@ public class TotalExpensesActivity extends AppCompatActivity {
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         fStore = FirebaseFirestore.getInstance();
         toolbar = findViewById(R.id.toolbar);
+        yellow = "#ffd133";
 
         // Crear un adaptador que vincula los nombres de los usuarios con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, usuarios);
 
         // Crear un adaptador que vincula los nombres del gasto con el vista del listView
         adapterG = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, detalleGasto);
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(yellow));
 
         // Configurar la barra de acción
         setSupportActionBar(toolbar);
@@ -88,7 +97,10 @@ public class TotalExpensesActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@androidx.annotation.NonNull MenuItem item) {
         boolean toret = false;
 
-        if (item.getItemId() == R.id.itGroupProfile){
+        if (item.getItemId() == R.id.itHome){
+            goToListUserGroups();
+            toret = true;
+        } else if (item.getItemId() == R.id.itGroupProfile){
             goToGroupProfile();
             toret = true;
         } else if (item.getItemId() == R.id.itGroupDetails) {
@@ -132,7 +144,15 @@ public class TotalExpensesActivity extends AppCompatActivity {
                                     // Añadir el gasto del grupo a la lista de gastos del grupo
                                     gastos.add(amount);
                                     //Cogemos los usuarios correspondientes al gasto
-                                    uids = (List<String>) document.get("sharedWith");
+                                    Object sharedWithObj = document.get("sharedWith");
+
+                                    if (sharedWithObj instanceof List<?>) {
+                                        uids = (List<String>) sharedWithObj;
+                                        Log.d("TotalExpenses", "uids : " + uids);
+                                    }else {
+                                        return;
+                                    }
+
                                     if(payer != null && payer.equals(uid)){
                                         gastosPag.add(amount);
                                         gastosTitulo.add(gasto);
@@ -211,6 +231,13 @@ public class TotalExpensesActivity extends AppCompatActivity {
     public static double round2(double value) {
 
         return Math.round(value * 100.0) / 100.0;
+    }
+
+    //Método que se ejecuta al pulsar la opción de inicio
+    public void goToListUserGroups() {
+        Intent intent = new Intent(this, ListUserGroupsActivity.class);
+        // Iniciar la actividad
+        startActivity(intent);
     }
 
     //Método que se ejecuta al pulsar la opción del perfil del grupo

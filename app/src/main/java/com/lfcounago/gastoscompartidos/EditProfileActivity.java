@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -39,6 +41,8 @@ public class EditProfileActivity extends AppCompatActivity {
     FirebaseFirestore fStore;
     FirebaseUser fUser;
     StorageReference fStorageReference;
+    private Window window;
+    private String primaryDark;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +67,11 @@ public class EditProfileActivity extends AppCompatActivity {
         etPhone = findViewById(R.id.profilePhoneNo);
         ivProfileImage = findViewById(R.id.profileImageView);
         btSave = findViewById(R.id.saveProfileInfo);
+        primaryDark = "#063642";
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(primaryDark));
 
         // Crear una referencia a la imagen de perfil del usuario en el almacenamiento de Firebase
         StorageReference profileRef = fStorageReference.child("users/"+fAuth.getCurrentUser().getUid()+"/profile.jpg");

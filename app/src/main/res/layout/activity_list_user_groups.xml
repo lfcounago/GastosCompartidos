@@ -23,7 +23,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:background="@color/purple"
+                android:background="@color/green2"
                 android:elevation="4dp" />
 
             <FrameLayout
@@ -64,6 +64,7 @@
                     android:layout_gravity="bottom|end"
                     android:layout_margin="16dp"
                     android:onClick="goToCrearGrupo"
+                    android:backgroundTint="@color/green2"
                     android:src="@android:drawable/ic_input_add" />
 
             </FrameLayout>

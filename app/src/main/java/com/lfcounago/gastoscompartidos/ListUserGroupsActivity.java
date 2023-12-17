@@ -1,9 +1,11 @@
 package com.lfcounago.gastoscompartidos;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -18,6 +20,7 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.core.view.GravityCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.collection.LLRBNode;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -37,6 +40,8 @@ public class ListUserGroupsActivity extends AppCompatActivity{
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private NavigationView navigationView;
+    private Window window;
+    private String green;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +57,15 @@ public class ListUserGroupsActivity extends AppCompatActivity{
         fAuth = FirebaseAuth.getInstance();
         navigationView = findViewById(R.id.navView);
         drawerLayout = findViewById(R.id.dlMenuLateral);
+        green = "#40eda7";
 
         // Crear un adaptador que vincula los nombres de los grupos con la vista del listView
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, groupNames);
         lvGroups.setAdapter(adapter); // Establecer el adaptador al listView
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(green));
 
         // Añadir un listener al listView que se activa cuando se hace clic en un elemento de la lista
         lvGroups.setOnItemClickListener(new AdapterView.OnItemClickListener() {

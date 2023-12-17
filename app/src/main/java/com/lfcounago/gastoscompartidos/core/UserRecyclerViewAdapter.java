@@ -1,6 +1,5 @@
 package com.lfcounago.gastoscompartidos.core;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +8,6 @@ import android.widget.TextView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.lfcounago.gastoscompartidos.BalanceActivity;
 import com.lfcounago.gastoscompartidos.R;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -18,6 +16,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+// Adaptador para la RecyclerView que muestra la lista de usuarios
 public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerViewAdapter.MemberViewHolder> {
     private List<User> memberList;
     private boolean showBalancesMode;
@@ -28,6 +27,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         this.showBalancesMode = showBalanceMode;
     }
 
+    // Método llamado cuando se necesita crear un nuevo ViewHolder
     @NonNull
     @Override
     public MemberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -35,6 +35,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         return new MemberViewHolder(view);
     }
 
+    // Método llamado para mostrar datos en un ViewHolder específico
     public void onBindViewHolder(@NonNull MemberViewHolder holder, int position) {
         User member = memberList.get(position);
         holder.tvMemberName.setText(member.getUserName());
@@ -49,6 +50,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
                 //Configurar la liquidacion directamente desde el objeto User y su currency
                 holder.setLiquidations(member.getTotalBalance(), currency.substring(Math.max(0, currency.length() - 4)));
             }else{
+                // Ocultar el elemento si no hay liquidaciones pendientes
                 holder.itemView.setVisibility(View.GONE);
                 ViewGroup.LayoutParams params = holder.itemView.getLayoutParams();
                 params.height = 0;
@@ -62,6 +64,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         holder.itemView.setLayoutParams(layoutParams);
     }
 
+    // Método para verificar si hay deudas en el grupo
     public boolean groupDebts(){
         if (showBalancesMode){
             return true;
@@ -80,11 +83,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
         return memberList.size();
     }
 
-    public void filtrar(ArrayList<User> filtroUsers){
-        this.memberList = filtroUsers;
-        notifyDataSetChanged();
-    }
-
+    // Clase interna que representa el ViewHolder para cada elemento de la RecyclerView
     public static class MemberViewHolder extends RecyclerView.ViewHolder {
         TextView tvMemberName;
         TextView tvMemberBalance;
@@ -97,6 +96,7 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
             tvMemberCurrency = itemView.findViewById(R.id.tvBalanceCurrency);
         }
 
+        // Método para configurar el saldo en la interfaz de usuario
         public void setBalance(double totalBalance, String currency){
             // Crear un objeto DecimalFormat con el formato deseado
             DecimalFormat decimalFormat = new DecimalFormat("0.00");
@@ -119,10 +119,9 @@ public class UserRecyclerViewAdapter extends RecyclerView.Adapter<UserRecyclerVi
                 tvMemberBalance.setText("0.00");
                 tvMemberCurrency.setText(currency);
             }
-
-
         }
 
+        // Método para configurar las liquidaciones en la interfaz de usuario
         public void setLiquidations(double totalLiquidations, String currency){
             // Crear un objeto DecimalFormat con el formato deseado
             DecimalFormat decimalFormat = new DecimalFormat("0.00");

@@ -68,7 +68,9 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="70dp"
         android:onClick="guardarCambiosGasto"
-        android:text="Editar" />
+        android:text="Editar"
+        android:backgroundTint="@color/blue"
+        android:textColor="@color/black"/>
 
     <Button
         android:id="@+id/btnCancelar"
@@ -78,7 +80,9 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:onClick="toGroupDetails"
-        android:text="Cancelar" />
+        android:text="Cancelar"
+        android:backgroundTint="@color/blue"
+        android:textColor="@color/black"/>
 
 
 

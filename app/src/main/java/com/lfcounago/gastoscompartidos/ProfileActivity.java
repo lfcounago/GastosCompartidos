@@ -2,10 +2,12 @@ package com.lfcounago.gastoscompartidos;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,12 +40,13 @@ public class ProfileActivity extends AppCompatActivity {
     TextView tvFullName, tvEmail, tvPhone, tvVerifyMsg;
     FirebaseAuth fAuth;
     FirebaseFirestore fStore;
-    String userId;
+    String userId, primaryDark;
     Button btResendCode;
     Button btResetPassLocal, btChangeProfileImage;
     FirebaseUser fUser;
     ImageView ivProfileImage;
     StorageReference fStorageReference;
+    private Window window;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,11 +60,16 @@ public class ProfileActivity extends AppCompatActivity {
         btResetPassLocal = findViewById(R.id.resetPasswordLocal);
         ivProfileImage = findViewById(R.id.profileImage);
         btChangeProfileImage = findViewById(R.id.changeProfile);
+        primaryDark = "#063642";
 
         // Inicialización de las variables para acceder a la base de datos de Firebase
         fAuth = FirebaseAuth.getInstance();
         fStore = FirebaseFirestore.getInstance();
         fStorageReference = FirebaseStorage.getInstance().getReference();
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(primaryDark));
 
         // Obtención de la referencia al archivo de la imagen de perfil del usuario en Firebase Storage
         StorageReference profileRef = fStorageReference.child("users/" + fAuth.getCurrentUser().getUid() + "/profile.jpg");
