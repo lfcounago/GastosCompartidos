@@ -36,8 +36,8 @@ public class TotalExpensesActivity extends AppCompatActivity {
     private  List<String> usuarios, uids, detalleGasto;
     private Map<String, String> uidToName, nameToUid;
     private ArrayAdapter<String> adapter, adapterG;
-    private TextView tvGastoTotal, tvTotalPagoUsu, tvPagoRealizadoUsu, tvPagosRecibidos;
-    private String gid;
+    private TextView tvGastoTotal, tvTotalPagoUsu, tvPagoRealizadoUsu;
+    private String gid, titulo;
     private String uid, yellow;
     private FirebaseFirestore fStore;
     private Toolbar toolbar;
@@ -58,9 +58,9 @@ public class TotalExpensesActivity extends AppCompatActivity {
         detalleGasto = new ArrayList<>();
         tvGastoTotal = findViewById(R.id.tvGastoTotal);
         tvTotalPagoUsu = findViewById(R.id.tvTotalPagoUsu);
-        tvPagosRecibidos = findViewById(R.id.tvPagosRecibidos);
-        gid = getIntent().getStringExtra("groupId");
-        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        titulo = "Liquidación";
+        gid = getIntent().getStringExtra("groupId");//"bmMYudVqJVuPzEaWwVNj";
+        uid = FirebaseAuth.getInstance().getCurrentUser().getUid();//"uivt6Bi7ZjapLuBKUXF8e052Oku2";
         fStore = FirebaseFirestore.getInstance();
         toolbar = findViewById(R.id.toolbar);
         yellow = "#ffd133";
@@ -131,6 +131,7 @@ public class TotalExpensesActivity extends AppCompatActivity {
                             // Recorrer cada documento del resultado
                             for (QueryDocumentSnapshot document : result) {
                                 // Obtener los valores correspondientes
+                                String title = document.getString("title");
                                 Number amount = document.getDouble("amount");
                                 String groupID = document.getString("groupID");
                                 String payer = document.getString("payer");
@@ -140,7 +141,7 @@ public class TotalExpensesActivity extends AppCompatActivity {
                                 // Limpiar los mapas de correspondencia entre UID y nombre de los usuarios
                                 uidToName.clear();
                                 nameToUid.clear();
-                                if (groupID != null && groupID.equals(groupId) && amount != null) { // Si la lista de gastos contiene el id del grupo actual
+                                if (groupID != null && groupID.equals(groupId) && amount != null && !title.equals(titulo)) { // Si la lista de gastos contiene el id del grupo actual
                                     // Añadir el gasto del grupo a la lista de gastos del grupo
                                     gastos.add(amount);
                                     //Cogemos los usuarios correspondientes al gasto
