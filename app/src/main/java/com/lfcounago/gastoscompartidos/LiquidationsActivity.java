@@ -104,7 +104,7 @@ public class LiquidationsActivity extends AppCompatActivity{
         //Añadir el boton al LinearLayout
         fab = new FloatingActionButton(this);
         fab.setLayoutParams(layoutParams);
-        fab.setImageResource(R.drawable.ic_return_white);
+        fab.setImageResource(R.drawable.ic_return);
         fab.setBackgroundTintList(ColorStateList.valueOf(colorWhite));
         fab.setElevation(0);
         fab.setStateListAnimator(null);
