@@ -13,7 +13,8 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/purple"
         android:elevation="4dp"
-        android:theme="?attr/actionBarTheme" />
+        android:theme="?attr/actionBarTheme"
+        android:backgroundTint="@color/yellow"/>
 
     <LinearLayout
         android:layout_width="match_parent"

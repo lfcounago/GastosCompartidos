@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -41,6 +43,8 @@ public class AddSpendActivity extends AppCompatActivity {
     private Spinner spPagador;
     private Button btFecha, btGuardar;
     private CheckBox cbTodos;
+    private Window window;
+    private String blue;
 
     // Declaración de variables para almacenar los datos introducidos por el usuario
     private String titulo, fecha, pagador, grupo, nombreGrupo, groupId;
@@ -75,6 +79,7 @@ public class AddSpendActivity extends AppCompatActivity {
         btFecha = findViewById(R.id.btFecha);
         btGuardar = findViewById(R.id.btGuardar);
         cbTodos = findViewById(R.id.cbTodos);
+        blue = "#1fdcff";
 
         //Obtener el groupId que se pasa con el intent
         groupId = getIntent().getStringExtra("groupId");
@@ -132,6 +137,10 @@ public class AddSpendActivity extends AppCompatActivity {
             }
 
         };
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(blue));
 
         fStore.collection("groups").document(groupId)
                 .get()
@@ -332,6 +341,7 @@ public class AddSpendActivity extends AppCompatActivity {
     public void goToActividadAnterior(View view) {
         // Crear un intent para iniciar la actividad GroupDetailsActivity
         Intent intent = new Intent(this, GroupDetailsActivity.class);
+        intent.putExtra("groupId", groupId);
 
         startActivity(intent);
     }

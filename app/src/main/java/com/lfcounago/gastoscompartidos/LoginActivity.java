@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -30,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     TextView tvCreateBt, tvForgotTextLink;
     ProgressBar progressBar;
     FirebaseAuth fAuth;
+    private Window window;
+    private String primaryDark;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,11 @@ public class LoginActivity extends AppCompatActivity {
         btLogin = findViewById(R.id.loginBtn);
         tvCreateBt = findViewById(R.id.createText);
         tvForgotTextLink = findViewById(R.id.forgotPassword);
+        primaryDark = "#063642";
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(primaryDark));
 
         //Listener del botón Login
         btLogin.setOnClickListener(new View.OnClickListener() {

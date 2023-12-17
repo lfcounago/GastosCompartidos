@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -38,6 +40,8 @@ public class RegisterActivity extends AppCompatActivity {
     ProgressBar progressBar;
     FirebaseFirestore fStore;
     String userID;
+    private Window window;
+    private String primaryDark;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
         etPhone = findViewById(R.id.phone);
         btRegister = findViewById(R.id.registerBtn);
         tvLoginBt = findViewById(R.id.createText);
+        primaryDark = "#063642";
 
         // Inicialización de las variables para acceder a la base de datos de Firebase
         fAuth = FirebaseAuth.getInstance();
@@ -60,6 +65,10 @@ public class RegisterActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             finish();
         }
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(primaryDark));
 
         //Listener del botón Login
         btRegister.setOnClickListener(new View.OnClickListener() {
