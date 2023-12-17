@@ -4,8 +4,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,8 +33,9 @@ public class EditSpendActivity extends AppCompatActivity {
     private EditText etTitle, etGasto;
     private TextView tvDivisa;
     private Button btnEditar;
-    private String spendId, groupIda;
+    private String spendId, groupIda, blue;
     private FirebaseFirestore fStore;
+    private Window window;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,11 @@ public class EditSpendActivity extends AppCompatActivity {
         spendId = getIntent().getStringExtra("spendId");
         btnEditar = findViewById(R.id.btnEditar);
         fStore = FirebaseFirestore.getInstance();
+        blue = "#1fdcff";
+
+        //Parámetros para cambiar el color de la barra de estado
+        this.window = getWindow();
+        window.setStatusBarColor(Color.parseColor(blue));
 
         // Llamar al método que obtiene los gastos pertenecientes al grupo
         getSpends();

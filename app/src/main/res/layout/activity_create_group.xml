@@ -82,14 +82,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Crear grupo" />
+                android:text="Crear grupo"
+                android:backgroundTint="@color/green2"
+                android:textColor="@color/black"/>
 
             <Button
                 android:id="@+id/bttCancelar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:onClick="goToActividadAnterior"
-                android:text="Cancelar" />
+                android:text="Cancelar"
+                android:backgroundTint="@color/green2"
+                android:textColor="@color/black"/>
         </LinearLayout>
     </ScrollView>
 

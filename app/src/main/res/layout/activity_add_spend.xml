@@ -55,7 +55,9 @@
                 android:id="@+id/btFecha"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seleccionar fecha" />
+                android:text="Seleccionar fecha"
+                android:backgroundTint="@color/blue"
+                android:textColor="@color/black"/>
 
             <TextView
                 android:id="@+id/tvCantidad"
@@ -127,7 +129,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="Guardar gasto" />
+                android:text="Guardar gasto"
+                android:backgroundTint="@color/blue"
+                android:textColor="@color/black"/>
 
             <Button
                 android:id="@+id/btCancelar"
@@ -136,7 +140,9 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
                 android:onClick="goToActividadAnterior"
-                android:text="Cancelar" />
+                android:text="Cancelar"
+                android:backgroundTint="@color/blue"
+                android:textColor="@color/black"/>
 
         </LinearLayout>
     </ScrollView>
