@@ -3,6 +3,8 @@
     <string name="app_name">GastosCompartidos</string>
     <string name="prefs_file">com.lfcounago.gastoscompartidos.PREFERENCE_FILE_KEY</string>
     <string name="default_web_client_id">55935314119-3g35kfd7k0tvf2mco5tcvco6vsgopaio.apps.googleusercontent.com</string>
+    <string name="open_nav">Open navegator</string>
+    <string name="close_nav">Close navegator</string>
     <string-array name="currencies">
         <item>Euro - EUR</item>
         <item>Baht tailandés - THB</item>
@@ -119,13 +121,6 @@
     <string name="add_user_emails">Write emails separated by commas</string>
 
     <!---
-    activity_balance
-
-    <string name=""></string>
-    -->
-
-
-    <!---
     activity_create_group
     -->
     <string name="create_group_title">Create a group</string>
@@ -165,13 +160,6 @@
     <string name="group_profile_currency">Group currency</string>
     <string name="group_profile_categories">Group category</string>
     <string name="group_profile_users">Participants:</string>
-
-    <!---
-       activity_liquidations
-
-        <string name=""></string>
-    -->
-
 
     <!---
         activity_list_user_groups
@@ -224,4 +212,19 @@
     <string name="user_item_user_amount">User balance </string>
     <string name="user_item_currency">Currency</string>
 
+    <!---
+        activity_debt_liquidation
+    -->
+    <string name="debt_liquidation_title">Debts to users</string>
+    <string name="debt_liquidation_debts">Debts: </string>
+
+    <!---
+        activity_settle_debt
+    -->
+    <string name="settle_debt_title">Settle Debt</string>
+    <string name="settle_debt_liquidation">Liquidation</string>
+    <string name="settle_debt_amount">Amount of the expense</string>
+    <string name="settle_debt_payer">User who pays the debt</string>
+    <string name="settle_debt_user">User</string>
+    <string name="settle_debt_user_to_pay">User to whom you pay the debt</string>
 </resources>

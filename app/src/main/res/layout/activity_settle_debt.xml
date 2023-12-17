@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Liquidar Deuda"
+                android:text="@string/settle_debt_title"
                 android:textSize="34sp" />
 
             <Space
@@ -34,7 +34,7 @@
                 android:id="@+id/tvTitulo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Liquidadicón"
+                android:text="@string/settle_debt_liquidation"
                 android:textSize="18sp" />
 
             <!--<TextView
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Cantidad del gasto"
+                android:text="@string/settle_debt_amount"
                 android:textSize="18sp" />
 
             <LinearLayout
@@ -68,9 +68,9 @@
                     android:id="@+id/tvCantidad"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginTop="5dp"
-                    android:hint="Cantidad del gasto"
+                    android:layout_weight="1"
+                    android:hint="@string/settle_debt_amount"
                     android:inputType="numberDecimal" />
 
                 <TextView
@@ -88,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Usuario que paga la deuda"
+                android:text="@string/settle_debt_payer"
                 android:textSize="18sp" />
 
             <TextView
@@ -96,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="El usuario"
+                android:text="@string/settle_debt_user"
                 android:textSize="18sp" />
 
             <TextView
@@ -104,7 +104,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Usuario al que le paga la deuda"
+                android:text="@string/settle_debt_user_to_pay"
                 android:textSize="18sp" />
 
             <TextView
@@ -112,7 +112,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="El usuario"
+                android:text="@string/settle_debt_user"
                 android:textSize="18sp" />
 
             <LinearLayout
@@ -127,9 +127,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="16dp"
-                android:text="Guardar liquidación"
                 android:backgroundTint="@color/red2"
-                android:textColor="@color/black"/>
+                android:text="@string/save"
+                android:textColor="@color/black" />
 
             <Button
                 android:id="@+id/btCancelar"
@@ -137,10 +137,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                android:onClick="goToActividadAnterior"
-                android:text="Cancelar"
                 android:backgroundTint="@color/red2"
-                android:textColor="@color/black"/>
+                android:onClick="goToActividadAnterior"
+                android:text="@string/cancel"
+                android:textColor="@color/black" />
 
         </LinearLayout>
     </ScrollView>
