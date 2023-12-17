@@ -3,19 +3,29 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/mnProfile"
-            android:title="Mi perfil"
-            android:icon="@drawable/ic_person_black_24dp"/>
+            android:id="@+id/mnHome"
+            android:title="Inicio"
+            android:icon="@drawable/nav_home"/>
+        <item
+            android:id="@+id/mnBalances"
+            android:title="Saldos"
+            android:icon="@drawable/nav_balances"/>
         <item
             android:id="@+id/mnLiquidations"
             android:title="Liquidaciones"
             android:icon="@drawable/nav_liquidations"/>
+
+
     </group>
 
     <item
         android:title="">
 
         <menu>
+            <item
+                android:id="@+id/mnProfile"
+                android:title="Mi perfil"
+                android:icon="@drawable/ic_person_black_24dp"/>
             <item
                 android:id="@+id/mnLogOut"
                 android:title="Cerrar Sesión"
