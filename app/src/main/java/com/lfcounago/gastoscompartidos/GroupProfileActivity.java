@@ -365,7 +365,7 @@ public class GroupProfileActivity extends AppCompatActivity {
     // Método que se ejecuta al pulsar el boton mas
     public void goToAddUser(View view) {
         // Crear un intent para iniciar la actividad GroupProfileActivity
-        Intent intent = new Intent(GroupProfileActivity.this, AddUserActivity.class);
+        Intent intent = new Intent(this, AddUserActivity.class);
         intent.putExtra("groupId", groupId);
         startActivity(intent);
     }
@@ -451,8 +451,6 @@ public class GroupProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(this, GroupDetailsActivity.class);
         intent.putExtra("groupId", groupId);
         startActivity(intent);
-        // Cerrar la actividad actual si es necesario
-        finish();
     }
 
     //Método que se ejecuta al pulsar la opción de inicio en el menu
@@ -477,6 +475,5 @@ public class GroupProfileActivity extends AppCompatActivity {
         // Iniciar la actividad
         startActivity(intent);
     }
-
 
 }

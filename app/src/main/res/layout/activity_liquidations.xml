@@ -67,7 +67,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvGroupUsers"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:divider="?android:attr/dividerHorizontal"
             android:orientation="vertical"
