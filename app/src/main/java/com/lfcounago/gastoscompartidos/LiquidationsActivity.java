@@ -127,9 +127,6 @@ public class LiquidationsActivity extends AppCompatActivity{
         this.window = getWindow();
         window.setStatusBarColor(Color.parseColor(primaryDark));
 
-        //Llamar al método que obtiene los grupos
-        getGroups();
-
         //Establecer la función a realizar al pulsar el botón de atrás
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,6 +134,9 @@ public class LiquidationsActivity extends AppCompatActivity{
                 goToListUserGroups(v);
             }
         });
+
+        //Llamar al método que obtiene los grupos
+        getGroups();
 
     }
 
@@ -294,6 +294,8 @@ public class LiquidationsActivity extends AppCompatActivity{
                                 Log.e("LiquidationsActivity", "El document es null");
                             }
                         }
+                        // Configurar el adapter y listener para el spinner de usuarios
+                        setupUserSpinner();
 
                         // Esperar a que todas las tareas se completen
                         Tasks.whenAllSuccess(tasks)
